@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32210.238
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lapis-testing", "Lapis-testing.vcxproj", "{44AC18A1-F0D4-4A3B-8712-55B890673C8D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{44AC18A1-F0D4-4A3B-8712-55B890673C8D}.Debug|x64.ActiveCfg = Debug|x64
+		{44AC18A1-F0D4-4A3B-8712-55B890673C8D}.Debug|x64.Build.0 = Debug|x64
+		{44AC18A1-F0D4-4A3B-8712-55B890673C8D}.Release|x64.ActiveCfg = Release|x64
+		{44AC18A1-F0D4-4A3B-8712-55B890673C8D}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0B4D681F-55D6-4EBE-A952-A909A7E16A69}
+	EndGlobalSection
+EndGlobal
