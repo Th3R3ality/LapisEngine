@@ -6,6 +6,7 @@
 #include <d3d11.h>
 #include <d3dx11.h>
 #include <d3dx10.h>
+#include <chrono>
 
 // include the Direct3D Library file
 #pragma comment (lib, "d3d11.lib")
@@ -13,24 +14,23 @@
 #pragma comment (lib, "d3dx10.lib")
 
 #include "Lapis-types.hpp"
+#include "utils/hsl-to-rgb.hpp"
 
 #define SCREEN_WIDTH 200
 #define SCREEN_HEIGHT 150
 
 // global declarations
-IDXGISwapChain* swapchain; // the pointer to the swap chain interface
-ID3D11Device* device; // the pointer to our Direct3D device interface
-ID3D11DeviceContext* device_ctx; // the pointer to our Direct3D device context
-ID3D11RenderTargetView* backbuffer;    // global declaration
-ID3D11InputLayout* pLayout;
-ID3D11VertexShader* pVS;    // the vertex shader
-ID3D11PixelShader* pPS;     // the pixel shader
-ID3D11Buffer* pVBuffer;
+IDXGISwapChain* g_swapchain; // the pointer to the swap chain interface
+ID3D11Device* g_device; // the pointer to our Direct3D device interface
+ID3D11DeviceContext* g_device_ctx; // the pointer to our Direct3D device context
+ID3D11RenderTargetView* g_backbuffer;    // global declaration
+ID3D11InputLayout* g_pLayout;
+ID3D11VertexShader* g_pVS_unlit;    // the vertex shader
+ID3D11PixelShader* g_pPS_unlit;     // the pixel shader
+ID3D11Buffer* g_pVBuffer;
 
-struct VERTEX {
-    FLOAT x, y, z;
-    D3DXCOLOR color;
-};
+float g_deltaTime = 0;
+
 
 // forward declarations
 void initd3d(HWND hwnd);
@@ -90,6 +90,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
                 break;
         }
         
+        //
+        // 
+        // 
+        // fix
+        // 
+        // 
+        // 
+        //g_deltaTime = std::chrono::system_clock::now().time_since_epoch().count();
         RenderFrame();
     }
 
@@ -139,21 +147,21 @@ void initd3d(HWND hwnd) {
         NULL,
         D3D11_SDK_VERSION,
         &scd,
-        &swapchain,
-        &device,
+        &g_swapchain,
+        &g_device,
         NULL,
-        &device_ctx);
+        &g_device_ctx);
 
     // get the address of the back buffer
     ID3D11Texture2D* pBackBuffer;
-    swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
+    g_swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
 
     // use the back buffer address to create the render target
-    device->CreateRenderTargetView(pBackBuffer, NULL, &backbuffer);
+    g_device->CreateRenderTargetView(pBackBuffer, NULL, &g_backbuffer);
     pBackBuffer->Release();
 
     // set the render target as the back buffer
-    device_ctx->OMSetRenderTargets(1, &backbuffer, NULL);
+    g_device_ctx->OMSetRenderTargets(1, &g_backbuffer, NULL);
 
     // Set the viewport
     D3D11_VIEWPORT viewport;
@@ -164,55 +172,45 @@ void initd3d(HWND hwnd) {
     viewport.Width = SCREEN_WIDTH;
     viewport.Height = SCREEN_HEIGHT;
 
-    device_ctx->RSSetViewports(1, &viewport);
+    g_device_ctx->RSSetViewports(1, &viewport);
 
     InitPipeline();
     InitGraphics();
 }
 
-
-void cleand3d() {
-
-    swapchain->SetFullscreenState(0, NULL);
-
-    pLayout->Release();
-    pVS->Release();
-    pPS->Release();
-    pVBuffer->Release();
-    swapchain->Release();
-    backbuffer->Release();
-    device->Release();
-    device_ctx->Release();
-}
-
 // this is the function used to render a single frame
 void RenderFrame()
 {
-    static int direction = 1;
-    static float B = 0.0f;
-    if (B < 0 || B > 1) {
-        direction *= -1;
+    static int h = 0;
+    //static int direction = 1;
+    //if (h < 0 || h > 360) {
+    //    direction *= -1;
+    //}
+    //h += 1 * direction;
+    static int timeout = 0;
+    timeout += 1;
+    if (timeout % 100 == 0) {
+        h += 1; if (h > 360) h -= 360;
     }
-    B += 0.0001f * direction;
 
     // clear the back buffer to a deep blue
-    device_ctx->ClearRenderTargetView(backbuffer, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f));
+    g_device_ctx->ClearRenderTargetView(g_backbuffer, HSLToRGB(h, 0.7f, 0.7f, 1.0f));
 
     // do 3D rendering on the back buffer here
 
     // select which vertex buffer to display
     UINT stride = sizeof(VERTEX);
     UINT offset = 0;
-    device_ctx->IASetVertexBuffers(0, 1, &pVBuffer, &stride, &offset);
+    g_device_ctx->IASetVertexBuffers(0, 1, &g_pVBuffer, &stride, &offset);
 
     // select which primtive type we are using
-    device_ctx->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    g_device_ctx->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     // draw the vertex buffer to the back buffer
-    device_ctx->Draw(6, 0);
+    g_device_ctx->Draw(6, 0);
 
     // switch the back buffer and the front buffer
-    swapchain->Present(0, 0);
+    g_swapchain->Present(0, 0);
 }
 
 void InitPipeline()
@@ -223,12 +221,12 @@ void InitPipeline()
     D3DX11CompileFromFile(L"src/unlit.shader", 0, 0, "PShader", "ps_4_0", 0, 0, 0, &PS, 0, 0);
 
     // encapsulate both shaders into shader objects
-    device->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, &pVS);
-    device->CreatePixelShader(PS->GetBufferPointer(), PS->GetBufferSize(), NULL, &pPS);
+    g_device->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, &g_pVS_unlit);
+    g_device->CreatePixelShader(PS->GetBufferPointer(), PS->GetBufferSize(), NULL, &g_pPS_unlit);
 
     // set the shader objects
-    device_ctx->VSSetShader(pVS, 0, 0);
-    device_ctx->PSSetShader(pPS, 0, 0);
+    g_device_ctx->VSSetShader(g_pVS_unlit, 0, 0);
+    g_device_ctx->PSSetShader(g_pPS_unlit, 0, 0);
 
     D3D11_INPUT_ELEMENT_DESC ied[] =
     {
@@ -236,8 +234,8 @@ void InitPipeline()
         {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
     };
 
-    device->CreateInputLayout(ied, 2, VS->GetBufferPointer(), VS->GetBufferSize(), &pLayout);
-    device_ctx->IASetInputLayout(pLayout);
+    g_device->CreateInputLayout(ied, 2, VS->GetBufferPointer(), VS->GetBufferSize(), &g_pLayout);
+    g_device_ctx->IASetInputLayout(g_pLayout);
 
 }
 
@@ -247,14 +245,14 @@ void InitGraphics()
     VERTEX tri1[] =
     {
         {-0.9f, 0.85f, 0.0f, D3DXCOLOR(0.2f, 0.2f, 1.0f, 1.0f)},
-        {0.85f, -0.95, 0.0f, D3DXCOLOR(0.8f, 0.8f, 0.8f, 1.0f)},
-        {-0.9f, -0.95f, 0.0f, D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.0f)}
+        {0.9f, -0.90, 0.0f, D3DXCOLOR(0.8f, 0.8f, 0.8f, 1.0f)},
+        {-0.9f, -0.90f, 0.0f, D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.0f)}
     };
 
     VERTEX tri2[] = {
         {-0.9f, 0.9f, 0.0f, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f)},
         {0.9f, 0.9f, 0.0f, D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f)},
-        {0.9f, -0.9f, 0.0f, D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f)}
+        {0.9f, -0.85f, 0.0f, D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f)}
     };
 
     // create the vertex buffer
@@ -266,7 +264,7 @@ void InitGraphics()
     bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;       // use as a vertex buffer
     bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;    // allow CPU to write in buffer
 
-    device->CreateBuffer(&bd, NULL, &pVBuffer);       // create the buffer
+    g_device->CreateBuffer(&bd, NULL, &g_pVBuffer);       // create the buffer
 
     char combined_buffer[sizeof(tri1) + sizeof(tri2)];
     ZeroMemory(combined_buffer, sizeof(combined_buffer));
@@ -276,7 +274,21 @@ void InitGraphics()
 
     // copy the vertices into the buffer
     D3D11_MAPPED_SUBRESOURCE ms;
-    device_ctx->Map(pVBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);    // map the buffer
+    g_device_ctx->Map(g_pVBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);    // map the buffer
     memcpy(ms.pData, combined_buffer, sizeof(combined_buffer)/sizeof(combined_buffer[0]));                 // copy the data
-    device_ctx->Unmap(pVBuffer, NULL);                                  // unmap the buffer
+    g_device_ctx->Unmap(g_pVBuffer, NULL);                                  // unmap the buffer
+}
+
+void cleand3d()
+{
+    g_swapchain->SetFullscreenState(0, NULL);
+
+    g_pLayout->Release();
+    g_pVS_unlit->Release();
+    g_pPS_unlit->Release();
+    g_pVBuffer->Release();
+    g_swapchain->Release();
+    g_backbuffer->Release();
+    g_device->Release();
+    g_device_ctx->Release();
 }

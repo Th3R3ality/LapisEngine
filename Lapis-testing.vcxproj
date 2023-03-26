@@ -11,7 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\utils\hsl-to-rgb.cpp" />
     <ClCompile Include="src\Lapis-testing.cpp" />
+    <ClCompile Include="src\Lapis-types.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\unlit.shader">
@@ -21,6 +23,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\utils\hsl-to-rgb.hpp" />
     <ClInclude Include="src\Lapis-types.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

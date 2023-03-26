@@ -6,32 +6,21 @@
 #include <D3DX11.h>
 #include <D3DX10.h>
 
-class worldObject {
-private:
-	int x, y, z;
-	D3D10_PRIMITIVE_TOPOLOGY topology;
-
-public:
-	worldObject()
-		: x(0), y(0), z(0),
-		topology(D3D10_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_POINTLIST) {};
-
-	worldObject(int x, int y, int z, D3D10_PRIMITIVE_TOPOLOGY topology)
-		: x(x), y(y), z(z),
-		topology(topology) {};
+struct VERTEX
+{
+	FLOAT x, y, z;
+	D3DXCOLOR color;
 };
 
-class screenObject {
+class square
+{
 private:
-	int x, y;
-	D3D10_PRIMITIVE_TOPOLOGY topology;
+	int x, y, w, h;
+	D3DXCOLOR color;
 
 public:
-	screenObject()
-		: x(0), y(0),
-		topology(D3D10_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_POINTLIST) {};
 
-	screenObject(int x, int y, D3D10_PRIMITIVE_TOPOLOGY topology)
-		: x(x), y(y),
-		topology(topology) {};
+	square() : x(0), y(0), w(0), h(0), color(D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f))  {};
+	square(int x, int y, int w, int h) : x(x), y(y), w(w), h(h) {};
+
 };

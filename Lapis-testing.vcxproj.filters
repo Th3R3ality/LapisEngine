@@ -2,11 +2,14 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="src\Lapis-testing.cpp" />
+    <ClCompile Include="src\Lapis-types.cpp" />
+    <ClCompile Include="src\utils\hsl-to-rgb.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\unlit.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Lapis-types.hpp" />
+    <ClInclude Include="src\utils\hsl-to-rgb.hpp" />
   </ItemGroup>
 </Project>
