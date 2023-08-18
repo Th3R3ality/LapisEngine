@@ -3,15 +3,16 @@
 // include the basic windows header files and the Direct3D header files
 #include <windows.h>
 #include <windowsx.h>
-#include <d3d11.h>
-#include <d3dx11.h>
-#include <d3dx10.h>
 #include <chrono>
+
+#include <d3d11.h>
+#include <DirectXMath.h>
+#include <DirectXPackedVector.h>
+#include <d3dcompiler.h>
 
 // include the Direct3D Library file
 #pragma comment (lib, "d3d11.lib")
-#pragma comment (lib, "d3dx11.lib")
-#pragma comment (lib, "d3dx10.lib")
+#pragma comment (lib, "d3dcompiler.lib")
 
 #include "Lapis-types.hpp"
 #include "utils/hsl-to-rgb.hpp"
@@ -194,7 +195,8 @@ void RenderFrame()
     }
 
     // clear the back buffer to a deep blue
-    g_device_ctx->ClearRenderTargetView(g_backbuffer, HSLToRGB(h, 0.7f, 0.7f, 1.0f));
+    auto color = HSLToRGB(h, 0.7f, 0.7f, 1.0f);
+    g_device_ctx->ClearRenderTargetView(g_backbuffer, (FLOAT*)&color);
 
     // do 3D rendering on the back buffer here
 
@@ -217,8 +219,8 @@ void InitPipeline()
 {
     // load and compile the two shaders
     ID3D10Blob* VS, * PS;
-    D3DX11CompileFromFile(L"src/unlit.shader", 0, 0, "VShader", "vs_4_0", 0, 0, 0, &VS, 0, 0);
-    D3DX11CompileFromFile(L"src/unlit.shader", 0, 0, "PShader", "ps_4_0", 0, 0, 0, &PS, 0, 0);
+    D3DCompileFromFile(L"src/unlit.shader", 0, 0, "VShader", "vs_4_0", 0, 0, &VS, 0);
+    D3DCompileFromFile(L"src/unlit.shader", 0, 0, "PShader", "ps_4_0", 0, 0, &PS, 0);
 
     // encapsulate both shaders into shader objects
     g_device->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, &g_pVS_unlit);
@@ -244,15 +246,15 @@ void InitGraphics()
     // create a triangle using the VERTEX struct
     VERTEX tri1[] =
     {
-        {-0.9f, 0.85f, 0.0f, D3DXCOLOR(0.2f, 0.2f, 1.0f, 1.0f)},
-        {0.9f, -0.90, 0.0f, D3DXCOLOR(0.8f, 0.8f, 0.8f, 1.0f)},
-        {-0.9f, -0.90f, 0.0f, D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.0f)}
+        {-0.9f, 0.85f, 0.0f, DXGI_RGBA(0.2f, 0.2f, 1.0f, 1.0f)},
+        {0.9f, -0.90, 0.0f, DXGI_RGBA(0.8f, 0.8f, 0.8f, 1.0f)},
+        {-0.9f, -0.90f, 0.0f, DXGI_RGBA(0.1f, 0.1f, 0.1f, 1.0f)}
     };
 
     VERTEX tri2[] = {
-        {-0.9f, 0.9f, 0.0f, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f)},
-        {0.9f, 0.9f, 0.0f, D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f)},
-        {0.9f, -0.85f, 0.0f, D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f)}
+        {-0.9f, 0.9f, 0.0f, DXGI_RGBA(1.0f, 0.0f, 0.0f, 1.0f)},
+        {0.9f, 0.9f, 0.0f, DXGI_RGBA(0.0f, 1.0f, 0.0f, 1.0f)},
+        {0.9f, -0.85f, 0.0f, DXGI_RGBA(0.0f, 0.0f, 1.0f, 1.0f)}
     };
 
     // create the vertex buffer

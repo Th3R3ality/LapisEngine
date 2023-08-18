@@ -69,9 +69,9 @@ static RGB HSLToRGB(HSL hsl)
 	return RGB(r, g, b);
 }
 
-D3DXCOLOR HSLToRGB(int h, float s, float l, float a)
+DXGI_RGBA HSLToRGB(int h, float s, float l, float a)
 {
-	D3DXCOLOR out;
+	DXGI_RGBA out;
 	out.a = a;
 
 	if (s == 0) {

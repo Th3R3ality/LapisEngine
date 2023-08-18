@@ -1,5 +1,5 @@
 #pragma once
-#include <D3DX10math.h>
+#include <d3d11.h>
 #undef RGB
 
 class RGB
@@ -29,4 +29,4 @@ public:
 
 static float HueToRGB(float v1, float v2, float vH);
 static RGB HSLToRGB(HSL hsl);
-D3DXCOLOR HSLToRGB(int h, float s, float l, float a);
+DXGI_RGBA HSLToRGB(int h, float s, float l, float a);
