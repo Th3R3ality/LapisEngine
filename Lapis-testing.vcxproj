@@ -11,9 +11,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\2d.cpp" />
+    <ClCompile Include="src\Backend.cpp" />
     <ClCompile Include="src\utils\hsl-to-rgb.cpp" />
     <ClCompile Include="src\Lapis-testing.cpp" />
-    <ClCompile Include="src\Lapis-types.cpp" />
+    <ClCompile Include="src\DataTypes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\unlit.shader">
@@ -23,8 +25,10 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Backend.h" />
+    <ClInclude Include="src\2d.h" />
     <ClInclude Include="src\utils\hsl-to-rgb.hpp" />
-    <ClInclude Include="src\Lapis-types.hpp" />
+    <ClInclude Include="src\DataTypes.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
