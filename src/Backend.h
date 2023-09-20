@@ -41,8 +41,6 @@ namespace Lapis
 			pVS_unlit = 0;
 			pPS_unlit = 0;
 			pVBuffer = 0;
-
-			deltaTime = std::chrono::steady_clock::duration(0);
 		}
 
 		void Init();
