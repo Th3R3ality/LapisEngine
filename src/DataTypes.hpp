@@ -15,3 +15,11 @@ class Rect2D
 	int x, y, z, w;
 
 };
+
+struct LapisCommand
+{
+	UINT IndexCount;
+	UINT StartIndexLocation;
+	INT BaseVertexLocation;
+	D3D_PRIMITIVE_TOPOLOGY PrimitiveType;
+};

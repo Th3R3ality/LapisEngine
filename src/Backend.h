@@ -3,6 +3,9 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 
+#include <vector>
+#include <chrono>
+
 #include "DataTypes.hpp"
 
 #include "utils/hsl-to-rgb.hpp"
@@ -25,6 +28,9 @@ namespace Lapis
 		ID3D11PixelShader* pPS_unlit;     // the pixel shader
 		ID3D11Buffer* pVBuffer;
 
+		std::vector<LapisCommand> CommandList;
+		std::chrono::steady_clock::duration deltaTime;
+
 		LapisInstance()
 		{
 			swapchain = 0;
@@ -45,6 +51,11 @@ namespace Lapis
 		void RenderFrame();
 		void InitPipeline();
 		void InitGraphics();
+
+
+		void DrawRect(int x, int y, int w, int h, DXGI_RGB rgb = { 1, 0, 1 }, float alpha = 1.f);
+		void DrawRect(int x, int y, int w, int h, DXGI_RGBA rgba) { DrawRect(x, y, w, h, { rgba.r, rgba.g, rgba.b }, rgba.a); }
+
 	};
 
 	

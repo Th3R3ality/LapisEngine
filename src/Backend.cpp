@@ -87,6 +87,7 @@ namespace Lapis
             {0.9f, -0.90, 0.0f, DXGI_RGBA(0.8f, 0.8f, 0.8f, 1.0f)},
             {-0.9f, -0.90f, 0.0f, DXGI_RGBA(0.1f, 0.1f, 0.1f, 1.0f)}
         };
+        CommandList.push_back({ 3, 0, 0, D3D10_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST });
 
         VERTEX tri2[] = {
             {-0.9f, 0.9f, 0.0f, DXGI_RGBA(1.0f, 0.0f, 0.0f, 1.0f)},
@@ -147,12 +148,30 @@ namespace Lapis
     // this is the function used to render a single frame
     void LapisInstance::RenderFrame()
     {
+        /*
+        // create the vertex buffer
+        D3D11_BUFFER_DESC bd;
+        ZeroMemory(&bd, sizeof(bd));
+
+        bd.Usage = D3D11_USAGE_DYNAMIC;                // write access access by CPU and GPU
+        bd.ByteWidth = sizeof(VERTEX) * 6;             // size is the VERTEX struct * 3
+        bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;       // use as a vertex buffer
+        bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;    // allow CPU to write in buffer
+
+        this->device->CreateBuffer(&bd, NULL, &this->pVBuffer);       // create the buffer
+        if (!this->pVBuffer)
+            return;
+
+        char combined_buffer[64];
+        ZeroMemory(combined_buffer, sizeof(combined_buffer));
+
+        // copy the vertices into the buffer
+        D3D11_MAPPED_SUBRESOURCE ms;
+        this->deviceContext->Map(this->pVBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);    // map the buffer
+        memcpy(ms.pData, combined_buffer, sizeof(combined_buffer) / sizeof(combined_buffer[0]));                 // copy the data
+        this->deviceContext->Unmap(this->pVBuffer, NULL);
+        */
         static int h = 0;
-        //static int direction = 1;
-        //if (h < 0 || h > 360) {
-        //    direction *= -1;
-        //}
-        //h += 1 * direction;
         static int timeout = 0;
         timeout += 1;
         if (timeout % 100 == 0) {
@@ -170,10 +189,16 @@ namespace Lapis
         UINT offset = 0;
         this->deviceContext->IASetVertexBuffers(0, 1, &this->pVBuffer, &stride, &offset);
 
-        // select which primtive type we are using
-        this->deviceContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        /*
+        for (auto& command : this->CommandList) {
+            // select which primtive type we are using
+            this->deviceContext->IASetPrimitiveTopology(command.PrimitiveType);
 
-        // draw the vertex buffer to the back buffer
+            // draw the vertex buffer to the back buffer
+            this->deviceContext->DrawIndexed(command.IndexCount, command.StartIndexLocation, command.BaseVertexLocation);
+        }
+        */
+        this->deviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         this->deviceContext->Draw(6, 0);
 
         // switch the back buffer and the front buffer

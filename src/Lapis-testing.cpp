@@ -1,9 +1,10 @@
-// Lapis-testing.cpp : This file contains the 'main' function. Program execution begins and ends there.
+﻿// Lapis-testing.cpp : This file contains the 'main' function. Program execution begins and ends there.
 
 // include the basic windows header files and the Direct3D header files
 #include <windows.h>
 #include <windowsx.h>
 #include <chrono>
+#include <iostream>
 
 #include <d3d11.h>
 #include <DirectXMath.h>
@@ -22,10 +23,7 @@
 
 using namespace Lapis;
 
-LapisInstance instance;
-
-float deltaTime = 0;
-
+LapisInstance engine;
 
 
 // the WindowProc function prototype
@@ -33,6 +31,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 
 // entry point
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+    
     HWND hwnd;
     WNDCLASSEX wc;
     ZeroMemory(&wc, sizeof(WNDCLASSEX));
@@ -64,12 +63,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         NULL);    // used with multiple windows, NULL
     ShowWindow(hwnd, nCmdShow);
 
-    instance.Init();
-    instance.InitD3D11(hwnd);
+    AllocConsole();
+    SetConsoleTitleW(L"DEBUG OUTPUT");
+    FILE* f;
+    freopen_s(&f, "CONOUT$", "w", stdout);
+    printf("negawatt!\n");
+
+    engine.Init();
+    engine.InitD3D11(hwnd);
+
+    auto old = std::chrono::high_resolution_clock::now().time_since_epoch();
+    engine.deltaTime = old;
 
     MSG msg;
     while (true)
     {
+        std::cout << "delta: " << std::chrono::duration_cast<std::chrono::microseconds>(engine.deltaTime).count() << "us\n";
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
@@ -77,19 +87,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             if (msg.message == WM_QUIT)
                 break;
         }
-        
-        //
-        // 
-        // 
-        // fix
-        // 
-        // 
-        // 
-        //instance.deltaTime = std::chrono::system_clock::now().time_since_epoch().count();
-        instance.RenderFrame();
+        engine.RenderFrame();
+
+        auto temp = std::chrono::high_resolution_clock::now().time_since_epoch();
+        engine.deltaTime = (temp - old);
+        old = temp;
     }
 
-    instance.CleanD3D11();
+    engine.CleanD3D11();
 
     return msg.wParam;
 }
