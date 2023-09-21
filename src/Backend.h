@@ -51,6 +51,7 @@ namespace Lapis
 		void CleanD3D11();
 
 		void RenderFrame();
+		bool GetInput(int key);
 		void InitPipeline();
 		void InitGraphics();
 

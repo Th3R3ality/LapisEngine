@@ -119,6 +119,7 @@ namespace Lapis
         this->deviceContext->Unmap(this->pVBuffer, NULL);                                  // unmap the buffer
     }
 
+
     void LapisInstance::InitPipeline()
     {
         // load and compile the two shaders
@@ -203,6 +204,11 @@ namespace Lapis
 
         // switch the back buffer and the front buffer
         this->swapchain->Present(0, 0);
+    }
+    bool LapisInstance::GetInput(int key)
+    {
+        return (GetAsyncKeyState(key) & 0x8000) != 0;
+
     }
 }
 

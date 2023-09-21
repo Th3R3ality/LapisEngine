@@ -77,7 +77,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     MSG msg;
     while (true)
     {
-        std::cout << "delta: " << std::chrono::duration_cast<std::chrono::microseconds>(engine.deltaTime).count() << "us\n";
+        //std::cout << "delta: " << std::chrono::duration_cast<std::chrono::microseconds>(engine.deltaTime).count() << "us\n";
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             TranslateMessage(&msg);
@@ -91,6 +91,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         auto temp = std::chrono::high_resolution_clock::now().time_since_epoch();
         engine.deltaTime = (temp - old);
         old = temp;
+        
     }
 
     engine.CleanD3D11();
