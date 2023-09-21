@@ -22,7 +22,6 @@
 
 
 using namespace Lapis;
-
 LapisInstance engine;
 
 

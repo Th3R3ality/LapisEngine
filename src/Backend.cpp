@@ -39,7 +39,7 @@ namespace Lapis
             &this->deviceContext);
 
         // get the address of the back buffer
-        ID3D11Texture2D* pBackBuffer;
+        ID3D11Texture2D* pBackBuffer = nullptr;
         this->swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
 
         // use the back buffer address to create the render target
