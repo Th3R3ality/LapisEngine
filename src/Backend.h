@@ -32,10 +32,12 @@ namespace Lapis
 		ID3D11PixelShader* pPS_unlit;     // the pixel shader
 		ID3D11Buffer* pVBuffer;
 
-		std::vector<VERTEX> VertexBuffer;
-		std::vector<LapisCommand> CommandList;
+		std::vector<VERTEX> vertexBuffer;
+		std::vector<LapisCommand> commandList;
 
+		double elapsedTime = 0;
 		double deltaTime = 0;
+		std::chrono::steady_clock::duration elapsedDuration;
 		std::chrono::steady_clock::duration deltaDuration;
 
 		LapisInstance()
@@ -50,7 +52,7 @@ namespace Lapis
 			pVBuffer = 0;
 
 			deltaDuration = std::chrono::steady_clock::duration(0);
-			VertexBuffer.reserve(VBufferCapacity);
+			vertexBuffer.reserve(VBufferCapacity);
 		}
 
 		void Init();

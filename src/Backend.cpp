@@ -77,7 +77,7 @@ namespace Lapis
             {0.9f, -0.90, 0.0f, DXGI_RGBA(0.8f, 0.8f, 0.8f, 1.0f)},
             {-0.9f, -0.90f, 0.0f, DXGI_RGBA(0.1f, 0.1f, 0.1f, 1.0f)}
         };
-        //CommandList.push_back({ 3, 0, 0, D3D10_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST });
+        //commandList.push_back({ 3, 0, 0, D3D10_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST });
 
         VERTEX tri2[] = {
             {-0.9f, 0.9f, 0.0f, DXGI_RGBA(1.0f, 0.0f, 0.0f, 1.0f)},
@@ -139,10 +139,10 @@ namespace Lapis
 
     void LapisInstance::BeginFrame() {
         
-        this->VertexBuffer.clear();
+        this->vertexBuffer.clear();
         this->VerticeCount = 0;
 
-        this->CommandList.clear();
+        this->commandList.clear();
     }
 
     // this is the function used to render a single frame
@@ -170,13 +170,13 @@ namespace Lapis
         // copy the vertices into the buffer
         D3D11_MAPPED_SUBRESOURCE ms;
         this->deviceContext->Map(this->pVBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
-        memcpy(ms.pData, this->VertexBuffer.data(), this->VertexBuffer.size() * sizeof(VERTEX));
+        memcpy(ms.pData, this->vertexBuffer.data(), this->vertexBuffer.size() * sizeof(VERTEX));
         this->deviceContext->Unmap(this->pVBuffer, NULL);
         
         static float h = 0;
         h += this->deltaTime * 0.01;
         if (h > 360) h -= 360;
-        auto color = HSLToRGB((int)h, 1.0f, 0.9f, 1.0f);
+        auto color = HSLToRGB((int)h, 1.0f, 0.95f, 1.0f);
         this->deviceContext->ClearRenderTargetView(this->backbuffer, (FLOAT*)&color);
 
 
@@ -184,7 +184,7 @@ namespace Lapis
         UINT offset = 0;
         this->deviceContext->IASetVertexBuffers(0, 1, &this->pVBuffer, &stride, &offset);
         
-        for (auto& command : this->CommandList) {
+        for (auto& command : this->commandList) {
             this->deviceContext->IASetPrimitiveTopology(command.TopologyType);
             this->deviceContext->Draw(command.VertexCount, command.StartVertexLocation);
         }
@@ -193,15 +193,15 @@ namespace Lapis
     }
 
     void LapisInstance::PushCommand(int VerticeCount, D3D_PRIMITIVE_TOPOLOGY Topology) {
-        this->CommandList.push_back(LapisCommand(VerticeCount, this->VerticeCount, Topology));
+        this->commandList.push_back(LapisCommand(VerticeCount, this->VerticeCount, Topology));
     }
 
     void LapisInstance::PushVertex(float x, float y, DXGI_RGBA col) {
         if (this->VerticeCount + 1 > this->VBufferCapacity) {
             this->VBufferCapacity += 1000;
-            this->VertexBuffer.reserve(this->VBufferCapacity);
+            this->vertexBuffer.reserve(this->VBufferCapacity);
         }
-        this->VertexBuffer.push_back(VERTEX( x, y, 0, col ));
+        this->vertexBuffer.push_back(VERTEX( x, y, 0, col ));
         this->VerticeCount += 1;
     }
 

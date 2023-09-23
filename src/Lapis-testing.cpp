@@ -71,17 +71,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     engine.Init();
     engine.InitD3D11(hwnd);
 
-    auto old = std::chrono::high_resolution_clock::now().time_since_epoch();
+    auto start = std::chrono::high_resolution_clock::now().time_since_epoch();
+    auto old = start;
 
     MSG msg;
     while (true)
     {
         auto temp = std::chrono::high_resolution_clock::now().time_since_epoch();
         engine.deltaDuration = (temp - old);
+        engine.elapsedDuration = (temp - start);
         old = temp;
+
         engine.deltaTime = (float)std::chrono::duration_cast<std::chrono::microseconds>(engine.deltaDuration).count() / 1000;
-        std::cout << "delta: " << engine.deltaTime << "ms\n";
-        //std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        engine.elapsedTime += engine.deltaTime;
+        std::cout << "delta: " << engine.deltaTime << "ms\t";
+
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
@@ -89,18 +93,26 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             if (msg.message == WM_QUIT)
                 break;
         }
+        static float x = 200;
+        static float y = 150;
+        float moveDistance = 0.1 * engine.deltaTime;
+        if (GetAsyncKeyState(VK_LEFT)) x -= moveDistance;
+        if (GetAsyncKeyState(VK_RIGHT)) x += moveDistance;
+        if (GetAsyncKeyState(VK_UP)) y += moveDistance;
+        if (GetAsyncKeyState(VK_DOWN)) y -= moveDistance;
+        std::cout << "x: " << x << " - y: " << y << "\n";
         
         engine.BeginFrame();
-        static float x = 0.3;
-        static float y = 0.3;
-        if (GetAsyncKeyState(VK_LEFT) & 0x0001) x -= 0.05;
-        if (GetAsyncKeyState(VK_RIGHT) & 0x0001) x += 0.05;
-        if (GetAsyncKeyState(VK_UP) & 0x0001) y -= 0.05;
-        if (GetAsyncKeyState(VK_DOWN) & 0x0001) y += 0.05;
 
-        engine.DrawPoint(x, y);
+        engine.DrawPoint(((float)(int)x - 100) / 100 - 0.5/100, ((float)(int)y-75) / 75 - 0.5/75);
         engine.DrawLine(-0.1, -0.1, 0.1, 0);
-        engine.DrawRect(-0.3, -0.5, 1, 0.3);
+
+        
+        engine.DrawRect(
+            -0.5 + sinf(engine.elapsedTime * 0.001),
+            -0.55 + (sinf(engine.elapsedTime * 0.004 + 2) + 1) / 2 * 0.4, 
+            1, 
+            0.01 + (sinf(engine.elapsedTime * 0.003)+1) / 2 * 0.3);
         engine.RenderFrame();
         
     }
