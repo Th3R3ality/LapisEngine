@@ -18,8 +18,7 @@ class Rect2D
 
 struct LapisCommand
 {
-	UINT IndexCount;
-	UINT StartIndexLocation;
-	INT BaseVertexLocation;
-	D3D_PRIMITIVE_TOPOLOGY PrimitiveType;
+	UINT VertexCount;
+	UINT StartVertexLocation;
+	D3D_PRIMITIVE_TOPOLOGY TopologyType;
 };

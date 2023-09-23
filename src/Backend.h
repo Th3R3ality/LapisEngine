@@ -17,6 +17,10 @@ namespace Lapis
 {
 	class LapisInstance
 	{
+	private:
+		int VerticeCount = 0;
+		int VBufferCapacity = 1000;
+
 	public:
 		// global declarations
 		IDXGISwapChain* swapchain; // the pointer to the swap chain interface
@@ -28,8 +32,11 @@ namespace Lapis
 		ID3D11PixelShader* pPS_unlit;     // the pixel shader
 		ID3D11Buffer* pVBuffer;
 
+		std::vector<VERTEX> VertexBuffer;
 		std::vector<LapisCommand> CommandList;
-		std::chrono::steady_clock::duration deltaTime;
+
+		double deltaTime = 0;
+		std::chrono::steady_clock::duration deltaDuration;
 
 		LapisInstance()
 		{
@@ -42,7 +49,8 @@ namespace Lapis
 			pPS_unlit = 0;
 			pVBuffer = 0;
 
-			deltaTime = std::chrono::steady_clock::duration(0);
+			deltaDuration = std::chrono::steady_clock::duration(0);
+			VertexBuffer.reserve(VBufferCapacity);
 		}
 
 		void Init();
@@ -50,13 +58,23 @@ namespace Lapis
 		void InitD3D11(HWND hwnd);
 		void CleanD3D11();
 
+		void BeginFrame();
 		void RenderFrame();
+
 		void InitPipeline();
 		void InitGraphics();
 
+		void PushVertex(float x, float y, DXGI_RGBA col);
+		void PushCommand(int VerticeCount, D3D10_PRIMITIVE_TOPOLOGY);
 
-		void DrawRect(int x, int y, int w, int h, DXGI_RGB rgb = { 1, 0, 1 }, float alpha = 1.f);
-		void DrawRect(int x, int y, int w, int h, DXGI_RGBA rgba) { DrawRect(x, y, w, h, { rgba.r, rgba.g, rgba.b }, rgba.a); }
+		void DrawPoint(float x, float y, DXGI_RGBA rgba);
+		void DrawPoint(float x, float y) { DrawPoint(x, y, { 1,0,1,1 }); };
+
+		void DrawLine(float x1, float y1, float x2, float y2, DXGI_RGBA rgba);
+		void DrawLine(float x1, float y1, float x2, float y2) { DrawLine(x1, y1, x2, y2, { 1,0,1,1 }); }
+
+		void DrawRect(float x, float y, float w, float h, DXGI_RGBA rgba);
+		void DrawRect(float x, float y, float w, float h, DXGI_RGB rgb = { 1, 0, 1 }, float alpha = 1.f) { DrawRect(x, y, w, h, { rgb.Red, rgb.Green, rgb.Blue, alpha }); }
 
 	};
 

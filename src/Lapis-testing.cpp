@@ -72,13 +72,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     engine.InitD3D11(hwnd);
 
     auto old = std::chrono::high_resolution_clock::now().time_since_epoch();
-    engine.deltaTime = old;
 
     MSG msg;
     while (true)
     {
-        std::cout << "delta: " << std::chrono::duration_cast<std::chrono::microseconds>(engine.deltaTime).count() << "us\n";
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        auto temp = std::chrono::high_resolution_clock::now().time_since_epoch();
+        engine.deltaDuration = (temp - old);
+        old = temp;
+        engine.deltaTime = (float)std::chrono::duration_cast<std::chrono::microseconds>(engine.deltaDuration).count() / 1000;
+        std::cout << "delta: " << engine.deltaTime << "ms\n";
+        //std::this_thread::sleep_for(std::chrono::milliseconds(5));
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
@@ -86,13 +89,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             if (msg.message == WM_QUIT)
                 break;
         }
-        engine.RenderFrame();
+        
+        engine.BeginFrame();
+        static float x = 0.3;
+        static float y = 0.3;
+        if (GetAsyncKeyState(VK_LEFT) & 0x0001) x -= 0.05;
+        if (GetAsyncKeyState(VK_RIGHT) & 0x0001) x += 0.05;
+        if (GetAsyncKeyState(VK_UP) & 0x0001) y -= 0.05;
+        if (GetAsyncKeyState(VK_DOWN) & 0x0001) y += 0.05;
 
-        auto temp = std::chrono::high_resolution_clock::now().time_since_epoch();
-        engine.deltaTime = (temp - old);
-        old = temp;
+        engine.DrawPoint(x, y);
+        engine.DrawLine(-0.1, -0.1, 0.1, 0);
+        engine.DrawRect(-0.3, -0.5, 1, 0.3);
+        engine.RenderFrame();
+        
     }
 
+    std::cout << "Cleaning up";
     engine.CleanD3D11();
 
     return msg.wParam;

@@ -1,7 +1,11 @@
 #include "Backend.h"
 
+#include <iostream>
+#include <chrono>
+
 namespace Lapis
 {
+    
     void LapisInstance::Init()
     {
 
@@ -64,20 +68,6 @@ namespace Lapis
         InitGraphics();
     }
 
-    void LapisInstance::CleanD3D11()
-    {
-        this->swapchain->SetFullscreenState(0, NULL);
-
-        this->pLayout->Release();
-        this->pVS_unlit->Release();
-        this->pPS_unlit->Release();
-        this->pVBuffer->Release();
-        this->swapchain->Release();
-        this->backbuffer->Release();
-        this->device->Release();
-        this->deviceContext->Release();
-    }
-
     void LapisInstance::InitGraphics()
     {
         // create a triangle using the VERTEX struct
@@ -87,14 +77,14 @@ namespace Lapis
             {0.9f, -0.90, 0.0f, DXGI_RGBA(0.8f, 0.8f, 0.8f, 1.0f)},
             {-0.9f, -0.90f, 0.0f, DXGI_RGBA(0.1f, 0.1f, 0.1f, 1.0f)}
         };
-        CommandList.push_back({ 3, 0, 0, D3D10_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST });
+        //CommandList.push_back({ 3, 0, 0, D3D10_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST });
 
         VERTEX tri2[] = {
             {-0.9f, 0.9f, 0.0f, DXGI_RGBA(1.0f, 0.0f, 0.0f, 1.0f)},
             {0.9f, 0.9f, 0.0f, DXGI_RGBA(0.0f, 1.0f, 0.0f, 1.0f)},
             {0.9f, -0.85f, 0.0f, DXGI_RGBA(0.0f, 0.0f, 1.0f, 1.0f)}
         };
-
+        /*
         // create the vertex buffer
         D3D11_BUFFER_DESC bd;
         ZeroMemory(&bd, sizeof(bd));
@@ -116,7 +106,8 @@ namespace Lapis
         D3D11_MAPPED_SUBRESOURCE ms;
         this->deviceContext->Map(this->pVBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);    // map the buffer
         memcpy(ms.pData, combined_buffer, sizeof(combined_buffer) / sizeof(combined_buffer[0]));                 // copy the data
-        this->deviceContext->Unmap(this->pVBuffer, NULL);                                  // unmap the buffer
+        this->deviceContext->Unmap(this->pVBuffer, NULL);// unmap the buffer
+        */
     }
 
     void LapisInstance::InitPipeline()
@@ -145,64 +136,86 @@ namespace Lapis
 
     }
 
+    void LapisInstance::BeginFrame() {
+        
+        this->VertexBuffer.clear();
+        this->VerticeCount = 0;
+
+        this->CommandList.clear();
+    }
+
     // this is the function used to render a single frame
     void LapisInstance::RenderFrame()
     {
-        /*
-        // create the vertex buffer
-        D3D11_BUFFER_DESC bd;
-        ZeroMemory(&bd, sizeof(bd));
+        
+        static int VBufferSize = 0;
+        if (this->VBufferCapacity > VBufferSize) {
+            // create the vertex buffer
+            D3D11_BUFFER_DESC bd;
+            ZeroMemory(&bd, sizeof(bd));
 
-        bd.Usage = D3D11_USAGE_DYNAMIC;                // write access access by CPU and GPU
-        bd.ByteWidth = sizeof(VERTEX) * 6;             // size is the VERTEX struct * 3
-        bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;       // use as a vertex buffer
-        bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;    // allow CPU to write in buffer
-
-        this->device->CreateBuffer(&bd, NULL, &this->pVBuffer);       // create the buffer
-        if (!this->pVBuffer)
-            return;
-
-        char combined_buffer[64];
-        ZeroMemory(combined_buffer, sizeof(combined_buffer));
+            bd.Usage = D3D11_USAGE_DYNAMIC;                // write access access by CPU and GPU
+            bd.ByteWidth = sizeof(VERTEX) * this->VBufferCapacity;             // size is the VERTEX struct * 3
+            bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;       // use as a vertex buffer
+            bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;    // allow CPU to write in buffer
+        
+            this->device->CreateBuffer(&bd, NULL, &this->pVBuffer);       // create the buffer
+            if (!this->pVBuffer)
+                return;
+        }
+        
+        
 
         // copy the vertices into the buffer
         D3D11_MAPPED_SUBRESOURCE ms;
-        this->deviceContext->Map(this->pVBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);    // map the buffer
-        memcpy(ms.pData, combined_buffer, sizeof(combined_buffer) / sizeof(combined_buffer[0]));                 // copy the data
+        this->deviceContext->Map(this->pVBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
+        memcpy(ms.pData, this->VertexBuffer.data(), this->VertexBuffer.size() * sizeof(VERTEX));
         this->deviceContext->Unmap(this->pVBuffer, NULL);
-        */
-        static int h = 0;
-        static int timeout = 0;
-        timeout += 1;
-        if (timeout % 100 == 0) {
-            h += 1; if (h > 360) h -= 360;
-        }
-
-        // clear the back buffer to a deep blue
-        auto color = HSLToRGB(h, 0.7f, 0.7f, 1.0f);
+        
+        static float h = 0;
+        h += this->deltaTime * 0.01;
+        if (h > 360) h -= 360;
+        auto color = HSLToRGB((int)h, 1.0f, 0.9f, 1.0f);
         this->deviceContext->ClearRenderTargetView(this->backbuffer, (FLOAT*)&color);
 
-        // do 3D rendering on the back buffer here
 
-        // select which vertex buffer to display
         UINT stride = sizeof(VERTEX);
         UINT offset = 0;
         this->deviceContext->IASetVertexBuffers(0, 1, &this->pVBuffer, &stride, &offset);
-
-        /*
+        
         for (auto& command : this->CommandList) {
-            // select which primtive type we are using
-            this->deviceContext->IASetPrimitiveTopology(command.PrimitiveType);
-
-            // draw the vertex buffer to the back buffer
-            this->deviceContext->DrawIndexed(command.IndexCount, command.StartIndexLocation, command.BaseVertexLocation);
+            this->deviceContext->IASetPrimitiveTopology(command.TopologyType);
+            this->deviceContext->Draw(command.VertexCount, command.StartVertexLocation);
         }
-        */
-        this->deviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-        this->deviceContext->Draw(6, 0);
 
-        // switch the back buffer and the front buffer
         this->swapchain->Present(0, 0);
+    }
+
+    void LapisInstance::PushCommand(int VerticeCount, D3D_PRIMITIVE_TOPOLOGY Topology) {
+        this->CommandList.push_back(LapisCommand(VerticeCount, this->VerticeCount, Topology));
+    }
+
+    void LapisInstance::PushVertex(float x, float y, DXGI_RGBA col) {
+        if (this->VerticeCount + 1 > this->VBufferCapacity) {
+            this->VBufferCapacity += 1000;
+            this->VertexBuffer.reserve(this->VBufferCapacity);
+        }
+        this->VertexBuffer.push_back(VERTEX( x, y, 0, col ));
+        this->VerticeCount += 1;
+    }
+
+    void LapisInstance::CleanD3D11()
+    {
+        this->swapchain->SetFullscreenState(0, NULL);
+
+        this->pLayout->Release();
+        this->pVS_unlit->Release();
+        this->pPS_unlit->Release();
+        this->pVBuffer->Release();
+        this->swapchain->Release();
+        this->backbuffer->Release();
+        this->device->Release();
+        this->deviceContext->Release();
     }
 }
 
