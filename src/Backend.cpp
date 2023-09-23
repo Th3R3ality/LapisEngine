@@ -110,6 +110,7 @@ namespace Lapis
         */
     }
 
+
     void LapisInstance::InitPipeline()
     {
         // load and compile the two shaders
@@ -216,6 +217,11 @@ namespace Lapis
         this->backbuffer->Release();
         this->device->Release();
         this->deviceContext->Release();
+    }
+    bool LapisInstance::GetInput(int key)
+    {
+        return (GetAsyncKeyState(key) & 0x8000) != 0;
+
     }
 }
 

@@ -60,7 +60,7 @@ namespace Lapis
 
 		void BeginFrame();
 		void RenderFrame();
-
+		bool GetInput(int key);
 		void InitPipeline();
 		void InitGraphics();
 
