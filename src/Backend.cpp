@@ -137,7 +137,7 @@ namespace Lapis
 
     }
 
-    void LapisInstance::BeginFrame() {
+    void LapisInstance::CleanFrame() {
         
         this->vertexBuffer.clear();
         this->VerticeCount = 0;
@@ -151,6 +151,11 @@ namespace Lapis
         
         static int VBufferSize = 0;
         if (this->VBufferCapacity > VBufferSize) {
+
+            if (this->pVBuffer)
+                this->pVBuffer->Release();
+
+            std::cout << "resizing back buffer\n";
             // create the vertex buffer
             D3D11_BUFFER_DESC bd;
             ZeroMemory(&bd, sizeof(bd));
@@ -160,9 +165,13 @@ namespace Lapis
             bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;       // use as a vertex buffer
             bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;    // allow CPU to write in buffer
         
+            
+
             this->device->CreateBuffer(&bd, NULL, &this->pVBuffer);       // create the buffer
             if (!this->pVBuffer)
                 return;
+
+            VBufferSize = this->VBufferCapacity;
         }
         
         
@@ -174,7 +183,7 @@ namespace Lapis
         this->deviceContext->Unmap(this->pVBuffer, NULL);
         
         static float h = 0;
-        h += this->deltaTime * 0.01;
+        h += this->deltaTime;
         if (h > 360) h -= 360;
         auto color = HSLToRGB((int)h, 1.0f, 0.95f, 1.0f);
         this->deviceContext->ClearRenderTargetView(this->backbuffer, (FLOAT*)&color);
@@ -201,7 +210,8 @@ namespace Lapis
             this->VBufferCapacity += 1000;
             this->vertexBuffer.reserve(this->VBufferCapacity);
         }
-        this->vertexBuffer.push_back(VERTEX( x, y, 0, col ));
+        this->vertexBuffer.push_back(VERTEX(x, y, 0, col));
+//        this->vertexBuffer.at(this->VerticeCount) = (VERTEX(x, y, 0, col));
         this->VerticeCount += 1;
     }
 

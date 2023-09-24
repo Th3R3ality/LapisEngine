@@ -82,9 +82,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         engine.elapsedDuration = (temp - start);
         old = temp;
 
-        engine.deltaTime = (float)std::chrono::duration_cast<std::chrono::microseconds>(engine.deltaDuration).count() / 1000;
+        engine.deltaTime = (float)std::chrono::duration_cast<std::chrono::microseconds>(engine.deltaDuration).count() / 1000 / 100;
         engine.elapsedTime += engine.deltaTime;
-        std::cout << "delta: " << engine.deltaTime << "ms\t";
+        std::cout << "delta: " << engine.deltaTime * 100 << "ms\t";
 
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             TranslateMessage(&msg);
@@ -93,28 +93,35 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             if (msg.message == WM_QUIT)
                 break;
         }
-        static float x = 200;
-        static float y = 150;
-        float moveDistance = 0.1 * engine.deltaTime;
+        static float x = 100;
+        static float y = 75;
+        float moveDistance = engine.deltaTime * 5;
         if (GetAsyncKeyState(VK_LEFT)) x -= moveDistance;
         if (GetAsyncKeyState(VK_RIGHT)) x += moveDistance;
         if (GetAsyncKeyState(VK_UP)) y += moveDistance;
         if (GetAsyncKeyState(VK_DOWN)) y -= moveDistance;
         std::cout << "x: " << x << " - y: " << y << "\n";
         
-        engine.BeginFrame();
 
         engine.DrawPoint(((float)(int)x - 100) / 100 - 0.5/100, ((float)(int)y-75) / 75 - 0.5/75);
-        engine.DrawLine(-0.1, -0.1, 0.1, 0);
+
+        float lineLength = (sinf(engine.elapsedTime * 0.1) + 1) / 3 ;
+        engine.DrawLine(
+            lineLength * sinf(engine.elapsedTime*.5),
+            lineLength * cosf(engine.elapsedTime*.5),
+            lineLength * -sinf(engine.elapsedTime*0.5),
+            lineLength * -cosf(engine.elapsedTime*0.5));
 
         
         engine.DrawRect(
-            -0.5 + sinf(engine.elapsedTime * 0.001),
-            -0.55 + (sinf(engine.elapsedTime * 0.004 + 2) + 1) / 2 * 0.4, 
-            1, 
-            0.01 + (sinf(engine.elapsedTime * 0.003)+1) / 2 * 0.3);
+            -0.5 + sinf(engine.elapsedTime * 0.1),
+            -0.55 + (sinf(engine.elapsedTime * 0.4 + 2) + 1) / 2 * 0.4, 
+            0.8, 
+            0.01 + (sinf(engine.elapsedTime * 0.3)+1) / 2 * 0.3,
+            HSLToRGB((sinf(engine.elapsedTime*0.2 + 1)+1)/2 * 360, 1.f, 0.7f, 1));
+
         engine.RenderFrame();
-        
+        engine.CleanFrame();
     }
 
     std::cout << "Cleaning up";

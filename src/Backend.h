@@ -35,8 +35,8 @@ namespace Lapis
 		std::vector<VERTEX> vertexBuffer;
 		std::vector<LapisCommand> commandList;
 
-		double elapsedTime = 0;
-		double deltaTime = 0;
+		float elapsedTime = 0;
+		float deltaTime = 0;
 		std::chrono::steady_clock::duration elapsedDuration;
 		std::chrono::steady_clock::duration deltaDuration;
 
@@ -62,6 +62,8 @@ namespace Lapis
 
 		void BeginFrame();
 		void RenderFrame();
+		void CleanFrame();
+
 		bool GetInput(int key);
 		void InitPipeline();
 		void InitGraphics();
