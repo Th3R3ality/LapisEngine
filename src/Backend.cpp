@@ -2,13 +2,14 @@
 
 #include <iostream>
 #include <chrono>
+#include <DirectXMath.h>
 
 namespace Lapis
 {
     
     void LapisInstance::Init()
     {
-
+        this->initDuration = std::chrono::high_resolution_clock::now().time_since_epoch();
     }
 
     void LapisInstance::InitD3D11(HWND hwnd)
@@ -65,51 +66,7 @@ namespace Lapis
         this->deviceContext->RSSetViewports(1, &viewport);
 
         InitPipeline();
-        InitGraphics();
     }
-
-    void LapisInstance::InitGraphics()
-    {
-        // create a triangle using the VERTEX struct
-        VERTEX tri1[] =
-        {
-            {-0.9f, 0.85f, 0.0f, DXGI_RGBA(0.2f, 0.2f, 1.0f, 1.0f)},
-            {0.9f, -0.90, 0.0f, DXGI_RGBA(0.8f, 0.8f, 0.8f, 1.0f)},
-            {-0.9f, -0.90f, 0.0f, DXGI_RGBA(0.1f, 0.1f, 0.1f, 1.0f)}
-        };
-        //commandList.push_back({ 3, 0, 0, D3D10_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST });
-
-        VERTEX tri2[] = {
-            {-0.9f, 0.9f, 0.0f, DXGI_RGBA(1.0f, 0.0f, 0.0f, 1.0f)},
-            {0.9f, 0.9f, 0.0f, DXGI_RGBA(0.0f, 1.0f, 0.0f, 1.0f)},
-            {0.9f, -0.85f, 0.0f, DXGI_RGBA(0.0f, 0.0f, 1.0f, 1.0f)}
-        };
-        /*
-        // create the vertex buffer
-        D3D11_BUFFER_DESC bd;
-        ZeroMemory(&bd, sizeof(bd));
-
-        bd.Usage = D3D11_USAGE_DYNAMIC;                // write access access by CPU and GPU
-        bd.ByteWidth = sizeof(VERTEX) * 6;             // size is the VERTEX struct * 3
-        bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;       // use as a vertex buffer
-        bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;    // allow CPU to write in buffer
-
-        this->device->CreateBuffer(&bd, NULL, &this->pVBuffer);       // create the buffer
-
-        char combined_buffer[sizeof(tri1) + sizeof(tri2)];
-        ZeroMemory(combined_buffer, sizeof(combined_buffer));
-
-        memcpy(combined_buffer, tri1, sizeof(tri1));
-        memcpy(combined_buffer + sizeof(tri1), tri2, sizeof(tri2));
-
-        // copy the vertices into the buffer
-        D3D11_MAPPED_SUBRESOURCE ms;
-        this->deviceContext->Map(this->pVBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);    // map the buffer
-        memcpy(ms.pData, combined_buffer, sizeof(combined_buffer) / sizeof(combined_buffer[0]));                 // copy the data
-        this->deviceContext->Unmap(this->pVBuffer, NULL);// unmap the buffer
-        */
-    }
-
 
     void LapisInstance::InitPipeline()
     {
@@ -135,6 +92,48 @@ namespace Lapis
         this->device->CreateInputLayout(ied, 2, VS->GetBufferPointer(), VS->GetBufferSize(), &this->pLayout);
         this->deviceContext->IASetInputLayout(this->pLayout);
 
+        
+        // Supply the vertex shader constant data.
+        VS_CONSTANT_BUFFER VsConstData;
+        VsConstData.fTime = 1.7f;
+
+        // Fill in a buffer description.
+        D3D11_BUFFER_DESC cbDesc{};
+        cbDesc.ByteWidth = sizeof(VS_CONSTANT_BUFFER);
+        cbDesc.Usage = D3D11_USAGE_DYNAMIC;
+        cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+        cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        cbDesc.MiscFlags = 0;
+        cbDesc.StructureByteStride = 0;
+
+        // Fill in the subresource data.
+        D3D11_SUBRESOURCE_DATA InitData;
+        InitData.pSysMem = &VsConstData;
+        InitData.SysMemPitch = 0;
+        InitData.SysMemSlicePitch = 0;
+
+        // Create the buffer.
+        auto hr = this->device->CreateBuffer(&cbDesc, &InitData, &this->pConstantBuffer);
+        std::cout << "CreateBuffer - cbuffer: " << hr << "\n";
+        
+        if (FAILED(hr))
+            return;
+
+
+        this->deviceContext->VSSetConstantBuffers(0, 1, &this->pConstantBuffer);
+
+    }
+
+    void LapisInstance::BeginFrame() {
+        static auto old = initDuration;
+
+        auto now = std::chrono::high_resolution_clock::now().time_since_epoch();
+        this->deltaDuration = (now - old);
+        this->elapsedDuration = (now - initDuration);
+        old = now;
+
+        this->deltaTime = (float)std::chrono::duration_cast<std::chrono::microseconds>(this->deltaDuration).count() / 1000 / 100;
+        this->elapsedTime += this->deltaTime;
     }
 
     void LapisInstance::CleanFrame() {
@@ -148,6 +147,16 @@ namespace Lapis
     // this is the function used to render a single frame
     void LapisInstance::RenderFrame()
     {
+        static VS_CONSTANT_BUFFER cb0;
+        cb0.fTime = this->elapsedTime;
+
+        {
+            D3D11_MAPPED_SUBRESOURCE ms;
+            this->deviceContext->Map(this->pConstantBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
+            memcpy(ms.pData, &cb0, sizeof(cb0));
+            this->deviceContext->Unmap(this->pConstantBuffer, NULL);
+        }
+
         
         static int VBufferSize = 0;
         if (this->VBufferCapacity > VBufferSize) {

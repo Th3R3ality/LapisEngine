@@ -18,6 +18,9 @@ namespace Lapis
 	class LapisInstance
 	{
 	private:
+		std::chrono::steady_clock::duration initDuration;
+
+
 		int VerticeCount = 0;
 		int VBufferCapacity = 1000;
 
@@ -28,6 +31,8 @@ namespace Lapis
 		ID3D11DeviceContext* deviceContext; // the pointer to our Direct3D device context
 		ID3D11RenderTargetView* backbuffer;    // global declaration
 		ID3D11InputLayout* pLayout;
+		
+		ID3D11Buffer* pConstantBuffer;
 		ID3D11VertexShader* pVS_unlit;    // the vertex shader
 		ID3D11PixelShader* pPS_unlit;     // the pixel shader
 		ID3D11Buffer* pVBuffer;

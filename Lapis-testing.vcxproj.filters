@@ -8,12 +8,12 @@
     <ClCompile Include="src\2d.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="src\unlit.shader" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="src\DataTypes.hpp" />
     <ClInclude Include="src\utils\hsl-to-rgb.hpp" />
     <ClInclude Include="src\Backend.h" />
     <ClInclude Include="src\2d.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\unlit.shader" />
   </ItemGroup>
 </Project>

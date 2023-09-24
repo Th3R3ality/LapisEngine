@@ -22,3 +22,9 @@ struct LapisCommand
 	UINT StartVertexLocation;
 	D3D_PRIMITIVE_TOPOLOGY TopologyType;
 };
+
+_declspec(align(16))
+struct VS_CONSTANT_BUFFER
+{
+	float fTime;
+};

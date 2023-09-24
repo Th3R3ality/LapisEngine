@@ -18,17 +18,13 @@
     <ClCompile Include="src\DataTypes.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="src\unlit.shader">
-      <FileType>Document</FileType>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="src\Backend.h" />
     <ClInclude Include="src\2d.h" />
     <ClInclude Include="src\utils\hsl-to-rgb.hpp" />
     <ClInclude Include="src\DataTypes.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\unlit.shader" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

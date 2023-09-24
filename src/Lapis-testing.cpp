@@ -71,19 +71,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     engine.Init();
     engine.InitD3D11(hwnd);
 
-    auto start = std::chrono::high_resolution_clock::now().time_since_epoch();
-    auto old = start;
+    
 
     MSG msg;
     while (true)
     {
-        auto temp = std::chrono::high_resolution_clock::now().time_since_epoch();
-        engine.deltaDuration = (temp - old);
-        engine.elapsedDuration = (temp - start);
-        old = temp;
-
-        engine.deltaTime = (float)std::chrono::duration_cast<std::chrono::microseconds>(engine.deltaDuration).count() / 1000 / 100;
-        engine.elapsedTime += engine.deltaTime;
+        engine.BeginFrame();
         std::cout << "delta: " << engine.deltaTime * 100 << "ms\t";
 
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
@@ -117,8 +110,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             -0.5 + sinf(engine.elapsedTime * 0.1),
             -0.55 + (sinf(engine.elapsedTime * 0.4 + 2) + 1) / 2 * 0.4, 
             0.8, 
-            0.01 + (sinf(engine.elapsedTime * 0.3)+1) / 2 * 0.3,
-            HSLToRGB((sinf(engine.elapsedTime*0.2 + 1)+1)/2 * 360, 1.f, 0.7f, 1));
+            0.01 + (sinf(engine.elapsedTime * 0.3)+1) / 2 * 0.3);
 
         engine.RenderFrame();
         engine.CleanFrame();
