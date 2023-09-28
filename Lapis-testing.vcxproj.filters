@@ -14,6 +14,7 @@
     <ClInclude Include="src\2d.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\unlit.shader" />
+    <None Include="src\shaders\unlit.shader" />
+    <None Include="src\shaders\Header.hlsli" />
   </ItemGroup>
 </Project>

@@ -72,8 +72,8 @@ namespace Lapis
     {
         // load and compile the two shaders
         ID3DBlob* VS, * PS;
-        D3DCompileFromFile(L"src/unlit.shader", 0, 0, "VShader", "vs_4_0", 0, 0, &VS, 0);
-        D3DCompileFromFile(L"src/unlit.shader", 0, 0, "PShader", "ps_4_0", 0, 0, &PS, 0);
+        D3DCompileFromFile(L"src/shaders/unlit.shader", 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, "VShader", "vs_4_0", 0, 0, &VS, 0);
+        D3DCompileFromFile(L"src/shaders/unlit.shader", 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, "PShader", "ps_4_0", 0, 0, &PS, 0);
 
         // encapsulate both shaders into shader objects
         this->device->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, &this->pVS_unlit);
@@ -92,12 +92,7 @@ namespace Lapis
         this->device->CreateInputLayout(ied, 2, VS->GetBufferPointer(), VS->GetBufferSize(), &this->pLayout);
         this->deviceContext->IASetInputLayout(this->pLayout);
 
-        
-        // Supply the vertex shader constant data.
-        VS_CONSTANT_BUFFER VsConstData;
-        VsConstData.fTime = 1.7f;
 
-        // Fill in a buffer description.
         D3D11_BUFFER_DESC cbDesc{};
         cbDesc.ByteWidth = sizeof(VS_CONSTANT_BUFFER);
         cbDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -106,20 +101,7 @@ namespace Lapis
         cbDesc.MiscFlags = 0;
         cbDesc.StructureByteStride = 0;
 
-        // Fill in the subresource data.
-        D3D11_SUBRESOURCE_DATA InitData;
-        InitData.pSysMem = &VsConstData;
-        InitData.SysMemPitch = 0;
-        InitData.SysMemSlicePitch = 0;
-
-        // Create the buffer.
-        auto hr = this->device->CreateBuffer(&cbDesc, &InitData, &this->pConstantBuffer);
-        std::cout << "CreateBuffer - cbuffer: " << hr << "\n";
-        
-        if (FAILED(hr))
-            return;
-
-
+        this->device->CreateBuffer(&cbDesc, NULL, &this->pConstantBuffer);
         this->deviceContext->VSSetConstantBuffers(0, 1, &this->pConstantBuffer);
 
     }

@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <windowsx.h>
 #include <D3D11.h>
+#include <DirectXMath.h>
 
 struct VERTEX
 {

@@ -96,7 +96,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         std::cout << "x: " << x << " - y: " << y << "\n";
         
 
-        engine.DrawPoint(((float)(int)x - 100) / 100 - 0.5/100, ((float)(int)y-75) / 75 - 0.5/75);
+        //engine.DrawPoint(((float)(int)x - 100) / 100 - 0.5/100, ((float)(int)y-75) / 75 - 0.5/75);
+        auto _x = ((float)(int)x - 100) / 100 - 0.5 / 100;
+        auto _y = ((float)(int)y - 75) / 75 - 0.5 / 75;
+        engine.DrawRect(_x + _x * 5, _y + _y * 5, 0.4, 0.4);
 
         float lineLength = (sinf(engine.elapsedTime * 0.1) + 1) / 3 ;
         engine.DrawLine(
