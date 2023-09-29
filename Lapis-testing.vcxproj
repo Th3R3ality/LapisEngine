@@ -24,7 +24,7 @@
     <ClInclude Include="src\DataTypes.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\shaders\Header.hlsli" />
+    <None Include="src\shaders\RGBHSL.hlsli" />
     <None Include="src\shaders\unlit.shader" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
