@@ -72,8 +72,8 @@ namespace Lapis
     {
         // load and compile the two shaders
         ID3DBlob* VS, * PS;
-        D3DCompileFromFile(L"src/shaders/unlit.shader", 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, "VShader", "vs_4_0", 0, 0, &VS, 0);
-        D3DCompileFromFile(L"src/shaders/unlit.shader", 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, "PShader", "ps_4_0", 0, 0, &PS, 0);
+        D3DCompileFromFile(L"src/shaders/unlit.shader", 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, "VShader", "vs_5_0", 0, 0, &VS, 0);
+        D3DCompileFromFile(L"src/shaders/unlit.shader", 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, "PShader", "ps_5_0", 0, 0, &PS, 0);
 
         // encapsulate both shaders into shader objects
         this->device->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, &this->pVS_unlit);
@@ -85,16 +85,17 @@ namespace Lapis
 
         D3D11_INPUT_ELEMENT_DESC ied[] =
         {
-            {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-            {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"TEXCOORD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
         };
 
-        this->device->CreateInputLayout(ied, 2, VS->GetBufferPointer(), VS->GetBufferSize(), &this->pLayout);
+        this->device->CreateInputLayout(ied, 3, VS->GetBufferPointer(), VS->GetBufferSize(), &this->pLayout);
         this->deviceContext->IASetInputLayout(this->pLayout);
 
 
         D3D11_BUFFER_DESC cbDesc{};
-        cbDesc.ByteWidth = sizeof(VS_CONSTANT_BUFFER);
+        cbDesc.ByteWidth = sizeof(CONSTANT_BUFFER);
         cbDesc.Usage = D3D11_USAGE_DYNAMIC;
         cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
         cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -129,9 +130,19 @@ namespace Lapis
     // this is the function used to render a single frame
     void LapisInstance::RenderFrame()
     {
-        static VS_CONSTANT_BUFFER cb0;
+        static CONSTANT_BUFFER cb0;
+        float L = 0;
+        float T = SCREEN_HEIGHT;
+        float R = SCREEN_WIDTH;
+        float B = 0;
+        float mvp[4][4] = {
+            { 2.0f / (R - L),   0.0f,           0.0f,       0.0f },
+            { 0.0f,             2.0f / (T - B),     0.0f,       0.0f },
+            { 0.0f,             0.0f,           0.5f,       0.0f },
+            { (R + L) / (L - R),(T + B) / (B - T),    0.5f,       1.0f },
+        };
+        memcpy(&cb0.mvp, mvp, sizeof(mvp));
         cb0.fTime = this->elapsedTime;
-
         {
             D3D11_MAPPED_SUBRESOURCE ms;
             this->deviceContext->Map(this->pConstantBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
@@ -196,13 +207,12 @@ namespace Lapis
         this->commandList.push_back(LapisCommand(VerticeCount, this->VerticeCount, Topology));
     }
 
-    void LapisInstance::PushVertex(float x, float y, DXGI_RGBA col) {
+    void LapisInstance::PushVertex(float x, float y, DXGI_RGBA col, DirectX::XMFLOAT4 uv) {
         if (this->VerticeCount + 1 > this->VBufferCapacity) {
             this->VBufferCapacity += 1000;
             this->vertexBuffer.reserve(this->VBufferCapacity);
         }
-        this->vertexBuffer.push_back(VERTEX(x, y, 0, col));
-//        this->vertexBuffer.at(this->VerticeCount) = (VERTEX(x, y, 0, col));
+        this->vertexBuffer.push_back(VERTEX(x, y, 0, col, uv));
         this->VerticeCount += 1;
     }
 

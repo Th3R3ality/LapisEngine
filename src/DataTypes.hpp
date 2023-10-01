@@ -9,12 +9,7 @@ struct VERTEX
 {
 	FLOAT x, y, z;
 	DXGI_RGBA color;
-};
-
-class Rect2D
-{
-	int x, y, z, w;
-
+	DirectX::XMFLOAT4 texCoord;
 };
 
 struct LapisCommand
@@ -25,7 +20,8 @@ struct LapisCommand
 };
 
 _declspec(align(16))
-struct VS_CONSTANT_BUFFER
+struct CONSTANT_BUFFER
 {
+	float mvp[4][4];
 	float fTime;
 };

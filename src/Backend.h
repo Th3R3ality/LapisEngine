@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <d3d11.h>
 #include <d3dcompiler.h>
+#include <DirectXMath.h>
 
 #include <vector>
 #include <chrono>
@@ -57,6 +58,7 @@ namespace Lapis
 			pVBuffer = 0;
 
 			deltaDuration = std::chrono::steady_clock::duration(0);
+			elapsedDuration = deltaDuration;
 			vertexBuffer.reserve(VBufferCapacity);
 		}
 
@@ -71,10 +73,10 @@ namespace Lapis
 
 		bool GetInput(int key);
 		void InitPipeline();
-		void InitGraphics();
 
-		void PushVertex(float x, float y, DXGI_RGBA col);
-		void PushCommand(int VerticeCount, D3D10_PRIMITIVE_TOPOLOGY);
+		//void PushVertex(float x, float y, DXGI_RGBA col) { PushVertex(x, y, col, {0.5, 0.5, 0.5, 0.5}); };
+		void PushVertex(float x, float y, DXGI_RGBA col, DirectX::XMFLOAT4 uv);
+		void PushCommand(int VerticeCount, D3D_PRIMITIVE_TOPOLOGY Topology);
 
 		void DrawPoint(float x, float y, DXGI_RGBA rgba);
 		void DrawPoint(float x, float y) { DrawPoint(x, y, { 1,0,1,1 }); };

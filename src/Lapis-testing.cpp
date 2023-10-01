@@ -88,32 +88,39 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         }
         static float x = 100;
         static float y = 75;
-        float moveDistance = engine.deltaTime * 5;
+        static float wishDistance;
+        static float moveDistance;
+
+        wishDistance += engine.deltaTime * 10;
+
+        while (wishDistance > 1.0f) {
+            wishDistance -= 1;
+            moveDistance += 1;
+        }
+
         if (GetAsyncKeyState(VK_LEFT)) x -= moveDistance;
         if (GetAsyncKeyState(VK_RIGHT)) x += moveDistance;
         if (GetAsyncKeyState(VK_UP)) y += moveDistance;
         if (GetAsyncKeyState(VK_DOWN)) y -= moveDistance;
         std::cout << "x: " << x << " - y: " << y << "\n";
         
+        moveDistance = 0;
 
-        //engine.DrawPoint(((float)(int)x - 100) / 100 - 0.5/100, ((float)(int)y-75) / 75 - 0.5/75);
-        auto _x = ((float)(int)x - 100) / 100 - 0.5 / 100;
-        auto _y = ((float)(int)y - 75) / 75 - 0.5 / 75;
-        engine.DrawRect(_x + _x * 5, _y + _y * 5, 0.4, 0.4);
+        float t = sinf(engine.elapsedTime * 0.1)*0.5 +0.5;
+        engine.DrawRect(x - 10*t, y - 10*t, 20*t, 20*t);
+        engine.DrawPoint(x + .5, y + .5);
 
-        float lineLength = (sinf(engine.elapsedTime * 0.1) + 1) / 3 ;
+        engine.DrawRect(10, 10, 100, 25);
+
+
+        float lineLength = (sinf(engine.elapsedTime * 0.1)*0.5+0.5) * 25;
         engine.DrawLine(
-            lineLength * sinf(engine.elapsedTime*.5),
-            lineLength * cosf(engine.elapsedTime*.5),
-            lineLength * -sinf(engine.elapsedTime*0.5),
-            lineLength * -cosf(engine.elapsedTime*0.5));
+            lineLength * sinf(engine.elapsedTime*.5) + 100,
+            lineLength * cosf(engine.elapsedTime*.5) + 75,
+            lineLength * -sinf(engine.elapsedTime*0.5) + 100,
+            lineLength * -cosf(engine.elapsedTime*0.5) + 75);
 
         
-        engine.DrawRect(
-            -0.5 + sinf(engine.elapsedTime * 0.1),
-            -0.55 + (sinf(engine.elapsedTime * 0.4 + 2) + 1) / 2 * 0.4, 
-            0.8, 
-            0.01 + (sinf(engine.elapsedTime * 0.3)+1) / 2 * 0.3);
 
         engine.RenderFrame();
         engine.CleanFrame();
