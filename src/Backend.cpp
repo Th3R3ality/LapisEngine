@@ -72,8 +72,8 @@ namespace Lapis
     {
         // load and compile the two shaders
         ID3DBlob* VS, * PS;
-        D3DCompileFromFile(L"src/shaders/unlit.shader", 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, "VShader", "vs_5_0", 0, 0, &VS, 0);
-        D3DCompileFromFile(L"src/shaders/unlit.shader", 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, "PShader", "ps_5_0", 0, 0, &PS, 0);
+        HRESULT hr1 = D3DCompileFromFile(L"src/shaders/unlit.shader", 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, "VShader", "vs_5_0", 0, 0, &VS, 0);
+        HRESULT hr2 = D3DCompileFromFile(L"src/shaders/unlit.shader", 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, "PShader", "ps_5_0", 0, 0, &PS, 0);
 
         // encapsulate both shaders into shader objects
         this->device->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, &this->pVS_unlit);
@@ -104,6 +104,7 @@ namespace Lapis
 
         this->device->CreateBuffer(&cbDesc, NULL, &this->pConstantBuffer);
         this->deviceContext->VSSetConstantBuffers(0, 1, &this->pConstantBuffer);
+        this->deviceContext->PSSetConstantBuffers(0, 1, &this->pConstantBuffer);
 
     }
 
@@ -135,7 +136,7 @@ namespace Lapis
         float T = SCREEN_HEIGHT;
         float R = SCREEN_WIDTH;
         float B = 0;
-        float mvp[4][4] = {
+        const float mvp[4][4] = {
             { 2.0f / (R - L),   0.0f,           0.0f,       0.0f },
             { 0.0f,             2.0f / (T - B),     0.0f,       0.0f },
             { 0.0f,             0.0f,           0.5f,       0.0f },

@@ -34,6 +34,7 @@ namespace Lapis
 		ID3D11InputLayout* pLayout;
 		
 		ID3D11Buffer* pConstantBuffer;
+
 		ID3D11VertexShader* pVS_unlit;    // the vertex shader
 		ID3D11PixelShader* pPS_unlit;     // the pixel shader
 		ID3D11Buffer* pVBuffer;
@@ -87,6 +88,7 @@ namespace Lapis
 		void DrawRect(float x, float y, float w, float h, DXGI_RGBA rgba);
 		void DrawRect(float x, float y, float w, float h, DXGI_RGB rgb = { 1, 0, 1 }, float alpha = 1.f) { DrawRect(x, y, w, h, { rgb.Red, rgb.Green, rgb.Blue, alpha }); }
 
+		void DrawCircle(float x, float y, float w, float h, DXGI_RGBA rgba, int vertexCount = 6);
 	};
 
 	

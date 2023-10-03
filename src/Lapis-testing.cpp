@@ -62,10 +62,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         NULL);    // used with multiple windows, NULL
     ShowWindow(hwnd, nCmdShow);
 
-    AllocConsole();
-    SetConsoleTitleW(L"DEBUG OUTPUT");
-    FILE* f;
-    freopen_s(&f, "CONOUT$", "w", stdout);
+    //AllocConsole();
+    //SetConsoleTitleW(L"DEBUG OUTPUT");
+    //FILE* f;
+    //freopen_s(&f, "CONOUT$", "w", stdout);
     printf("negawatt!\n");
 
     engine.Init();
@@ -106,21 +106,24 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         
         moveDistance = 0;
 
+        
         float t = sinf(engine.elapsedTime * 0.1)*0.5 +0.5;
-        engine.DrawRect(x - 10*t, y - 10*t, 20*t, 20*t);
+        engine.DrawRect(x - 50*t, y - 50*t, 100*t, 100*t);
         engine.DrawPoint(x + .5, y + .5);
 
         engine.DrawRect(10, 10, 100, 25);
 
 
-        float lineLength = (sinf(engine.elapsedTime * 0.1)*0.5+0.5) * 25;
+        float lineLength = (sinf(engine.elapsedTime * 0.05)*0.5+0.5) * 65;
         engine.DrawLine(
             lineLength * sinf(engine.elapsedTime*.5) + 100,
             lineLength * cosf(engine.elapsedTime*.5) + 75,
             lineLength * -sinf(engine.elapsedTime*0.5) + 100,
             lineLength * -cosf(engine.elapsedTime*0.5) + 75);
-
+        //*/
         
+        //engine.DrawRect(100, 75, 50, 50, {0.0,0.0,0.0,0.0});
+        engine.DrawCircle(140, 90, 50, 50, { 1.0,1.0,1.0,1.0 }, (int)((cosf(engine.elapsedTime*0.1)*0.5+0.5)*64)+6);
 
         engine.RenderFrame();
         engine.CleanFrame();
