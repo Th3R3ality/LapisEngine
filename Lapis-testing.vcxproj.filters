@@ -17,5 +17,6 @@
     <None Include="src\shaders\unlit.shader" />
     <None Include="src\shaders\RGBHSL.hlsli" />
     <None Include="src\shaders\ShaderToy1.hlsli" />
+    <None Include="src\shaders\ShaderToy2.hlsli" />
   </ItemGroup>
 </Project>
