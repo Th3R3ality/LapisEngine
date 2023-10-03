@@ -2,7 +2,7 @@
 
 #include "ShaderToy1.hlsli"
 
-//#include "ShaderToy2.hlsli"
+#include "ShaderToy2.hlsli"
 
 struct VIn
 {
@@ -37,9 +37,9 @@ VOut VShader(VIn input)
 
 float4 PShader(VOut input) : SV_TARGET
 {
-    //return ShaderToy1(fTime, input.texCoord.xy, 0);
+    //return ShaderToy1(fTime, input.position.xy, 1);
     
-    //return mainImage(input.texCoord.xy, fTime);
+    //return ShaderToy2(input.position.xy, fTime);
     
     return input.texCoord;
     return input.texCoord * input.color;
