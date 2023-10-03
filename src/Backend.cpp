@@ -108,7 +108,7 @@ namespace Lapis
 
     }
 
-    void LapisInstance::BeginFrame() {
+    void LapisInstance::NewFrame() {
         static auto old = initDuration;
 
         auto now = std::chrono::high_resolution_clock::now().time_since_epoch();
@@ -188,7 +188,7 @@ namespace Lapis
         static float h = 0;
         h += this->deltaTime;
         if (h > 360) h -= 360;
-        auto color = HSLToRGB((int)h, 1.0f, 0.95f, 1.0f);
+        auto color = HSLToRGB((int)h, 1.0f, 0.7f, 1.0f);
         this->deviceContext->ClearRenderTargetView(this->backbuffer, (FLOAT*)&color);
 
 

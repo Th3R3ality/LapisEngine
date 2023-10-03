@@ -68,7 +68,7 @@ namespace Lapis
 		void InitD3D11(HWND hwnd);
 		void CleanD3D11();
 
-		void BeginFrame();
+		void NewFrame();
 		void RenderFrame();
 		void CleanFrame();
 

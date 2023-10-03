@@ -76,7 +76,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     MSG msg;
     while (true)
     {
-        engine.BeginFrame();
+        engine.NewFrame();
         std::cout << "delta: " << engine.deltaTime * 100 << "ms\t";
 
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
