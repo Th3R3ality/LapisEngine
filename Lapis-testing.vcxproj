@@ -12,14 +12,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\2d.cpp" />
+    <ClCompile Include="src\3d.cpp" />
     <ClCompile Include="src\Backend.cpp" />
+    <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\utils\hsl-to-rgb.cpp" />
     <ClCompile Include="src\Lapis-testing.cpp" />
     <ClCompile Include="src\DataTypes.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\3d.h" />
     <ClInclude Include="src\Backend.h" />
     <ClInclude Include="src\2d.h" />
+    <ClInclude Include="src\Material.h" />
     <ClInclude Include="src\utils\hsl-to-rgb.hpp" />
     <ClInclude Include="src\DataTypes.hpp" />
   </ItemGroup>
