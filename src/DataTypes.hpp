@@ -20,8 +20,11 @@ struct LapisCommand
 };
 
 _declspec(align(16))
-struct CONSTANT_BUFFER
+struct GlobalConstantBuffer
 {
-	float mvp[4][4];
 	float fTime;
+	DirectX::XMMATRIX Screen;
+	DirectX::XMMATRIX World;
+	DirectX::XMMATRIX View;
+	DirectX::XMMATRIX Projection;
 };
