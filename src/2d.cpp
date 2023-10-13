@@ -20,10 +20,10 @@ namespace Lapis
 	{
 		this->PushCommand(4, D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
-		this->PushVertex(x, y, rgba, { 0.0, 0.0, 0.0, 0.0 });
 		this->PushVertex(x, y + h, rgba, { 0.0, 1.0, 0.0, 0.0 });
-		this->PushVertex(x + w, y, rgba, { 1.0, 0.0, 0.0, 0.0 });
+		this->PushVertex(x, y, rgba, { 0.0, 0.0, 0.0, 0.0 });
 		this->PushVertex(x + w, y + h, rgba, { 1.0, 1.0, 0.0, 0.0 });
+		this->PushVertex(x + w, y, rgba, { 1.0, 0.0, 0.0, 0.0 });
 
 	}
 
@@ -37,7 +37,7 @@ namespace Lapis
 
 		for (int i = 0; i < vertexCount; i++) {
 			float _x = cosf(i * _PI / (vertexCount-1)) * 0.5 + 0.5;
-			float _y = (i % 2 == 0 ? 1 : -1) * sinf(i * _PI / (vertexCount-1)) * 0.5 + 0.5;
+			float _y = (i % 2 == 0 ? -1 : 1) * sinf(i * _PI / (vertexCount-1)) * 0.5 + 0.5;
 			this->PushVertex(
 				x + w * _x,
 				y + h * _y,
