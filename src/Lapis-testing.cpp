@@ -62,11 +62,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         NULL);    // used with multiple windows, NULL
     ShowWindow(hwnd, nCmdShow);
 
-    //AllocConsole();
-    //SetConsoleTitleW(L"DEBUG OUTPUT");
-    //FILE* f;
-    //freopen_s(&f, "CONOUT$", "w", stdout);
+#ifdef _DEBUG
+    AllocConsole();
+    SetConsoleTitleW(L"DEBUG OUTPUT");
+    FILE* f;
+    freopen_s(&f, "CONOUT$", "w", stdout);
     printf("negawatt!\n");
+#endif
 
     engine.Init();
     engine.InitD3D11(hwnd);
@@ -91,7 +93,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         static float wishDistance;
         static float moveDistance;
 
-        wishDistance += engine.deltaTime * 10;
+        wishDistance += engine.deltaTime * 100;
 
         while (wishDistance > 1.0f) {
             wishDistance -= 1;
@@ -100,14 +102,25 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
         if (GetAsyncKeyState(VK_LEFT)) x -= moveDistance;
         if (GetAsyncKeyState(VK_RIGHT)) x += moveDistance;
-        if (GetAsyncKeyState(VK_UP)) y += moveDistance;
-        if (GetAsyncKeyState(VK_DOWN)) y -= moveDistance;
+        if (GetAsyncKeyState(VK_UP)) y -= moveDistance;
+        if (GetAsyncKeyState(VK_DOWN)) y += moveDistance;
         std::cout << "x: " << x << " - y: " << y << "\n";
         
         moveDistance = 0;
 
         
-        float t = sinf(engine.elapsedTime * 0.1)*0.5 +0.5;
+        float t = sinf(engine.elapsedTime)*0.5 +0.5;
+
+        static bool resizeCube = false;
+        if (GetAsyncKeyState(VK_SPACE) & 0x0001) {
+            resizeCube = !resizeCube;
+        }
+
+        if (!resizeCube) {
+            t = 0.5f;
+        }
+
+        engine.DrawPoint(10, 10);
         engine.DrawRect(x - 50*t, y - 50*t, 100*t, 100*t);
         engine.DrawPoint(x + .5, y + .5);
 
