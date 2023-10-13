@@ -40,9 +40,9 @@ float3 calcNormal(float3 p)
 
 float4 ShaderToy2(float2 fragCoord, float time)
 {
-    
-    float2 uv = fragCoord / iResolution.xy;
-    
+    float2 resxy = iResolution.xy * saturate(time / 100);
+    float2 uv = fragCoord / 3;
+    //uv = fragCoord;
     float3 rayOri = float3((uv - 0.5) * float2(iResolution.x / iResolution.y, 1.0) * 6.0, 3.0);
     float3 rayDir = float3(0.0, 0.0, -1.0);
 	

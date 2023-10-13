@@ -17,18 +17,21 @@ struct VOut
     float4 texCoord : TEXCOORD0;
 };
 
-cbuffer VS_CONSTANT_BUFFER : register(b0)
+cbuffer GlobalConstantBuffer : register(b0)
 {
-    float4x4 mvp;
     float fTime;
-};
+    matrix Screen;
+    matrix World;
+    matrix View;
+    matrix Projection;
+}
 
 VOut VShader(VIn input)
 {
     VOut output;
 
 
-    output.position = mul(mvp, input.position);
+    output.position = mul(Screen, input.position);
     output.color = input.color;
     output.texCoord = input.texCoord;
     
