@@ -95,7 +95,7 @@ namespace Lapis
 
 
         D3D11_BUFFER_DESC cbDesc{};
-        cbDesc.ByteWidth = sizeof(CONSTANT_BUFFER);
+        cbDesc.ByteWidth = sizeof(GlobalConstantBuffer);
         cbDesc.Usage = D3D11_USAGE_DYNAMIC;
         cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
         cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -116,7 +116,7 @@ namespace Lapis
         this->elapsedDuration = (now - initDuration);
         old = now;
 
-        this->deltaTime = (float)std::chrono::duration_cast<std::chrono::microseconds>(this->deltaDuration).count() / 1000 / 100;
+        this->deltaTime = (float)std::chrono::duration_cast<std::chrono::microseconds>(this->deltaDuration).count() / 1000 / 1000;
         this->elapsedTime += this->deltaTime;
     }
 
@@ -128,26 +128,44 @@ namespace Lapis
         this->commandList.clear();
     }
 
-    // this is the function used to render a single frame
     void LapisInstance::RenderFrame()
     {
-        static CONSTANT_BUFFER cb0;
+        static GlobalConstantBuffer gcb;
+        gcb.fTime = this->elapsedTime;
+
         float L = 0;
-        float T = SCREEN_HEIGHT;
+        float T = 0;
         float R = SCREEN_WIDTH;
-        float B = 0;
+        float B = SCREEN_HEIGHT;
         const float mvp[4][4] = {
             { 2.0f / (R - L),   0.0f,           0.0f,       0.0f },
             { 0.0f,             2.0f / (T - B),     0.0f,       0.0f },
             { 0.0f,             0.0f,           0.5f,       0.0f },
             { (R + L) / (L - R),(T + B) / (B - T),    0.5f,       1.0f },
         };
-        memcpy(&cb0.mvp, mvp, sizeof(mvp));
-        cb0.fTime = this->elapsedTime;
+
+        auto screen = DirectX::XMMATRIX((const float*)mvp);
+
+        auto world = DirectX::XMMatrixIdentity();
+
+        DirectX::XMVECTOR Eye = DirectX::XMVectorSet(0.0f, 1.0f, -5.0f, 0.0f);
+        DirectX::XMVECTOR At = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+        DirectX::XMVECTOR Up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+        
+        auto view = DirectX::XMMatrixLookAtLH(Eye, At, Up);
+
+        auto projection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, 200 / (FLOAT)150, 0.01f, 100.0f);
+
         {
+            gcb.Screen = screen;
+            gcb.World = DirectX::XMMatrixTranspose(world);
+            gcb.View = DirectX::XMMatrixTranspose(view);
+            gcb.Projection = DirectX::XMMatrixTranspose(projection);
+            //this->deviceContext->UpdateSubresource(this->pConstantBuffer, 0, nullptr, &gcb, 0, 0);
+
             D3D11_MAPPED_SUBRESOURCE ms;
             this->deviceContext->Map(this->pConstantBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
-            memcpy(ms.pData, &cb0, sizeof(cb0));
+            memcpy(ms.pData, &gcb, sizeof(gcb));
             this->deviceContext->Unmap(this->pConstantBuffer, NULL);
         }
 
@@ -178,15 +196,15 @@ namespace Lapis
         }
         
         
-
-        // copy the vertices into the buffer
-        D3D11_MAPPED_SUBRESOURCE ms;
-        this->deviceContext->Map(this->pVBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
-        memcpy(ms.pData, this->vertexBuffer.data(), this->vertexBuffer.size() * sizeof(VERTEX));
-        this->deviceContext->Unmap(this->pVBuffer, NULL);
+        {
+            D3D11_MAPPED_SUBRESOURCE ms;
+            this->deviceContext->Map(this->pVBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
+            memcpy(ms.pData, this->vertexBuffer.data(), this->vertexBuffer.size() * sizeof(VERTEX));
+            this->deviceContext->Unmap(this->pVBuffer, NULL);
+        }
         
         static float h = 0;
-        h += this->deltaTime;
+        h += this->deltaTime*0.5;
         if (h > 360) h -= 360;
         auto color = HSLToRGB((int)h, 1.0f, 0.7f, 1.0f);
         this->deviceContext->ClearRenderTargetView(this->backbuffer, (FLOAT*)&color);
