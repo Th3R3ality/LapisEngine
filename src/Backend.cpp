@@ -8,18 +8,9 @@
 
 namespace Lapis
 {
-    LapisInstance* _instance = 0;
-    LapisInstance* LapisInstance::instance()
-    {
-        if (_instance)
-            return _instance;
-        else
-            return nullptr;
-    }
 
     void LapisInstance::Init()
     {
-        _instance = this;
         this->initDuration = std::chrono::high_resolution_clock::now().time_since_epoch();
     }
 
@@ -186,32 +177,29 @@ namespace Lapis
 
         auto screen = DirectX::XMMATRIX((const float*)mvp);
 
+        
+
         auto world = DirectX::XMMatrixIdentity();
 
 
-        DirectX::XMVECTOR Eye = Lapis::Helpers::XMVectorSet(this->cameraPosition + Lapis::Vector4( 0.0f, 1.0f, -5.0f, 0.0f ));
-        DirectX::XMVECTOR At = Lapis::Helpers::XMVectorSet(this->cameraPosition + Lapis::Vector4(0.0f, 1.0f, 0.0f, 0.0f));
-        DirectX::XMVECTOR Up = Lapis::Helpers::XMVectorSet(this->cameraPosition + Lapis::Vector4(0.0f, 1.0f, 0.0f, 0.0f));
+        DirectX::XMVECTOR Eye = Lapis::Helpers::XMVectorSet(Lapis::Vector4( 0.0f, 0.0f, 0.0f, 0.0f ));
+        DirectX::XMVECTOR At = Lapis::Helpers::XMVectorSet(Lapis::Vector4(0.0f, 0.0f, 1.0f, 0.0f));
+        DirectX::XMVECTOR Up = Lapis::Helpers::XMVectorSet(Lapis::Vector4(0.0f, 1.0f, 0.0f, 0.0f));
         
         auto view = DirectX::XMMatrixLookAtLH(Eye, At, Up);
+        auto rotateView = DirectX::XMMatrixRotationY(this->CameraRotationY);
+        auto translateView = DirectX::XMMatrixTranslation(this->cameraPosition.x, this->cameraPosition.y, this->cameraPosition.z);
 
-        
+        //view = view * rotateView * translateView;
+        view = view * translateView;
+
+
+
 
         auto projection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, SCREEN_WIDTH / (FLOAT)SCREEN_HEIGHT, 0.01f, 100.0f);
 
 
-        {
-            gcb.Screen = screen;
-            gcb.World = DirectX::XMMatrixTranspose(world);
-            gcb.View = DirectX::XMMatrixTranspose(view);
-            gcb.Projection = DirectX::XMMatrixTranspose(projection);
-            //this->deviceContext->UpdateSubresource(this->pConstantBuffer, 0, nullptr, &gcb, 0, 0);
-
-            D3D11_MAPPED_SUBRESOURCE ms;
-            this->deviceContext->Map(this->pConstantBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
-            memcpy(ms.pData, &gcb, sizeof(gcb));
-            this->deviceContext->Unmap(this->pConstantBuffer, NULL);
-        }
+        
 
         
         static int VBufferSize = 0;
@@ -257,9 +245,32 @@ namespace Lapis
         UINT offset = 0;
         this->deviceContext->IASetVertexBuffers(0, 1, &this->pVBuffer, &stride, &offset);
         
-        for (auto& command : this->commandList3D) {
-            this->deviceContext->IASetPrimitiveTopology(command.TopologyType);
-            this->deviceContext->Draw(command.VertexCount, command.StartVertexLocation);
+        
+        for (int i = 0; i < this->commandList3D.size(); i++) {
+            {
+
+                auto model = DirectX::XMMatrixIdentity();
+                auto scaleModel = Lapis::Helpers::XMMatrixScaling(this->transformList.at(i).scale);
+                auto rotateModel = Lapis::Helpers::XMMatrixRotationAxis(Lapis::Vector3(0,1,0),this->elapsedTime);
+                auto translateModel = Lapis::Helpers::XMMatrixTranslation(this->transformList.at(i).pos);
+                
+                model = model * scaleModel * rotateModel * translateModel;
+
+                gcb.Screen = screen;
+                gcb.Model = DirectX::XMMatrixTranspose(model);
+                gcb.World = DirectX::XMMatrixTranspose(world);
+                gcb.View = DirectX::XMMatrixTranspose(view);
+                gcb.Projection = DirectX::XMMatrixTranspose(projection);
+                //this->deviceContext->UpdateSubresource(this->pConstantBuffer, 0, nullptr, &gcb, 0, 0);
+
+                D3D11_MAPPED_SUBRESOURCE ms;
+                this->deviceContext->Map(this->pConstantBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
+                memcpy(ms.pData, &gcb, sizeof(gcb));
+                this->deviceContext->Unmap(this->pConstantBuffer, NULL);
+            }
+
+            this->deviceContext->IASetPrimitiveTopology(this->commandList3D.at(i).TopologyType);
+            this->deviceContext->Draw(this->commandList3D.at(i).VertexCount, this->commandList3D.at(i).StartVertexLocation);
         }
 
         this->swapchain->Present(0, 0);
@@ -273,6 +284,11 @@ namespace Lapis
             this->commandList3D.push_back(LapisCommand(VerticeCount, this->VerticeCount3D, Topology));
         }
     }
+
+    void LapisInstance::PushTransform(Transform transform) {
+        this->transformList.push_back(transform);
+    }
+
 
     void LapisInstance::PushVertex(float x, float y, DXGI_RGBA col, DirectX::XMFLOAT4 uv) {
         if (this->VerticeCount2D + 1 > this->VBufferCapacity2D) {

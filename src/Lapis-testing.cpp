@@ -1,11 +1,16 @@
 ﻿// Lapis-testing.cpp : This file contains the 'main' function. Program execution begins and ends there.
 
-// include the basic windows header files and the Direct3D header files
+// include the basic windows header files
 #include <windows.h>
 #include <windowsx.h>
+
+// include chrono for time
 #include <chrono>
+
+// include iostream for printing
 #include <iostream>
 
+// include DirectX headers
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
@@ -15,9 +20,9 @@
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 
+// include Lapis headers
 #include "Backend.h"
 #include "DataTypes.hpp"
-
 #include "utils/hsl-to-rgb.hpp"
 
 
@@ -31,7 +36,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 // entry point
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
     
-    HWND hwnd;
+    // define window class
     WNDCLASSEX wc;
     ZeroMemory(&wc, sizeof(WNDCLASSEX));
 
@@ -46,6 +51,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     RegisterClassEx(&wc);
 
     RECT wr = { 0, 0, 800, 600 };
+    HWND hwnd;
 
     // create the window and use the result as the handle
     hwnd = CreateWindowExW(NULL,
@@ -60,14 +66,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         NULL,    // we aren't using menus, NULL
         hInstance,    // application handle
         NULL);    // used with multiple windows, NULL
-    ShowWindow(hwnd, nCmdShow);
+    ShowWindow(hwnd, nCmdShow); // make sure window is shown
 
 #ifdef _DEBUG
     AllocConsole();
     SetConsoleTitleW(L"DEBUG OUTPUT");
     FILE* f;
     freopen_s(&f, "CONOUT$", "w", stdout);
-    printf("negawatt!\n");
+    printf("yoo!\n");
 #endif
 
     engine.Init();
@@ -92,7 +98,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         static float x = 0;
         static float y = 0;
         static float z = 0;
-        static float moveDistance = 0.01 * engine.deltaTime;
+        float moveDistance = 3 * engine.deltaTime;
 
         if (GetAsyncKeyState('D')) x -= moveDistance;
         if (GetAsyncKeyState('A')) x += moveDistance;
@@ -101,12 +107,48 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         if (GetAsyncKeyState('W')) z -= moveDistance;
         if (GetAsyncKeyState('S')) z += moveDistance;
 
-        if (GetAsyncKeyState(VK_RIGHT)) engine.nigger -= moveDistance;
-        if (GetAsyncKeyState(VK_LEFT)) engine.nigger += moveDistance;
+        engine.cameraPosition = { x,y,z,0 };
+
+        if (GetAsyncKeyState(VK_RIGHT)) engine.CameraRotationY -= moveDistance;
+        if (GetAsyncKeyState(VK_LEFT)) engine.CameraRotationY += moveDistance;
+
+        for (int i = 0; i < 32; i++) {
+            float _x = cosf(i * DirectX::XM_PI / (10 - 1)) * 0.5 + 0.5;
+            float _y = (i % 2 == 0 ? -1 : 1) * sinf(i * DirectX::XM_PI / (10 - 1)) * 0.5 + 0.5;
+            engine.DrawTriangle3D(
+                {{_x,-1,_y},{0.0,0.0,0.0},{0.1,0.1,0.1}},
+                { _x,0.0,_y,1.0 });
+            engine.DrawTriangle3D(
+                {{_x,-1.5f + _y,0.5},{0.0,0.0,0.0},{0.1,0.1,0.1}},
+                {_x, _y,0.0,1.0} );
+            engine.DrawTriangle3D(
+                {{0.5,-1.5f + _y,_x},{0.0,0,0.0},{ 0.1,0.1,0.1 }},
+                { 0.0,_y,_x,1.0 });
+        }
+
+        constexpr float DEG2RAD = (DirectX::XM_PI / 180);
+        constexpr float RAD2DEG = (180 / DirectX::XM_PI);
+
+        float penis = ((float)(((int)engine.elapsedTime*3) % 360));
+
+        if (penis > 360)
+        {
+            penis -= 360;
+        }
 
 
-        engine.DrawTriangle3D({ x, y, z }, { 1.0, 0.0, 1.0, 1.0 });
+        std::cout << penis << std::endl;
 
+        engine.DrawTriangle3D(
+            Transform(
+                Vector3(0, 0, 0),
+                Vector3(0, 45, 0),
+                Vector3(1, 1, 1)
+            ), { 1.0, 0.8, 1.0, 1.0 });
+
+        engine.DrawTriangle3D({ { 0, penis * DEG2RAD, 5 },{0.0,45*DEG2RAD,0.0}, {2,0.5,1} }, { 0.2, 1.0, 0.2, 1.0 });
+        engine.DrawTriangle3D({ { 0, 2, 5 },{0.0,0.0,0.0}, {0.5,2,1} }, { 0.2, 0.2, 1.0, 1.0 });
+        
         /* 2d
 
         static float x = 100;

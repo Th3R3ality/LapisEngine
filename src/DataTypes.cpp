@@ -3,6 +3,14 @@
 
 namespace Lapis
 {
+	Vector3 Lapis::Vector3::operator-() {
+		Vector3 vec;
+		vec.x = -this->x;
+		vec.y = -this->y;
+		vec.z = -this->z;
+		return vec;
+	}
+
 	Vector4 Lapis::Vector4::operator+(const Vector4& other)
 	{
 		Vector4 res;

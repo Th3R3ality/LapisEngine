@@ -11,8 +11,8 @@
 
 #include "utils/hsl-to-rgb.hpp"
 
-#define SCREEN_WIDTH (200*1)
-#define SCREEN_HEIGHT (150*1)
+#define SCREEN_WIDTH (200*4)
+#define SCREEN_HEIGHT (150*4)
 
 
 
@@ -34,6 +34,8 @@ namespace Lapis
 		std::vector<VERTEX> vertexBuffer3D;
 		std::vector<LapisCommand> commandList3D;
 
+		std::vector<Transform> transformList;
+
 
 	public:
 		
@@ -54,7 +56,7 @@ namespace Lapis
 		ID3D11Buffer* pVBuffer;
 
 		Lapis::Vector4 cameraPosition = { 0, 0, 0, 0 };
-		float nigger = 0;
+		float CameraRotationY = 0;
 
 		float elapsedTime = 0;
 		float deltaTime = 0;
@@ -94,6 +96,9 @@ namespace Lapis
 		void PushVertex(float x, float y, float z, DXGI_RGBA col, DirectX::XMFLOAT4 uv);
 		void PushCommand(int VerticeCount, D3D_PRIMITIVE_TOPOLOGY Topology, bool _3D = false);
 
+		void PushTransform(Transform transform);
+
+
 		void DrawPoint(float x, float y, DXGI_RGBA rgba);
 		void DrawPoint(float x, float y) { DrawPoint(x, y, { 1,0,1,1 }); };
 
@@ -106,12 +111,10 @@ namespace Lapis
 		void DrawCircle(float x, float y, float w, float h, DXGI_RGBA rgba, int vertexCount = 6);
 
 
-		void DrawTriangle3D(Lapis::Vector3 pos, DXGI_RGBA rgba);
+		void DrawTriangle3D(Lapis::Transform transform, DXGI_RGBA rgba);
 
 		void DrawCube(float x, float y, float z, float scale, DXGI_RGBA rgba);
 		void DrawPyramid(Lapis::Vector3 pos, DXGI_RGBA);
 
 	};
-
-	
 }

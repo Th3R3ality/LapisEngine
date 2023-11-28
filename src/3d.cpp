@@ -3,22 +3,14 @@
 
 namespace Lapis
 {
-	void LapisInstance::DrawTriangle3D(Lapis::Vector3 pos, DXGI_RGBA rgba)
+	void LapisInstance::DrawTriangle3D(Transform transform, DXGI_RGBA rgba)
 	{
 		this->PushCommand(3, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, true);
-		float elapsed = 0;
+		this->PushTransform(transform);
 
-		if (LapisInstance::instance) {
-			elapsed = LapisInstance::instance()->elapsedTime;
-		}
-		else
-		{
-			elapsed = 0;
-		}
-
-		this->PushVertex(pos.x, pos.y + 0.5, pos.z, rgba, {0.5, 1.0, 0.5, 0.0});
-		this->PushVertex(pos.x + 0.5 * sinf(elapsed), pos.y - 0.5, pos.z + 0.5 * cosf(elapsed), rgba, {1, 0.0, 0.5, 0.0});
-		this->PushVertex(pos.x - 0.5 * sinf(elapsed), pos.y - 0.5, pos.z - 0.5 * cosf(elapsed), rgba, {0, 0.0, 0.5, 0.0});
+		this->PushVertex(0.0, 0.5, 0.0, rgba, {0.5, 1.0, 0.5, 0.0});
+		this->PushVertex(0.5, -0.5, 0.0, rgba, {1, 0.0, 0.5, 0.0});
+		this->PushVertex(-0.5, -0.5, 0.0, rgba, {0, 0.0, 0.5, 0.0});
 
 	}
 

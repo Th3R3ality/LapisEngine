@@ -21,6 +21,7 @@ cbuffer GlobalConstantBuffer : register(b0)
 {
     float fTime;
     matrix Screen;
+    matrix Model;
     matrix World;
     matrix View;
     matrix Projection;
@@ -34,8 +35,10 @@ VOut VShader(VIn input)
     //output.position = mul(Screen, input.position);
     output.color = input.color;
     output.texCoord = input.texCoord;
+    output.position = input.position;
     
-    output.position = mul(input.position, World);
+    output.position = mul(output.position, Model);
+    output.position = mul(output.position, World);
     output.position = mul(output.position, View);
     output.position = mul(output.position, Projection);
 
@@ -48,6 +51,7 @@ float4 PShader(VOut input) : SV_TARGET
     
     //return ShaderToy2(input.position.xy, fTime);
     
+    return input.color;
     return input.texCoord;
     return input.texCoord * input.color;
     

@@ -15,6 +15,8 @@ namespace Lapis
 	struct Vector3
 	{
 		float x, y, z;
+
+		Vector3 operator-();
 	};
 
 	struct Vector4
@@ -31,6 +33,12 @@ namespace Lapis
 		DirectX::XMFLOAT4 texCoord;
 	};
 
+	struct Transform {
+		Vector3 pos;
+		Vector3 rot;
+		Vector3 scale;
+	};
+
 	struct LapisCommand
 	{
 		UINT VertexCount;
@@ -43,6 +51,7 @@ namespace Lapis
 	{
 		float fTime;
 		DirectX::XMMATRIX Screen;
+		DirectX::XMMATRIX Model;
 		DirectX::XMMATRIX World;
 		DirectX::XMMATRIX View;
 		DirectX::XMMATRIX Projection;
