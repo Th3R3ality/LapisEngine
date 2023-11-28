@@ -31,10 +31,14 @@ VOut VShader(VIn input)
     VOut output;
 
 
-    output.position = mul(Screen, input.position);
+    //output.position = mul(Screen, input.position);
     output.color = input.color;
     output.texCoord = input.texCoord;
     
+    output.position = mul(input.position, World);
+    output.position = mul(output.position, View);
+    output.position = mul(output.position, Projection);
+
     return output;
 }
 

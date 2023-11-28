@@ -16,6 +16,7 @@
     <ClInclude Include="src\2d.h" />
     <ClInclude Include="src\3d.h" />
     <ClInclude Include="src\Material.h" />
+    <ClInclude Include="src\Helpers.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shaders\unlit.shader" />

@@ -33,7 +33,7 @@ namespace Lapis
 
 		this->PushCommand(vertexCount, D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 		
-#define _PI 3.14159265358979323846
+#define _PI (float)3.14159265358979323846
 
 		for (int i = 0; i < vertexCount; i++) {
 			float _x = cosf(i * _PI / (vertexCount-1)) * 0.5 + 0.5;
@@ -44,8 +44,5 @@ namespace Lapis
 				rgba, 
 				{ _x, _y, 0.0, 0.0 }); //idk why this works but it makes the uv not inverted
 		}
-		
-
-
 	}
 }

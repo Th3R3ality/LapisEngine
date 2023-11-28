@@ -79,7 +79,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     while (true)
     {
         engine.NewFrame();
-        std::cout << "delta: " << engine.deltaTime * 100 << "ms\t";
+        std::cout << "delta: " << engine.deltaTime * 100 << "ms\n";
 
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             TranslateMessage(&msg);
@@ -88,6 +88,27 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             if (msg.message == WM_QUIT)
                 break;
         }
+
+        static float x = 0;
+        static float y = 0;
+        static float z = 0;
+        static float moveDistance = 0.01 * engine.deltaTime;
+
+        if (GetAsyncKeyState('D')) x -= moveDistance;
+        if (GetAsyncKeyState('A')) x += moveDistance;
+        if (GetAsyncKeyState('Q')) y += moveDistance;
+        if (GetAsyncKeyState('E')) y -= moveDistance;
+        if (GetAsyncKeyState('W')) z -= moveDistance;
+        if (GetAsyncKeyState('S')) z += moveDistance;
+
+        if (GetAsyncKeyState(VK_RIGHT)) engine.nigger -= moveDistance;
+        if (GetAsyncKeyState(VK_LEFT)) engine.nigger += moveDistance;
+
+
+        engine.DrawTriangle3D({ x, y, z }, { 1.0, 0.0, 1.0, 1.0 });
+
+        /* 2d
+
         static float x = 100;
         static float y = 75;
         static float wishDistance;
@@ -133,10 +154,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             lineLength * cosf(engine.elapsedTime*.5) + 75,
             lineLength * -sinf(engine.elapsedTime*0.5) + 100,
             lineLength * -cosf(engine.elapsedTime*0.5) + 75);
-        //*/
+        
         
         //engine.DrawRect(100, 75, 50, 50, {0.0,0.0,0.0,0.0});
         engine.DrawCircle(140, 90, 50, 50, { 1.0,1.0,1.0,1.0 }, (int)((cosf(engine.elapsedTime*0.1)*0.5+0.5)*64)+6);
+
+        */
 
         engine.RenderFrame();
         engine.CleanFrame();

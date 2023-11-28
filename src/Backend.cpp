@@ -4,11 +4,22 @@
 #include <chrono>
 #include <DirectXMath.h>
 
+#include "Helpers.h"
+
 namespace Lapis
 {
-    
+    LapisInstance* _instance = 0;
+    LapisInstance* LapisInstance::instance()
+    {
+        if (_instance)
+            return _instance;
+        else
+            return nullptr;
+    }
+
     void LapisInstance::Init()
     {
+        _instance = this;
         this->initDuration = std::chrono::high_resolution_clock::now().time_since_epoch();
     }
 
@@ -54,6 +65,7 @@ namespace Lapis
         // set the render target as the back buffer
         this->deviceContext->OMSetRenderTargets(1, &this->backbuffer, NULL);
 
+        /*
         // Set the viewport
         D3D11_VIEWPORT viewport;
         ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
@@ -62,8 +74,20 @@ namespace Lapis
         viewport.TopLeftY = 0;
         viewport.Width = SCREEN_WIDTH;
         viewport.Height = SCREEN_HEIGHT;
-
         this->deviceContext->RSSetViewports(1, &viewport);
+        */
+
+        // Setup the viewport
+        D3D11_VIEWPORT vp;
+        vp.Width = (FLOAT)SCREEN_WIDTH;
+        vp.Height = (FLOAT)SCREEN_HEIGHT;
+        vp.MinDepth = 0.0f;
+        vp.MaxDepth = 1.0f;
+        vp.TopLeftX = 0;
+        vp.TopLeftY = 0;
+        this->deviceContext->RSSetViewports(1, &vp);
+
+
 
         InitPipeline();
     }
@@ -106,6 +130,15 @@ namespace Lapis
         this->deviceContext->VSSetConstantBuffers(0, 1, &this->pConstantBuffer);
         this->deviceContext->PSSetConstantBuffers(0, 1, &this->pConstantBuffer);
 
+        D3D11_RASTERIZER_DESC pRasterizerDesc = {};
+        pRasterizerDesc.FillMode = D3D11_FILL_SOLID;
+        pRasterizerDesc.CullMode = D3D11_CULL_NONE;
+
+        ID3D11RasterizerState* pRasterizerState;
+
+        this->device->CreateRasterizerState(&pRasterizerDesc, &pRasterizerState);
+
+        this->deviceContext->RSSetState(pRasterizerState);
     }
 
     void LapisInstance::NewFrame() {
@@ -122,10 +155,17 @@ namespace Lapis
 
     void LapisInstance::CleanFrame() {
         
-        this->vertexBuffer.clear();
-        this->VerticeCount = 0;
+        this->vertexBuffer2D.clear();
+        this->VerticeCount2D = 0;
 
-        this->commandList.clear();
+        this->commandList2D.clear();
+
+
+
+        this->vertexBuffer3D.clear();
+        this->VerticeCount3D = 0;
+
+        this->commandList3D.clear();
     }
 
     void LapisInstance::RenderFrame()
@@ -148,13 +188,17 @@ namespace Lapis
 
         auto world = DirectX::XMMatrixIdentity();
 
-        DirectX::XMVECTOR Eye = DirectX::XMVectorSet(0.0f, 1.0f, -5.0f, 0.0f);
-        DirectX::XMVECTOR At = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-        DirectX::XMVECTOR Up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
+        DirectX::XMVECTOR Eye = Lapis::Helpers::XMVectorSet(this->cameraPosition + Lapis::Vector4( 0.0f, 1.0f, -5.0f, 0.0f ));
+        DirectX::XMVECTOR At = Lapis::Helpers::XMVectorSet(this->cameraPosition + Lapis::Vector4(0.0f, 1.0f, 0.0f, 0.0f));
+        DirectX::XMVECTOR Up = Lapis::Helpers::XMVectorSet(this->cameraPosition + Lapis::Vector4(0.0f, 1.0f, 0.0f, 0.0f));
         
         auto view = DirectX::XMMatrixLookAtLH(Eye, At, Up);
 
-        auto projection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, 200 / (FLOAT)150, 0.01f, 100.0f);
+        
+
+        auto projection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, SCREEN_WIDTH / (FLOAT)SCREEN_HEIGHT, 0.01f, 100.0f);
+
 
         {
             gcb.Screen = screen;
@@ -171,7 +215,7 @@ namespace Lapis
 
         
         static int VBufferSize = 0;
-        if (this->VBufferCapacity > VBufferSize) {
+        if (this->VBufferCapacity3D > VBufferSize) {
 
             if (this->pVBuffer)
                 this->pVBuffer->Release();
@@ -182,24 +226,23 @@ namespace Lapis
             ZeroMemory(&bd, sizeof(bd));
 
             bd.Usage = D3D11_USAGE_DYNAMIC;                // write access access by CPU and GPU
-            bd.ByteWidth = sizeof(VERTEX) * this->VBufferCapacity;             // size is the VERTEX struct * 3
+            bd.ByteWidth = sizeof(VERTEX) * this->VBufferCapacity3D;             // size is the VERTEX struct * 3
             bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;       // use as a vertex buffer
             bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;    // allow CPU to write in buffer
-        
-            
+
 
             this->device->CreateBuffer(&bd, NULL, &this->pVBuffer);       // create the buffer
             if (!this->pVBuffer)
                 return;
 
-            VBufferSize = this->VBufferCapacity;
+            VBufferSize = this->VBufferCapacity3D;
         }
         
         
         {
             D3D11_MAPPED_SUBRESOURCE ms;
             this->deviceContext->Map(this->pVBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
-            memcpy(ms.pData, this->vertexBuffer.data(), this->vertexBuffer.size() * sizeof(VERTEX));
+            memcpy(ms.pData, this->vertexBuffer3D.data(), this->vertexBuffer3D.size() * sizeof(VERTEX));
             this->deviceContext->Unmap(this->pVBuffer, NULL);
         }
         
@@ -214,7 +257,7 @@ namespace Lapis
         UINT offset = 0;
         this->deviceContext->IASetVertexBuffers(0, 1, &this->pVBuffer, &stride, &offset);
         
-        for (auto& command : this->commandList) {
+        for (auto& command : this->commandList3D) {
             this->deviceContext->IASetPrimitiveTopology(command.TopologyType);
             this->deviceContext->Draw(command.VertexCount, command.StartVertexLocation);
         }
@@ -222,18 +265,34 @@ namespace Lapis
         this->swapchain->Present(0, 0);
     }
 
-    void LapisInstance::PushCommand(int VerticeCount, D3D_PRIMITIVE_TOPOLOGY Topology) {
-        this->commandList.push_back(LapisCommand(VerticeCount, this->VerticeCount, Topology));
+    void LapisInstance::PushCommand(int VerticeCount, D3D_PRIMITIVE_TOPOLOGY Topology, bool _3D) {
+        if (!_3D) {
+            this->commandList2D.push_back(LapisCommand(VerticeCount, this->VerticeCount2D, Topology));
+        }
+        else {
+            this->commandList3D.push_back(LapisCommand(VerticeCount, this->VerticeCount3D, Topology));
+        }
     }
 
     void LapisInstance::PushVertex(float x, float y, DXGI_RGBA col, DirectX::XMFLOAT4 uv) {
-        if (this->VerticeCount + 1 > this->VBufferCapacity) {
-            this->VBufferCapacity += 1000;
-            this->vertexBuffer.reserve(this->VBufferCapacity);
+        if (this->VerticeCount2D + 1 > this->VBufferCapacity2D) {
+            this->VBufferCapacity2D += 1000;
+            this->vertexBuffer2D.reserve(this->VBufferCapacity2D);
         }
-        this->vertexBuffer.push_back(VERTEX(x, y, 0, col, uv));
-        this->VerticeCount += 1;
+        this->vertexBuffer2D.push_back(VERTEX({ x, y, 0 }, col, uv));
+        this->VerticeCount2D += 1;
     }
+
+    void LapisInstance::PushVertex(float x, float y, float z, DXGI_RGBA col, DirectX::XMFLOAT4 uv)
+    {
+        if (this->VerticeCount3D + 1 > this->VBufferCapacity3D) {
+            this->VBufferCapacity3D += 1000;
+            this->vertexBuffer3D.reserve(this->VBufferCapacity3D);
+        }
+        this->vertexBuffer3D.push_back(VERTEX({ x, y, z }, col, uv));
+        this->VerticeCount3D += 1;
+    }
+
 
     void LapisInstance::CleanD3D11()
     {

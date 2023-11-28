@@ -11,8 +11,10 @@
 
 #include "utils/hsl-to-rgb.hpp"
 
-#define SCREEN_WIDTH 200
-#define SCREEN_HEIGHT 150
+#define SCREEN_WIDTH (200*1)
+#define SCREEN_HEIGHT (150*1)
+
+
 
 namespace Lapis
 {
@@ -22,10 +24,22 @@ namespace Lapis
 		std::chrono::steady_clock::duration initDuration;
 
 
-		int VerticeCount = 0;
-		int VBufferCapacity = 1000;
+		int VerticeCount2D = 0;
+		int VBufferCapacity2D = 1000;
+		std::vector<VERTEX> vertexBuffer2D;
+		std::vector<LapisCommand> commandList2D;
+
+		int VerticeCount3D = 0;
+		int VBufferCapacity3D = 1000;
+		std::vector<VERTEX> vertexBuffer3D;
+		std::vector<LapisCommand> commandList3D;
+
 
 	public:
+		
+
+		static LapisInstance* instance();
+		
 		// global declarations
 		IDXGISwapChain* swapchain; // the pointer to the swap chain interface
 		ID3D11Device* device; // the pointer to our Direct3D device interface
@@ -39,8 +53,8 @@ namespace Lapis
 		ID3D11PixelShader* pPS_unlit;     // the pixel shader
 		ID3D11Buffer* pVBuffer;
 
-		std::vector<VERTEX> vertexBuffer;
-		std::vector<LapisCommand> commandList;
+		Lapis::Vector4 cameraPosition = { 0, 0, 0, 0 };
+		float nigger = 0;
 
 		float elapsedTime = 0;
 		float deltaTime = 0;
@@ -60,7 +74,7 @@ namespace Lapis
 
 			deltaDuration = std::chrono::steady_clock::duration(0);
 			elapsedDuration = deltaDuration;
-			vertexBuffer.reserve(VBufferCapacity);
+			vertexBuffer2D.reserve(VBufferCapacity2D);
 		}
 
 		void Init();
@@ -77,7 +91,8 @@ namespace Lapis
 
 		//void PushVertex(float x, float y, DXGI_RGBA col) { PushVertex(x, y, col, {0.5, 0.5, 0.5, 0.5}); };
 		void PushVertex(float x, float y, DXGI_RGBA col, DirectX::XMFLOAT4 uv);
-		void PushCommand(int VerticeCount, D3D_PRIMITIVE_TOPOLOGY Topology);
+		void PushVertex(float x, float y, float z, DXGI_RGBA col, DirectX::XMFLOAT4 uv);
+		void PushCommand(int VerticeCount, D3D_PRIMITIVE_TOPOLOGY Topology, bool _3D = false);
 
 		void DrawPoint(float x, float y, DXGI_RGBA rgba);
 		void DrawPoint(float x, float y) { DrawPoint(x, y, { 1,0,1,1 }); };
@@ -89,6 +104,13 @@ namespace Lapis
 		void DrawRect(float x, float y, float w, float h, DXGI_RGB rgb = { 1, 0, 1 }, float alpha = 1.f) { DrawRect(x, y, w, h, { rgb.Red, rgb.Green, rgb.Blue, alpha }); }
 
 		void DrawCircle(float x, float y, float w, float h, DXGI_RGBA rgba, int vertexCount = 6);
+
+
+		void DrawTriangle3D(Lapis::Vector3 pos, DXGI_RGBA rgba);
+
+		void DrawCube(float x, float y, float z, float scale, DXGI_RGBA rgba);
+		void DrawPyramid(Lapis::Vector3 pos, DXGI_RGBA);
+
 	};
 
 	
