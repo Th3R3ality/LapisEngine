@@ -100,17 +100,28 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         static float z = 0;
         float moveDistance = 3 * engine.deltaTime;
 
-        if (GetAsyncKeyState('D')) x -= moveDistance;
         if (GetAsyncKeyState('A')) x += moveDistance;
+        if (GetAsyncKeyState('D')) x -= moveDistance;
         if (GetAsyncKeyState('Q')) y += moveDistance;
         if (GetAsyncKeyState('E')) y -= moveDistance;
         if (GetAsyncKeyState('W')) z -= moveDistance;
         if (GetAsyncKeyState('S')) z += moveDistance;
 
-        engine.cameraPosition = { x,y,z,0 };
+        engine.cameraPosition = { x,y,z };
 
         if (GetAsyncKeyState(VK_RIGHT)) engine.CameraRotationY -= moveDistance;
         if (GetAsyncKeyState(VK_LEFT)) engine.CameraRotationY += moveDistance;
+
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 20; j++) {
+                DXGI_RGBA col;
+                if (((i % 2) + j) % 2 == 1)
+                    col = { 1,1,1,1 };
+                else
+                    col = { 0,0,0,1 };
+                engine.DrawPlane(Transform({ i - 10,-2, j - 5 }, {}, { 1,1,1 }), col);
+            }
+        }
 
         for (int i = 0; i < 32; i++) {
             float _x = cosf(i * DirectX::XM_PI / (10 - 1)) * 0.5 + 0.5;
@@ -126,29 +137,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
                 { 0.0,_y,_x,1.0 });
         }
 
-        constexpr float DEG2RAD = (DirectX::XM_PI / 180);
-        constexpr float RAD2DEG = (180 / DirectX::XM_PI);
-
-        float penis = ((float)(((int)engine.elapsedTime*3) % 360));
-
-        if (penis > 360)
-        {
-            penis -= 360;
-        }
-
-
-        std::cout << penis << std::endl;
 
         engine.DrawTriangle3D(
             Transform(
-                Vector3(0, 0, 0),
-                Vector3(0, 45, 0),
+                Vector3(-2, 0, 0),
+                Vector3(0, engine.elapsedTime*3, 0),
                 Vector3(1, 1, 1)
             ), { 1.0, 0.8, 1.0, 1.0 });
 
-        engine.DrawTriangle3D({ { 0, penis * DEG2RAD, 5 },{0.0,45*DEG2RAD,0.0}, {2,0.5,1} }, { 0.2, 1.0, 0.2, 1.0 });
-        engine.DrawTriangle3D({ { 0, 2, 5 },{0.0,0.0,0.0}, {0.5,2,1} }, { 0.2, 0.2, 1.0, 1.0 });
+        engine.DrawTriangle3D({ { 0, 0, 5 },{0,engine.elapsedTime,0}, {2,0.5,1} }, { 0.2, 1.0, 0.2, 1.0 });
+        engine.DrawTriangle3D({ { 0, 2, 5 },{0,engine.elapsedTime,0}, {0.5,2,1} }, { 0.2, 0.2, 1.0, 1.0 });
         
+        
+
+
         /* 2d
 
         static float x = 100;

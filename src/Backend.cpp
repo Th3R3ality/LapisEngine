@@ -56,18 +56,6 @@ namespace Lapis
         // set the render target as the back buffer
         this->deviceContext->OMSetRenderTargets(1, &this->backbuffer, NULL);
 
-        /*
-        // Set the viewport
-        D3D11_VIEWPORT viewport;
-        ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
-
-        viewport.TopLeftX = 0;
-        viewport.TopLeftY = 0;
-        viewport.Width = SCREEN_WIDTH;
-        viewport.Height = SCREEN_HEIGHT;
-        this->deviceContext->RSSetViewports(1, &viewport);
-        */
-
         // Setup the viewport
         D3D11_VIEWPORT vp;
         vp.Width = (FLOAT)SCREEN_WIDTH;
@@ -79,12 +67,6 @@ namespace Lapis
         this->deviceContext->RSSetViewports(1, &vp);
 
 
-
-        InitPipeline();
-    }
-
-    void LapisInstance::InitPipeline()
-    {
         // load and compile the two shaders
         ID3DBlob* VS, * PS;
         HRESULT hr1 = D3DCompileFromFile(L"src/shaders/unlit.shader", 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, "VShader", "vs_5_0", 0, 0, &VS, 0);
@@ -126,9 +108,7 @@ namespace Lapis
         pRasterizerDesc.CullMode = D3D11_CULL_NONE;
 
         ID3D11RasterizerState* pRasterizerState;
-
         this->device->CreateRasterizerState(&pRasterizerDesc, &pRasterizerState);
-
         this->deviceContext->RSSetState(pRasterizerState);
     }
 
@@ -152,11 +132,12 @@ namespace Lapis
         this->commandList2D.clear();
 
 
-
         this->vertexBuffer3D.clear();
         this->VerticeCount3D = 0;
 
         this->commandList3D.clear();
+
+        this->transformList.clear();
     }
 
     void LapisInstance::RenderFrame()
@@ -164,36 +145,25 @@ namespace Lapis
         static GlobalConstantBuffer gcb;
         gcb.fTime = this->elapsedTime;
 
-        float L = 0;
-        float T = 0;
-        float R = SCREEN_WIDTH;
-        float B = SCREEN_HEIGHT;
-        const float mvp[4][4] = {
+        float L = 0, T = 0, R = SCREEN_WIDTH, B = SCREEN_HEIGHT;
+        const float m[4][4] = {
             { 2.0f / (R - L),   0.0f,           0.0f,       0.0f },
-            { 0.0f,             2.0f / (T - B),     0.0f,       0.0f },
+            { 0.0f,             2.0f / (T - B), 0.0f,       0.0f },
             { 0.0f,             0.0f,           0.5f,       0.0f },
             { (R + L) / (L - R),(T + B) / (B - T),    0.5f,       1.0f },
         };
-
-        auto screen = DirectX::XMMATRIX((const float*)mvp);
-
-        
+        auto screen = DirectX::XMMATRIX((const float*)m);
 
         auto world = DirectX::XMMatrixIdentity();
-
 
         DirectX::XMVECTOR Eye = Lapis::Helpers::XMVectorSet(Lapis::Vector4( 0.0f, 0.0f, 0.0f, 0.0f ));
         DirectX::XMVECTOR At = Lapis::Helpers::XMVectorSet(Lapis::Vector4(0.0f, 0.0f, 1.0f, 0.0f));
         DirectX::XMVECTOR Up = Lapis::Helpers::XMVectorSet(Lapis::Vector4(0.0f, 1.0f, 0.0f, 0.0f));
         
         auto view = DirectX::XMMatrixLookAtLH(Eye, At, Up);
+        auto translateView = Lapis::Helpers::XMMatrixTranslation(this->cameraPosition);
         auto rotateView = DirectX::XMMatrixRotationY(this->CameraRotationY);
-        auto translateView = DirectX::XMMatrixTranslation(this->cameraPosition.x, this->cameraPosition.y, this->cameraPosition.z);
-
-        //view = view * rotateView * translateView;
-        view = view * translateView;
-
-
+        view = view * translateView * rotateView;
 
 
         auto projection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, SCREEN_WIDTH / (FLOAT)SCREEN_HEIGHT, 0.01f, 100.0f);
@@ -248,10 +218,12 @@ namespace Lapis
         
         for (int i = 0; i < this->commandList3D.size(); i++) {
             {
+                if (this->transformList.at(i).rot.y != 0.f)
+                    printf("backend transform rot y: %f\n", this->transformList.at(i).rot.y);
 
                 auto model = DirectX::XMMatrixIdentity();
                 auto scaleModel = Lapis::Helpers::XMMatrixScaling(this->transformList.at(i).scale);
-                auto rotateModel = Lapis::Helpers::XMMatrixRotationAxis(Lapis::Vector3(0,1,0),this->elapsedTime);
+                auto rotateModel = Lapis::Helpers::XMMatrixRotationAxis(Lapis::Vector3(0,1,0), this->transformList.at(i).rot.y);
                 auto translateModel = Lapis::Helpers::XMMatrixTranslation(this->transformList.at(i).pos);
                 
                 model = model * scaleModel * rotateModel * translateModel;

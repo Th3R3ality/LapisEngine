@@ -55,7 +55,7 @@ namespace Lapis
 		ID3D11PixelShader* pPS_unlit;     // the pixel shader
 		ID3D11Buffer* pVBuffer;
 
-		Lapis::Vector4 cameraPosition = { 0, 0, 0, 0 };
+		Lapis::Vector3 cameraPosition = { 0, 0, 0 };
 		float CameraRotationY = 0;
 
 		float elapsedTime = 0;
@@ -89,7 +89,6 @@ namespace Lapis
 		void CleanFrame();
 
 		bool GetInput(int key);
-		void InitPipeline();
 
 		//void PushVertex(float x, float y, DXGI_RGBA col) { PushVertex(x, y, col, {0.5, 0.5, 0.5, 0.5}); };
 		void PushVertex(float x, float y, DXGI_RGBA col, DirectX::XMFLOAT4 uv);
@@ -112,6 +111,7 @@ namespace Lapis
 
 
 		void DrawTriangle3D(Lapis::Transform transform, DXGI_RGBA rgba);
+		void DrawPlane(Lapis::Transform transform, DXGI_RGBA rgba);
 
 		void DrawCube(float x, float y, float z, float scale, DXGI_RGBA rgba);
 		void DrawPyramid(Lapis::Vector3 pos, DXGI_RGBA);
