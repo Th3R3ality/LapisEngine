@@ -163,14 +163,15 @@ namespace Lapis
         auto view = DirectX::XMMatrixLookAtLH(Eye, At, Up);
         auto translateView = Lapis::Helpers::XMMatrixTranslation(this->cameraPosition);
         auto rotateView = DirectX::XMMatrixRotationY(this->CameraRotationY);
+        rotateView = rotateView * DirectX::XMMatrixRotationX(-20 * DirectX::XM_PI/180);
         view = view * translateView * rotateView;
-
 
         auto projection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, SCREEN_WIDTH / (FLOAT)SCREEN_HEIGHT, 0.01f, 100.0f);
 
-
-        
-
+        gcb.Screen = screen;
+        gcb.World = DirectX::XMMatrixTranspose(world);
+        gcb.View = DirectX::XMMatrixTranspose(view);
+        gcb.Projection = DirectX::XMMatrixTranspose(projection);
         
         static int VBufferSize = 0;
         if (this->VBufferCapacity3D > VBufferSize) {
@@ -210,30 +211,20 @@ namespace Lapis
         auto color = HSLToRGB((int)h, 1.0f, 0.7f, 1.0f);
         this->deviceContext->ClearRenderTargetView(this->backbuffer, (FLOAT*)&color);
 
-
         UINT stride = sizeof(VERTEX);
         UINT offset = 0;
         this->deviceContext->IASetVertexBuffers(0, 1, &this->pVBuffer, &stride, &offset);
         
-        
         for (int i = 0; i < this->commandList3D.size(); i++) {
             {
-                if (this->transformList.at(i).rot.y != 0.f)
-                    printf("backend transform rot y: %f\n", this->transformList.at(i).rot.y);
-
                 auto model = DirectX::XMMatrixIdentity();
                 auto scaleModel = Lapis::Helpers::XMMatrixScaling(this->transformList.at(i).scale);
                 auto rotateModel = Lapis::Helpers::XMMatrixRotationAxis(Lapis::Vector3(0,1,0), this->transformList.at(i).rot.y);
                 auto translateModel = Lapis::Helpers::XMMatrixTranslation(this->transformList.at(i).pos);
                 
                 model = model * scaleModel * rotateModel * translateModel;
-
-                gcb.Screen = screen;
                 gcb.Model = DirectX::XMMatrixTranspose(model);
-                gcb.World = DirectX::XMMatrixTranspose(world);
-                gcb.View = DirectX::XMMatrixTranspose(view);
-                gcb.Projection = DirectX::XMMatrixTranspose(projection);
-                //this->deviceContext->UpdateSubresource(this->pConstantBuffer, 0, nullptr, &gcb, 0, 0);
+
 
                 D3D11_MAPPED_SUBRESOURCE ms;
                 this->deviceContext->Map(this->pConstantBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);

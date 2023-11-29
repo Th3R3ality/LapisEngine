@@ -85,7 +85,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     while (true)
     {
         engine.NewFrame();
-        std::cout << "delta: " << engine.deltaTime * 100 << "ms\n";
+        std::cout << "delta: " << engine.deltaTime * 100 << "ms\t";
 
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             TranslateMessage(&msg);
@@ -112,14 +112,24 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         if (GetAsyncKeyState(VK_RIGHT)) engine.CameraRotationY -= moveDistance;
         if (GetAsyncKeyState(VK_LEFT)) engine.CameraRotationY += moveDistance;
 
-        for (int i = 0; i < 20; i++) {
-            for (int j = 0; j < 20; j++) {
+
+        static int checkerboardSize = 100;
+        if (GetAsyncKeyState(VK_UP)) checkerboardSize += 1;
+        if (GetAsyncKeyState(VK_DOWN)) checkerboardSize -= 1;
+
+        std::cout << "Checkerboard Size: " << checkerboardSize << std::endl;
+
+        for (int i = 0; i < checkerboardSize; i++) {
+            for (int j = 0; j < checkerboardSize; j++) {
+                //float dist = ((DirectX::XMVector2Length({ (float)i - checkerboardSize / 2,(float)j - checkerboardSize / 2 })).m128_f32[0]) / (checkerboardSize / 2);
                 DXGI_RGBA col;
                 if (((i % 2) + j) % 2 == 1)
-                    col = { 1,1,1,1 };
+                    col = { 1 ,1 ,1 ,1 };
                 else
-                    col = { 0,0,0,1 };
-                engine.DrawPlane(Transform({ i - 10,-2, j - 5 }, {}, { 1,1,1 }), col);
+                    col = { 0, 0 ,0 ,1 };
+                //col = { dist,dist,dist,1 };
+                //engine.DrawPlane(Transform({ i - checkerboardSize / 2,-2 - dist * dist * (checkerboardSize / 5), j - checkerboardSize / 2 }, {}, { 1,1,1 }), col);
+                engine.DrawPlane(Transform({ i - checkerboardSize / 2,-2, j - checkerboardSize / 2 }, {}, {1,1,1}), col);
             }
         }
 
