@@ -47,6 +47,7 @@ namespace Lapis
 		ID3D11Device* device; // the pointer to our Direct3D device interface
 		ID3D11DeviceContext* deviceContext; // the pointer to our Direct3D device context
 		ID3D11RenderTargetView* backbuffer;    // global declaration
+		ID3D11DepthStencilView* depthBufferView;
 		ID3D11InputLayout* pLayout;
 		
 		ID3D11Buffer* pConstantBuffer;

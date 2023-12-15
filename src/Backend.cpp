@@ -111,6 +111,35 @@ namespace Lapis
         this->device->CreateRasterizerState(&pRasterizerDesc, &pRasterizerState);
         this->deviceContext->RSSetState(pRasterizerState);
 
+
+        D3D11_TEXTURE2D_DESC depthBufferDesc;
+
+        pBackBuffer->GetDesc(&depthBufferDesc); // copy from framebuffer properties
+
+        depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+        depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+
+        ID3D11Texture2D* depthBuffer;
+
+        device->CreateTexture2D(&depthBufferDesc, nullptr, &depthBuffer);
+
+        //ID3D11DepthStencilView* depthBufferView;
+
+        device->CreateDepthStencilView(depthBuffer, nullptr, &this->depthBufferView);
+
+        deviceContext->OMSetRenderTargets(1, &this->backbuffer, this->depthBufferView);
+
+        D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {};
+        depthStencilDesc.DepthEnable = TRUE;
+        depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+        depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+        ID3D11DepthStencilState* depthStencilState;
+
+        device->CreateDepthStencilState(&depthStencilDesc, &depthStencilState);
+
+        deviceContext->OMSetDepthStencilState(depthStencilState, 0);
+        deviceContext->OMSetBlendState(nullptr, nullptr, 0xffffffff); // use default blend mode (i.e. disable)
     }
 
     void LapisInstance::NewFrame() {
@@ -211,6 +240,7 @@ namespace Lapis
         if (h > 360) h -= 360;
         auto color = HSLToRGB((int)h, 1.0f, 0.7f, 1.0f);
         this->deviceContext->ClearRenderTargetView(this->backbuffer, (FLOAT*)&color);
+        this->deviceContext->ClearDepthStencilView(this->depthBufferView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
         UINT stride = sizeof(VERTEX);
         UINT offset = 0;
