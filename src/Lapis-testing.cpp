@@ -113,7 +113,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         if (GetAsyncKeyState(VK_LEFT)) engine.CameraRotationY += moveDistance;
 
 
-        static int checkerboardSize = 100;
+        static int checkerboardSize = 20;
         if (GetAsyncKeyState(VK_UP)) checkerboardSize += 1;
         if (GetAsyncKeyState(VK_DOWN)) checkerboardSize -= 1;
 
@@ -132,6 +132,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
                 engine.DrawPlane(Transform({ i - checkerboardSize / 2,-2, j - checkerboardSize / 2 }, {}, {1,1,1}), col);
             }
         }
+
+        engine.DrawCube(Transform({2,1,2}, {0,0,0}, {1,1,1}), { 0, 1, 0, 1 });
 
         for (int i = 0; i < 32; i++) {
             float _x = cosf(i * DirectX::XM_PI / (10 - 1)) * 0.5 + 0.5;

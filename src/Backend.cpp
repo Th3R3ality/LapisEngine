@@ -110,6 +110,7 @@ namespace Lapis
         ID3D11RasterizerState* pRasterizerState;
         this->device->CreateRasterizerState(&pRasterizerDesc, &pRasterizerState);
         this->deviceContext->RSSetState(pRasterizerState);
+
     }
 
     void LapisInstance::NewFrame() {

@@ -113,7 +113,7 @@ namespace Lapis
 		void DrawTriangle3D(Lapis::Transform transform, DXGI_RGBA rgba);
 		void DrawPlane(Lapis::Transform transform, DXGI_RGBA rgba);
 
-		void DrawCube(float x, float y, float z, float scale, DXGI_RGBA rgba);
+		void DrawCube(Lapis::Transform transform, DXGI_RGBA rgba);
 		void DrawPyramid(Lapis::Vector3 pos, DXGI_RGBA);
 
 	};
