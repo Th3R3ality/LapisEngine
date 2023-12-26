@@ -12,20 +12,36 @@ namespace Lapis
 	struct Vector2
 	{
 		float x, y;
+
+		Vector2 operator-() const;
+		Vector2 operator+(const Vector2& other) const;
+		Vector2 operator-(const Vector2& other) const;
 	};
 
 	struct Vector3
 	{
 		float x, y, z;
 
-		Vector3 operator-();
+		Vector3 operator-() const;
+
+		constexpr Vector3() :
+			x(0), y(0), z(0)
+		{}
+
+		constexpr Vector3(float f) :
+			x(f), y(f), z(f)
+		{}
+
+		constexpr Vector3(float x, float y, float z) :
+			x(x), y(y), z(z)
+		{}
 	};
 
 	struct Vector4
 	{
 		float x, y, z, w;
 
-		Vector4 operator+(const Vector4& other);
+		Vector4 operator+(const Vector4& other) const;
 	};
 
 	struct VERTEX
@@ -65,6 +81,12 @@ namespace Lapis
 		{
 			Vector3 scale;
 		};
+		Transform() :
+			pos(0), rot(0), scale(0)
+		{}
+		Transform(Vector3 pos, Vector3 rot, Vector3 scale) :
+			pos(pos), rot(rot), scale(scale)
+		{}
 	};
 
 	struct LapisCommand

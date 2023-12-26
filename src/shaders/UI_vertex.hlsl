@@ -9,6 +9,7 @@ VOut main( VIn input )
     output.uv = input.uv;
     output.normal = input.normal;
     
+    
     output.position = mul(Screen, output.position);
     
 	return output;

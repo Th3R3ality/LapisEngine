@@ -10,7 +10,7 @@
 
 namespace Lapis
 {
-    GlobalConstantBuffer gcb;
+    
 
     void LapisInstance::Init()
     {
@@ -71,9 +71,10 @@ namespace Lapis
 
         InitDefaultShaders();
 
+
+
         deviceContext->VSSetShader(builtinMaterials["UI"].vertexShader, 0, 0);
         deviceContext->PSSetShader(builtinMaterials["UI"].pixelShader, 0, 0);
-
 
         D3D11_INPUT_ELEMENT_DESC ied[] =
         {
@@ -166,18 +167,20 @@ namespace Lapis
 
     void LapisInstance::UpdateGlobalConstantBuffer()
     {
-        gcb.fTime = this->elapsedTime;
+        gcb.fTime = elapsedTime;
 
         float L = 0, T = 0, R = SCREEN_WIDTH, B = SCREEN_HEIGHT;
-        const float m[4][4] = {
-            { 2.0f / (R - L),   0.0f,           0.0f,       0.0f },
-            { 0.0f,             2.0f / (T - B), 0.0f,       0.0f },
-            { 0.0f,             0.0f,           0.5f,       0.0f },
-            { (R + L) / (L - R),(T + B) / (B - T),    0.5f,       1.0f },
+        DirectX::XMMATRIX m = {
+             2.0f / (R - L),   0.0f,           0.0f,       0.0f ,
+             0.0f,             2.0f / (T - B), 0.0f,       0.0f ,
+             0.0f,             0.0f,           0.5f,       0.0f ,
+             (R + L) / (L - R),(T + B) / (B - T),    0.5f,       1.0f 
         };
-        auto screen = DirectX::XMMATRIX((const float*)m);
+        auto screen = m;
 
-        auto dxscreen = DirectX::XMMatrixOrthographicLH(SCREEN_WIDTH, SCREEN_HEIGHT, 0.001, 1000);
+        auto dxscreen = DirectX::XMMatrixOrthographicLH(SCREEN_WIDTH, SCREEN_HEIGHT, -10, 1000);
+
+        
 
         auto world = DirectX::XMMatrixIdentity();
 
@@ -240,6 +243,8 @@ namespace Lapis
         UINT offset = 0;
         this->deviceContext->IASetVertexBuffers(0, 1, &this->pVBuffer, &stride, &offset);
         
+        UpdateGlobalConstantBuffer();
+
         for (auto& internalCommand : commandList) {
             {
                 this->DrawCommand(internalCommand);
@@ -248,14 +253,9 @@ namespace Lapis
         this->swapchain->Present(0, 0);
     }
 
-
-
-    void LapisInstance::PushCommand(LapisCommand drawCommand) {
-        this->commandList.push_back(InternalLapisCommand(drawCommand, this->VertexCount));
-    }
-
     void LapisInstance::DrawCommand(InternalLapisCommand internalDrawCommand)
     {
+
         auto model = DirectX::XMMatrixIdentity();
         auto scaleModel = Lapis::Helpers::XMMatrixScaling(internalDrawCommand.transform.scale);
         auto rotateModel = Lapis::Helpers::XMMatrixRotationAxis(Lapis::Vector3(0, 1, 0), internalDrawCommand.transform.rot.y);
@@ -266,8 +266,24 @@ namespace Lapis
 
         RemapSubResource(pConstantBuffer, &gcb, sizeof(gcb));
 
+        static ID3D11VertexShader* prevVertexShader = nullptr;
+        if (prevVertexShader != internalDrawCommand.material.vertexShader) {
+            deviceContext->VSSetShader(internalDrawCommand.material.vertexShader, 0, 0);
+            prevVertexShader = internalDrawCommand.material.vertexShader;
+        }
+
+        static ID3D11PixelShader* prevPixelShader = nullptr;
+        if (prevPixelShader != internalDrawCommand.material.pixelShader) {
+            deviceContext->PSSetShader(internalDrawCommand.material.pixelShader, 0, 0);
+            prevPixelShader = internalDrawCommand.material.pixelShader;
+        }
+
         this->deviceContext->IASetPrimitiveTopology(internalDrawCommand.topology);
         this->deviceContext->Draw(internalDrawCommand.vertexCount, internalDrawCommand.startVertexLocation);
+    }
+    
+    void LapisInstance::PushCommand(LapisCommand drawCommand) {
+        this->commandList.push_back(InternalLapisCommand(drawCommand, this->VertexCount));
     }
 
     void LapisInstance::InitDefaultShaders()
@@ -276,15 +292,23 @@ namespace Lapis
         ID3D11VertexShader* vsName##_vertex; \
         this->device->CreateVertexShader(DEFAULTSHADER__##vsName##_vertex, sizeof(DEFAULTSHADER__##vsName##_vertex), NULL, &vsName##_vertex); \
         ID3D11PixelShader* psName##_pixel; \
-        this->device->CreatePixelShader(DEFAULTSHADER__##psName##_pixel, sizeof(DEFAULTSHADER__##psName##_pixel), NULL, &psName##_pixel)
+        this->device->CreatePixelShader(DEFAULTSHADER__##psName##_pixel, sizeof(DEFAULTSHADER__##psName##_pixel), NULL, &psName##_pixel) \
 
-#define CREATE_DEFAULT_SHADERS(name) CREATE_DEFAULT_SHADERS_SEPERATE(name, name)
+#define CREATE_DEFAULT_SHADERS(name) CREATE_DEFAULT_SHADERS_SEPERATE(name, name);
 
-        CREATE_DEFAULT_SHADERS(UI);
-
-        builtinMaterials.insert({
-            "UI",Material(UI_vertex, UI_pixel, nullptr)
+#define CREATE_DEFAULT_MATERIAL_SEPERATE_SHADERS(name, vsName, psName) \
+        CREATE_DEFAULT_SHADERS_SEPERATE(vsName, psName); \
+        builtinMaterials.insert({ \
+                #name,Material(vsName##_vertex, psName##_pixel, nullptr)\
             });
+
+#define CREATE_DEFAULT_MATERIAL(name) CREATE_DEFAULT_MATERIAL_SEPERATE_SHADERS(name, name, name)
+        
+
+        CREATE_DEFAULT_MATERIAL(UI);
+        CREATE_DEFAULT_MATERIAL_SEPERATE_SHADERS(UNLIT3D,UNLIT3D,UNLIT);
+
+        
 
 #undef CREATE_DEFAULT_SHADER
     }

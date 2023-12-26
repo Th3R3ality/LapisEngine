@@ -32,5 +32,7 @@
   <ItemGroup>
     <FxCompile Include="src\shaders\UI_vertex.hlsl" />
     <FxCompile Include="src\shaders\UI_pixel.hlsl" />
+    <FxCompile Include="src\shaders\UNLIT_pixel.hlsl" />
+    <FxCompile Include="src\shaders\UNLIT3D_vertex.hlsl" />
   </ItemGroup>
 </Project>

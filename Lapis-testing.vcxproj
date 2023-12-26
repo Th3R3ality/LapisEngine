@@ -60,6 +60,26 @@
       <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">DEFAULTSHADER__UI_vertex</VariableName>
       <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">src\shaders\compiled\UI_vertex.h</HeaderFileOutput>
     </FxCompile>
+    <FxCompile Include="src\shaders\UNLIT3D_vertex.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">DEFAULTSHADER__UNLIT3D_vertex</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">src\shaders\compiled\UNLIT3d_vertex.h</HeaderFileOutput>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">DEFAULTSHADER__UNLIT3D_vertex</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">src\shaders\compiled\UNLIT3d_vertex.h</HeaderFileOutput>
+    </FxCompile>
+    <FxCompile Include="src\shaders\UNLIT_pixel.hlsl">
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">DEFAULTSHADER__UNLIT_pixel</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">src\shaders\compiled\UNLIT_pixel.h</HeaderFileOutput>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">DEFAULTSHADER__UNLIT_pixel</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">src\shaders\compiled\UNLIT_pixel.h</HeaderFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

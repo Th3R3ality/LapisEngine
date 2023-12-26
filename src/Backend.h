@@ -68,22 +68,16 @@ namespace Lapis
 
 		void DrawPoint(float x, float y, DXGI_RGBA rgba);
 		void DrawPoint(float x, float y) { DrawPoint(x, y, { 1,0,1,1 }); };
-
 		void DrawLine(Vector2 from, Vector2 to, DXGI_RGBA rgba);
-		void DrawLine(float x1, float y1, float x2, float y2, DXGI_RGBA rgba) { DrawLine(Vector2(x1, y1), Vector2(x2, y2), rgba); };
-
-		void DrawLine(float x1, float y1, float x2, float y2) { DrawLine(x1, y1, x2, y2, { 1,0,1,1 }); }
-
-		void DrawRect(float x, float y, float w, float h, DXGI_RGBA rgba);
-		void DrawRect(float x, float y, float w, float h, DXGI_RGB rgb = { 1, 0, 1 }, float alpha = 1.f) { DrawRect(x, y, w, h, { rgb.Red, rgb.Green, rgb.Blue, alpha }); }
-
-		void DrawCircle(float x, float y, float w, float h, DXGI_RGBA rgba, int vertexCount = 6);
+		void DrawRect(Vector2 xy, Vector2 wh, DXGI_RGBA rgba);
+		void DrawRect(Vector4 ltrb, DXGI_RGBA rgba) { DrawRect(Vector2(ltrb.x, ltrb.y), Vector2(ltrb.z - ltrb.x, ltrb.w - ltrb.y), rgba); };
+		void DrawCircle(Vector2 xy, float r, DXGI_RGBA rgba, int vertexCount);
 
 
 		void DrawTriangle3D(Lapis::Transform transform, DXGI_RGBA rgba);
 		void DrawPlane(Lapis::Transform transform, DXGI_RGBA rgba);
-
 		void DrawCube(Lapis::Transform transform, DXGI_RGBA rgba);
+
 
 	private:
 
@@ -94,6 +88,7 @@ namespace Lapis
 		ID3D11DepthStencilView* depthBufferView;
 		ID3D11InputLayout* pLayout;
 
+		GlobalConstantBuffer gcb{};
 		ID3D11Buffer* pConstantBuffer;
 
 		ID3D11Buffer* pVBuffer;

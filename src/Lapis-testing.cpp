@@ -122,14 +122,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         if (GetAsyncKeyState(VK_LEFT)) engine.CameraRotationY += moveDistance;
 
 
-        engine.DrawLine({ 0.2, 0 }, { 0.5, 0 }, { 1, 0, 0, 1 });
-        engine.DrawLine({ 0, 0.2 }, { 0, 0.5 }, { 0, 1, 0, 1 });
 
-        engine.DrawLine({ 20, 20 }, { 50, 50 }, { 1, 0, 0, 1 });
-        engine.DrawLine({ -20, -20 }, { -50, -50 }, { 0, 1, 0, 1 });
+        Vector2 center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
 
-        engine.DrawLine({ 20, -20 }, { 50, -50 }, { 1, 0, 0, 1 });
-        engine.DrawLine({ -20, 20 }, { -50, 50 }, { 0, 1, 0, 1 });
+        engine.DrawLine(center + Vector2(20, 0), center + Vector2(50, 0), { 1, 0, 0, 1 });
+        engine.DrawLine(center + Vector2(0, 20), center + Vector2(0, 50), { 0, 1, 0, 1 });
+        engine.DrawRect(center - Vector2(10, 10), Vector2(20, 20), { 0,0,1,1 });
+        engine.DrawRect(Vector4(10, 10, 190, 15), { 1,0,1,1 });
+        engine.DrawCircle(Vector2(10, 50), 10, { 1,1,0,1 }, 16);
+
+        engine.DrawPlane(Transform(Vector3(0, -0.1, 0), {}, { 1 }), { 1,1,1,1 });
 
         engine.RenderFrame();
         engine.FlushFrame();
