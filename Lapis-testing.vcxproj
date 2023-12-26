@@ -25,14 +25,41 @@
     <ClInclude Include="src\2d.h" />
     <ClInclude Include="src\Helpers.h" />
     <ClInclude Include="src\Material.h" />
+    <ClInclude Include="src\shaders\compiled\UI_pixel.h" />
+    <ClInclude Include="src\shaders\compiled\UI_vertex.h" />
+    <ClInclude Include="src\shaders\DefaultShaders.h" />
     <ClInclude Include="src\utils\hsl-to-rgb.hpp" />
     <ClInclude Include="src\DataTypes.hpp" />
+    <ClInclude Include="src\utils\ReadData.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="src\shaders\DefaultStructs.hlsli" />
     <None Include="src\shaders\RGBHSL.hlsli" />
     <None Include="src\shaders\ShaderToy1.hlsli" />
     <None Include="src\shaders\ShaderToy2.hlsli" />
     <None Include="src\shaders\unlit.shader" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="src\shaders\UI_pixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">DEFAULTSHADER__UI_pixel</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">src\shaders\compiled\UI_pixel.h</HeaderFileOutput>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">DEFAULTSHADER__UI_pixel</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">src\shaders\compiled\UI_pixel.h</HeaderFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="src\shaders\UI_vertex.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">DEFAULTSHADER__UI_vertex</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">src\shaders\compiled\UI_vertex.h</HeaderFileOutput>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">DEFAULTSHADER__UI_vertex</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">src\shaders\compiled\UI_vertex.h</HeaderFileOutput>
+    </FxCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -4,19 +4,22 @@
 #include <chrono>
 #include <DirectXMath.h>
 
+#include "shaders/DefaultShaders.h"
+
 #include "Helpers.h"
 
 namespace Lapis
 {
+    GlobalConstantBuffer gcb;
 
     void LapisInstance::Init()
     {
         this->initDuration = std::chrono::high_resolution_clock::now().time_since_epoch();
+
     }
 
     void LapisInstance::InitD3D11(HWND hwnd)
     {
-
         DXGI_SWAP_CHAIN_DESC scd;
 
         ZeroMemory(&scd, sizeof(DXGI_SWAP_CHAIN_DESC));
@@ -45,6 +48,8 @@ namespace Lapis
             NULL,
             &this->deviceContext);
 
+        std::cout << "created device and swapchain\n";
+
         // get the address of the back buffer
         ID3D11Texture2D* pBackBuffer = nullptr;
         this->swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
@@ -60,34 +65,25 @@ namespace Lapis
         D3D11_VIEWPORT vp;
         vp.Width = (FLOAT)SCREEN_WIDTH;
         vp.Height = (FLOAT)SCREEN_HEIGHT;
-        vp.MinDepth = 0.0f;
-        vp.MaxDepth = 1.0f;
-        vp.TopLeftX = 0;
-        vp.TopLeftY = 0;
-        this->deviceContext->RSSetViewports(1, &vp);
+        vp.MinDepth = 0.0f; vp.TopLeftX = 0;
+        vp.MaxDepth = 1.0f; vp.TopLeftY = 0;
+        deviceContext->RSSetViewports(1, &vp);
 
+        InitDefaultShaders();
 
-        // load and compile the two shaders
-        ID3DBlob* VS, * PS;
-        HRESULT hr1 = D3DCompileFromFile(L"src/shaders/unlit.shader", 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, "VShader", "vs_5_0", 0, 0, &VS, 0);
-        HRESULT hr2 = D3DCompileFromFile(L"src/shaders/unlit.shader", 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, "PShader", "ps_5_0", 0, 0, &PS, 0);
+        deviceContext->VSSetShader(builtinMaterials["UI"].vertexShader, 0, 0);
+        deviceContext->PSSetShader(builtinMaterials["UI"].pixelShader, 0, 0);
 
-        // encapsulate both shaders into shader objects
-        this->device->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, &this->pVS_unlit);
-        this->device->CreatePixelShader(PS->GetBufferPointer(), PS->GetBufferSize(), NULL, &this->pPS_unlit);
-
-        // set the shader objects
-        this->deviceContext->VSSetShader(this->pVS_unlit, 0, 0);
-        this->deviceContext->PSSetShader(this->pPS_unlit, 0, 0);
 
         D3D11_INPUT_ELEMENT_DESC ied[] =
         {
             {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
             {"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-            {"TEXCOORD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
         };
 
-        this->device->CreateInputLayout(ied, 3, VS->GetBufferPointer(), VS->GetBufferSize(), &this->pLayout);
+        this->device->CreateInputLayout(ied, sizeof(ied) / sizeof(ied[0]), DEFAULTSHADER__UI_vertex, sizeof(DEFAULTSHADER__UI_vertex), &this->pLayout);
         this->deviceContext->IASetInputLayout(this->pLayout);
 
 
@@ -154,25 +150,22 @@ namespace Lapis
         this->elapsedTime += this->deltaTime;
     }
 
-    void LapisInstance::CleanFrame() {
+    void LapisInstance::FlushFrame() {
         
-        this->vertexBuffer2D.clear();
-        this->VerticeCount2D = 0;
+        this->vertexBuffer.clear();
+        this->VertexCount = 0;
 
-        this->commandList2D.clear();
+        this->commandList.clear();
 
 
-        this->vertexBuffer3D.clear();
-        this->VerticeCount3D = 0;
+        this->vertexBuffer.clear();
+        this->VertexCount = 0;
 
-        this->commandList3D.clear();
-
-        this->transformList.clear();
+        this->commandList.clear();
     }
 
-    void LapisInstance::RenderFrame()
+    void LapisInstance::UpdateGlobalConstantBuffer()
     {
-        static GlobalConstantBuffer gcb;
         gcb.fTime = this->elapsedTime;
 
         float L = 0, T = 0, R = SCREEN_WIDTH, B = SCREEN_HEIGHT;
@@ -184,16 +177,17 @@ namespace Lapis
         };
         auto screen = DirectX::XMMATRIX((const float*)m);
 
+        auto dxscreen = DirectX::XMMatrixOrthographicLH(SCREEN_WIDTH, SCREEN_HEIGHT, 0.001, 1000);
+
         auto world = DirectX::XMMatrixIdentity();
 
-        DirectX::XMVECTOR Eye = Lapis::Helpers::XMVectorSet(Lapis::Vector4( 0.0f, 0.0f, 0.0f, 0.0f ));
+        DirectX::XMVECTOR Eye = Lapis::Helpers::XMVectorSet(Lapis::Vector4(0.0f, 0.0f, 0.0f, 0.0f));
         DirectX::XMVECTOR At = Lapis::Helpers::XMVectorSet(Lapis::Vector4(0.0f, 0.0f, 1.0f, 0.0f));
         DirectX::XMVECTOR Up = Lapis::Helpers::XMVectorSet(Lapis::Vector4(0.0f, 1.0f, 0.0f, 0.0f));
-        
         auto view = DirectX::XMMatrixLookAtLH(Eye, At, Up);
         auto translateView = Lapis::Helpers::XMMatrixTranslation(this->cameraPosition);
         auto rotateView = DirectX::XMMatrixRotationY(this->CameraRotationY);
-        rotateView = rotateView * DirectX::XMMatrixRotationX(-20 * DirectX::XM_PI/180);
+        rotateView = rotateView * DirectX::XMMatrixRotationX(-20 * DirectX::XM_PI / 180);
         view = view * translateView * rotateView;
 
         auto projection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, SCREEN_WIDTH / (FLOAT)SCREEN_HEIGHT, 0.01f, 100.0f);
@@ -202,43 +196,43 @@ namespace Lapis
         gcb.World = DirectX::XMMatrixTranspose(world);
         gcb.View = DirectX::XMMatrixTranspose(view);
         gcb.Projection = DirectX::XMMatrixTranspose(projection);
+
+        RemapSubResource(pConstantBuffer, &gcb, sizeof(gcb));
+
+    }
+
+    void LapisInstance::RenderFrame()
+    {
         
         static int VBufferSize = 0;
-        if (this->VBufferCapacity3D > VBufferSize) {
+        if (VBufferCapacity > VBufferSize) {
 
-            if (this->pVBuffer)
-                this->pVBuffer->Release();
+            if (pVBuffer)
+                pVBuffer->Release();
 
             std::cout << "resizing back buffer\n";
-            // create the vertex buffer
-            D3D11_BUFFER_DESC bd;
-            ZeroMemory(&bd, sizeof(bd));
+            D3D11_BUFFER_DESC bd = {};
 
-            bd.Usage = D3D11_USAGE_DYNAMIC;                // write access access by CPU and GPU
-            bd.ByteWidth = sizeof(VERTEX) * this->VBufferCapacity3D;             // size is the VERTEX struct * 3
-            bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;       // use as a vertex buffer
-            bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;    // allow CPU to write in buffer
+            bd.Usage = D3D11_USAGE_DYNAMIC;
+            bd.ByteWidth = VBufferCapacity * sizeof(VERTEX);
+            bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+            bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
 
             this->device->CreateBuffer(&bd, NULL, &this->pVBuffer);       // create the buffer
             if (!this->pVBuffer)
                 return;
 
-            VBufferSize = this->VBufferCapacity3D;
+            VBufferSize = this->VBufferCapacity;
         }
         
-        
-        {
-            D3D11_MAPPED_SUBRESOURCE ms;
-            this->deviceContext->Map(this->pVBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
-            memcpy(ms.pData, this->vertexBuffer3D.data(), this->vertexBuffer3D.size() * sizeof(VERTEX));
-            this->deviceContext->Unmap(this->pVBuffer, NULL);
-        }
+        RemapSubResource(pVBuffer, vertexBuffer.data(), sizeof(VERTEX) * vertexBuffer.size());
         
         static float h = 0;
         h += this->deltaTime*0.5;
         if (h > 360) h -= 360;
         auto color = HSLToRGB((int)h, 1.0f, 0.7f, 1.0f);
+
         this->deviceContext->ClearRenderTargetView(this->backbuffer, (FLOAT*)&color);
         this->deviceContext->ClearDepthStencilView(this->depthBufferView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
@@ -246,61 +240,71 @@ namespace Lapis
         UINT offset = 0;
         this->deviceContext->IASetVertexBuffers(0, 1, &this->pVBuffer, &stride, &offset);
         
-        for (int i = 0; i < this->commandList3D.size(); i++) {
+        for (auto& internalCommand : commandList) {
             {
-                auto model = DirectX::XMMatrixIdentity();
-                auto scaleModel = Lapis::Helpers::XMMatrixScaling(this->transformList.at(i).scale);
-                auto rotateModel = Lapis::Helpers::XMMatrixRotationAxis(Lapis::Vector3(0,1,0), this->transformList.at(i).rot.y);
-                auto translateModel = Lapis::Helpers::XMMatrixTranslation(this->transformList.at(i).pos);
-                
-                model = model * scaleModel * rotateModel * translateModel;
-                gcb.Model = DirectX::XMMatrixTranspose(model);
-
-
-                D3D11_MAPPED_SUBRESOURCE ms;
-                this->deviceContext->Map(this->pConstantBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
-                memcpy(ms.pData, &gcb, sizeof(gcb));
-                this->deviceContext->Unmap(this->pConstantBuffer, NULL);
+                this->DrawCommand(internalCommand);
             }
-
-            this->deviceContext->IASetPrimitiveTopology(this->commandList3D.at(i).TopologyType);
-            this->deviceContext->Draw(this->commandList3D.at(i).VertexCount, this->commandList3D.at(i).StartVertexLocation);
         }
-
         this->swapchain->Present(0, 0);
     }
 
-    void LapisInstance::PushCommand(int VerticeCount, D3D_PRIMITIVE_TOPOLOGY Topology, bool _3D) {
-        if (!_3D) {
-            this->commandList2D.push_back(LapisCommand(VerticeCount, this->VerticeCount2D, Topology));
-        }
-        else {
-            this->commandList3D.push_back(LapisCommand(VerticeCount, this->VerticeCount3D, Topology));
-        }
+
+
+    void LapisInstance::PushCommand(LapisCommand drawCommand) {
+        this->commandList.push_back(InternalLapisCommand(drawCommand, this->VertexCount));
     }
 
-    void LapisInstance::PushTransform(Transform transform) {
-        this->transformList.push_back(transform);
-    }
-
-
-    void LapisInstance::PushVertex(float x, float y, DXGI_RGBA col, DirectX::XMFLOAT4 uv) {
-        if (this->VerticeCount2D + 1 > this->VBufferCapacity2D) {
-            this->VBufferCapacity2D += 1000;
-            this->vertexBuffer2D.reserve(this->VBufferCapacity2D);
-        }
-        this->vertexBuffer2D.push_back(VERTEX({ x, y, 0 }, col, uv));
-        this->VerticeCount2D += 1;
-    }
-
-    void LapisInstance::PushVertex(float x, float y, float z, DXGI_RGBA col, DirectX::XMFLOAT4 uv)
+    void LapisInstance::DrawCommand(InternalLapisCommand internalDrawCommand)
     {
-        if (this->VerticeCount3D + 1 > this->VBufferCapacity3D) {
-            this->VBufferCapacity3D += 1000;
-            this->vertexBuffer3D.reserve(this->VBufferCapacity3D);
+        auto model = DirectX::XMMatrixIdentity();
+        auto scaleModel = Lapis::Helpers::XMMatrixScaling(internalDrawCommand.transform.scale);
+        auto rotateModel = Lapis::Helpers::XMMatrixRotationAxis(Lapis::Vector3(0, 1, 0), internalDrawCommand.transform.rot.y);
+        auto translateModel = Lapis::Helpers::XMMatrixTranslation(internalDrawCommand.transform.pos);
+
+        model = model * scaleModel * rotateModel * translateModel;
+        gcb.Model = DirectX::XMMatrixTranspose(model);
+
+        RemapSubResource(pConstantBuffer, &gcb, sizeof(gcb));
+
+        this->deviceContext->IASetPrimitiveTopology(internalDrawCommand.topology);
+        this->deviceContext->Draw(internalDrawCommand.vertexCount, internalDrawCommand.startVertexLocation);
+    }
+
+    void LapisInstance::InitDefaultShaders()
+    {
+#define CREATE_DEFAULT_SHADERS_SEPERATE(vsName, psName) \
+        ID3D11VertexShader* vsName##_vertex; \
+        this->device->CreateVertexShader(DEFAULTSHADER__##vsName##_vertex, sizeof(DEFAULTSHADER__##vsName##_vertex), NULL, &vsName##_vertex); \
+        ID3D11PixelShader* psName##_pixel; \
+        this->device->CreatePixelShader(DEFAULTSHADER__##psName##_pixel, sizeof(DEFAULTSHADER__##psName##_pixel), NULL, &psName##_pixel)
+
+#define CREATE_DEFAULT_SHADERS(name) CREATE_DEFAULT_SHADERS_SEPERATE(name, name)
+
+        CREATE_DEFAULT_SHADERS(UI);
+
+        builtinMaterials.insert({
+            "UI",Material(UI_vertex, UI_pixel, nullptr)
+            });
+
+#undef CREATE_DEFAULT_SHADER
+    }
+
+    void LapisInstance::RemapSubResource(ID3D11Resource* resource, void* data, size_t size)
+    {
+        D3D11_MAPPED_SUBRESOURCE ms;
+        this->deviceContext->Map(resource, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
+        memcpy(ms.pData, data, size);
+        this->deviceContext->Unmap(resource, NULL);
+    }
+
+    
+    void LapisInstance::PushVertex(VERTEX vert) {
+        if (this->VertexCount + 1 > this->VBufferCapacity) {
+            this->VBufferCapacity += 1000;
+            this->vertexBuffer.reserve(this->VBufferCapacity);
         }
-        this->vertexBuffer3D.push_back(VERTEX({ x, y, z }, col, uv));
-        this->VerticeCount3D += 1;
+        this->vertexBuffer.push_back(vert);
+        this->VertexCount += 1;
     }
 
 
@@ -309,18 +313,17 @@ namespace Lapis
         this->swapchain->SetFullscreenState(0, NULL);
 
         this->pLayout->Release();
-        this->pVS_unlit->Release();
-        this->pPS_unlit->Release();
+
+        for (auto& material : builtinMaterials) {
+            material.second.vertexShader->Release();
+            material.second.pixelShader->Release();
+        }
+
         this->pVBuffer->Release();
         this->swapchain->Release();
         this->backbuffer->Release();
         this->device->Release();
         this->deviceContext->Release();
-    }
-    bool LapisInstance::GetInput(int key)
-    {
-        return (GetAsyncKeyState(key) & 0x8000) != 0;
-
     }
 }
 

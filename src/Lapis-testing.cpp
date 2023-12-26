@@ -6,6 +6,7 @@
 
 // include chrono for time
 #include <chrono>
+#include <thread>
 
 // include iostream for printing
 #include <iostream>
@@ -76,16 +77,24 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     printf("yoo!\n");
 #endif
 
+    printf("initting lapis\n");
     engine.Init();
+    printf("initting d3d11\n");
     engine.InitD3D11(hwnd);
 
-    
-
+    float FPS_CAP = 60;
     MSG msg;
     while (true)
     {
+
+        if (GetAsyncKeyState(VK_INSERT) & 0x1) {
+            auto hmodule = LoadLibraryW(L"C:\\Users\\reality\\source\\repos\\present hook\\present hook\\bin\\present hook_Debug.dll");
+        }
+
         engine.NewFrame();
-        std::cout << "delta: " << engine.deltaTime * 100 << "ms\t";
+        std::cout << "delta: " << engine.deltaTime * 100 << "ms\n";
+        
+        
 
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             TranslateMessage(&msg);
@@ -113,112 +122,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         if (GetAsyncKeyState(VK_LEFT)) engine.CameraRotationY += moveDistance;
 
 
-        static int checkerboardSize = 20;
-        if (GetAsyncKeyState(VK_UP)) checkerboardSize += 1;
-        if (GetAsyncKeyState(VK_DOWN)) checkerboardSize -= 1;
+        engine.DrawLine({ 0.2, 0 }, { 0.5, 0 }, { 1, 0, 0, 1 });
+        engine.DrawLine({ 0, 0.2 }, { 0, 0.5 }, { 0, 1, 0, 1 });
 
-        std::cout << "Checkerboard Size: " << checkerboardSize << std::endl;
+        engine.DrawLine({ 20, 20 }, { 50, 50 }, { 1, 0, 0, 1 });
+        engine.DrawLine({ -20, -20 }, { -50, -50 }, { 0, 1, 0, 1 });
 
-        for (int i = 0; i < checkerboardSize; i++) {
-            for (int j = 0; j < checkerboardSize; j++) {
-                //float dist = ((DirectX::XMVector2Length({ (float)i - checkerboardSize / 2,(float)j - checkerboardSize / 2 })).m128_f32[0]) / (checkerboardSize / 2);
-                DXGI_RGBA col;
-                if (((i % 2) + j) % 2 == 1)
-                    col = { 1 ,1 ,1 ,1 };
-                else
-                    col = { 0, 0 ,0 ,1 };
-                //col = { dist,dist,dist,1 };
-                //engine.DrawPlane(Transform({ i - checkerboardSize / 2,-2 - dist * dist * (checkerboardSize / 5), j - checkerboardSize / 2 }, {}, { 1,1,1 }), col);
-                engine.DrawPlane(Transform({ i - checkerboardSize / 2,-2, j - checkerboardSize / 2 }, {}, {1,1,1}), col);
-            }
-        }
-
-        engine.DrawCube(Transform({2,1,2}, {0,0,0}, {1,1,1}), { 0, 1, 0, 1 });
-
-        for (int i = 0; i < 32; i++) {
-            float _x = cosf(i * DirectX::XM_PI / (10 - 1)) * 0.5 + 0.5;
-            float _y = (i % 2 == 0 ? -1 : 1) * sinf(i * DirectX::XM_PI / (10 - 1)) * 0.5 + 0.5;
-            engine.DrawTriangle3D(
-                {{_x,-1,_y},{0.0,0.0,0.0},{0.1,0.1,0.1}},
-                { _x,0.0,_y,1.0 });
-            engine.DrawTriangle3D(
-                {{_x,-1.5f + _y,0.5},{0.0,0.0,0.0},{0.1,0.1,0.1}},
-                {_x, _y,0.0,1.0} );
-            engine.DrawTriangle3D(
-                {{0.5,-1.5f + _y,_x},{0.0,0,0.0},{ 0.1,0.1,0.1 }},
-                { 0.0,_y,_x,1.0 });
-        }
-
-
-        engine.DrawTriangle3D(
-            Transform(
-                Vector3(-2, 0, 0),
-                Vector3(0, engine.elapsedTime*3, 0),
-                Vector3(1, 1, 1)
-            ), { 1.0, 0.8, 1.0, 1.0 });
-
-        engine.DrawTriangle3D({ { 0, 0, 5 },{0,engine.elapsedTime,0}, {2,0.5,1} }, { 0.2, 1.0, 0.2, 1.0 });
-        engine.DrawTriangle3D({ { 0, 2, 5 },{0,engine.elapsedTime,0}, {0.5,2,1} }, { 0.2, 0.2, 1.0, 1.0 });
-        
-        
-
-
-        /* 2d
-
-        static float x = 100;
-        static float y = 75;
-        static float wishDistance;
-        static float moveDistance;
-
-        wishDistance += engine.deltaTime * 100;
-
-        while (wishDistance > 1.0f) {
-            wishDistance -= 1;
-            moveDistance += 1;
-        }
-
-        if (GetAsyncKeyState(VK_LEFT)) x -= moveDistance;
-        if (GetAsyncKeyState(VK_RIGHT)) x += moveDistance;
-        if (GetAsyncKeyState(VK_UP)) y -= moveDistance;
-        if (GetAsyncKeyState(VK_DOWN)) y += moveDistance;
-        std::cout << "x: " << x << " - y: " << y << "\n";
-        
-        moveDistance = 0;
-
-        
-        float t = sinf(engine.elapsedTime)*0.5 +0.5;
-
-        static bool resizeCube = false;
-        if (GetAsyncKeyState(VK_SPACE) & 0x0001) {
-            resizeCube = !resizeCube;
-        }
-
-        if (!resizeCube) {
-            t = 0.5f;
-        }
-
-        engine.DrawPoint(10, 10);
-        engine.DrawRect(x - 50*t, y - 50*t, 100*t, 100*t);
-        engine.DrawPoint(x + .5, y + .5);
-
-        engine.DrawRect(10, 10, 100, 25);
-
-
-        float lineLength = (sinf(engine.elapsedTime * 0.05)*0.5+0.5) * 65;
-        engine.DrawLine(
-            lineLength * sinf(engine.elapsedTime*.5) + 100,
-            lineLength * cosf(engine.elapsedTime*.5) + 75,
-            lineLength * -sinf(engine.elapsedTime*0.5) + 100,
-            lineLength * -cosf(engine.elapsedTime*0.5) + 75);
-        
-        
-        //engine.DrawRect(100, 75, 50, 50, {0.0,0.0,0.0,0.0});
-        engine.DrawCircle(140, 90, 50, 50, { 1.0,1.0,1.0,1.0 }, (int)((cosf(engine.elapsedTime*0.1)*0.5+0.5)*64)+6);
-
-        */
+        engine.DrawLine({ 20, -20 }, { 50, -50 }, { 1, 0, 0, 1 });
+        engine.DrawLine({ -20, 20 }, { -50, 50 }, { 0, 1, 0, 1 });
 
         engine.RenderFrame();
-        engine.CleanFrame();
+        engine.FlushFrame();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000 / (int)FPS_CAP));
     }
 
     std::cout << "Cleaning up";

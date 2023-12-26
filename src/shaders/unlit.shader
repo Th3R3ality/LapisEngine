@@ -1,46 +1,22 @@
 #include "RGBHSL.hlsli"
 
-#include "ShaderToy1.hlsli"
-
-#include "ShaderToy2.hlsli"
-
-struct VIn
-{
-    float4 position : POSITION0;
-    float4 color : COLOR0;
-    float4 texCoord : TEXCOORD0;
-};
-struct VOut
-{
-    float4 position : SV_Position;
-    float4 color : COLOR0;
-    float4 texCoord : TEXCOORD0;
-};
-
-cbuffer GlobalConstantBuffer : register(b0)
-{
-    float fTime;
-    matrix Screen;
-    matrix Model;
-    matrix World;
-    matrix View;
-    matrix Projection;
-}
+#include "DefaultStructs.hlsli"
 
 VOut VShader(VIn input)
 {
     VOut output;
 
 
-    //output.position = mul(Screen, input.position);
     output.color = input.color;
-    output.texCoord = input.texCoord;
+    output.uv = input.uv;
     output.position = input.position;
     
-    output.position = mul(output.position, Model);
-    output.position = mul(output.position, World);
-    output.position = mul(output.position, View);
-    output.position = mul(output.position, Projection);
+    output.position = mul(Screen, output.position);
+
+    //output.position = mul(output.position, Model);
+    //output.position = mul(output.position, World);
+    //output.position = mul(output.position, View);
+    //output.position = mul(output.position, Projection);
 
     return output;
 }
@@ -51,12 +27,12 @@ float4 PShader(VOut input) : SV_TARGET
     
     //return ShaderToy2(input.position.xy, fTime);
     
-    return input.color;
-    return input.texCoord;
-    return input.texCoord * input.color;
+    //return input.color;
+    return input.uv;
+    return input.uv * input.color;
     
     float4 col = float4(0.0, 0.0, 0.0, 1.0);
-    col.xy = input.texCoord;
+    col.xy = input.uv;
     //col.z = input.color.z;
     return col;
 }
