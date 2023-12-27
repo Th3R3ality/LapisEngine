@@ -10,8 +10,6 @@
 
 namespace Lapis
 {
-    
-
     void LapisInstance::Init()
     {
         this->initDuration = std::chrono::high_resolution_clock::now().time_since_epoch();
@@ -321,7 +319,6 @@ namespace Lapis
         this->deviceContext->Unmap(resource, NULL);
     }
 
-    
     void LapisInstance::PushVertex(VERTEX vert) {
         if (this->VertexCount + 1 > this->VBufferCapacity) {
             this->VBufferCapacity += 1000;
@@ -330,7 +327,6 @@ namespace Lapis
         this->vertexBuffer.push_back(vert);
         this->VertexCount += 1;
     }
-
 
     void LapisInstance::CleanD3D11()
     {

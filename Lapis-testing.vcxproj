@@ -30,7 +30,6 @@
     <ClInclude Include="src\shaders\DefaultShaders.h" />
     <ClInclude Include="src\utils\hsl-to-rgb.hpp" />
     <ClInclude Include="src\DataTypes.hpp" />
-    <ClInclude Include="src\utils\ReadData.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shaders\DefaultStructs.hlsli" />
