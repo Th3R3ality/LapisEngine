@@ -16,6 +16,19 @@ namespace Lapis
 		Vector2 operator-() const;
 		Vector2 operator+(const Vector2& other) const;
 		Vector2 operator-(const Vector2& other) const;
+
+		constexpr Vector2() :
+			x(0), y(0)
+		{}
+
+		constexpr Vector2(float f) :
+			x(f), y(f)
+		{}
+
+		constexpr Vector2(float x, float y) :
+			x(x), y(y)
+		{}
+
 	};
 
 	struct Vector3

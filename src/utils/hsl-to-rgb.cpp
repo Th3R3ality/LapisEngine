@@ -1,26 +1,27 @@
 #include "hsl-to-rgb.hpp"
 
-RGB::RGB(unsigned char r, unsigned char g, unsigned char b)
+
+rgb::rgb(unsigned char r, unsigned char g, unsigned char b)
 {
 	R = r;
 	G = g;
 	B = b;
 }
 
-bool RGB::Equals(RGB rgb)
+bool rgb::Equals(rgb rgb)
 {
 	return (R == rgb.R) && (G == rgb.G) && (B == rgb.B);
 }
 
 
-HSL::HSL(int h, float s, float l)
+hsl::hsl(int h, float s, float l)
 {
 	H = h;
 	S = s;
 	L = l;
 }
 
-bool HSL::Equals(HSL hsl)
+bool hsl::Equals(hsl hsl)
 {
 	return (H == hsl.H) && (S == hsl.S) && (L == hsl.L);
 }
@@ -45,7 +46,7 @@ static float HueToRGB(float v1, float v2, float vH)
 	return v1;
 }
 
-static RGB HSLToRGB(HSL hsl)
+static rgb hsl2rgb(hsl hsl)
 {
 	unsigned char r = 0;
 	unsigned char g = 0;
@@ -66,10 +67,10 @@ static RGB HSLToRGB(HSL hsl)
 		b = (unsigned char)(255 * HueToRGB(v1, v2, hue - (1.0f / 3)));
 	}
 
-	return RGB(r, g, b);
+	return rgb(r, g, b);
 }
 
-DXGI_RGBA HSLToRGB(int h, float s, float l, float a)
+DXGI_RGBA hsl2rgb(int h, float s, float l, float a)
 {
 	DXGI_RGBA out;
 	out.a = a;

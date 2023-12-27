@@ -74,6 +74,9 @@ namespace Lapis
 		void DrawCircle(Vector2 xy, float r, DXGI_RGBA rgba, int vertexCount);
 
 
+
+		void DrawLine3D(Vector3 from, Vector3 to, DXGI_RGBA rgba);
+		void DrawLines3D(std::vector<Vector3> points, DXGI_RGBA rgba);
 		void DrawTriangle3D(Lapis::Transform transform, DXGI_RGBA rgba);
 		void DrawPlane(Lapis::Transform transform, DXGI_RGBA rgba);
 		void DrawCube(Lapis::Transform transform, DXGI_RGBA rgba);

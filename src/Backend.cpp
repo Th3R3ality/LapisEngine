@@ -59,18 +59,7 @@ namespace Lapis
         // set the render target as the back buffer
         this->deviceContext->OMSetRenderTargets(1, &this->backbuffer, NULL);
 
-        // Setup the viewport
-        D3D11_VIEWPORT vp;
-        vp.Width = (FLOAT)SCREEN_WIDTH;
-        vp.Height = (FLOAT)SCREEN_HEIGHT;
-        vp.MinDepth = 0.0f; vp.TopLeftX = 0;
-        vp.MaxDepth = 1.0f; vp.TopLeftY = 0;
-        deviceContext->RSSetViewports(1, &vp);
-
         InitDefaultShaders();
-
-
-
         deviceContext->VSSetShader(builtinMaterials["UI"].vertexShader, 0, 0);
         deviceContext->PSSetShader(builtinMaterials["UI"].pixelShader, 0, 0);
 
@@ -98,12 +87,31 @@ namespace Lapis
         this->deviceContext->VSSetConstantBuffers(0, 1, &this->pConstantBuffer);
         this->deviceContext->PSSetConstantBuffers(0, 1, &this->pConstantBuffer);
 
-        D3D11_RASTERIZER_DESC pRasterizerDesc = {};
-        pRasterizerDesc.FillMode = D3D11_FILL_SOLID;
-        pRasterizerDesc.CullMode = D3D11_CULL_NONE;
+        // Setup the viewport
+        D3D11_VIEWPORT vp;
+        vp.Width = (FLOAT)SCREEN_WIDTH;
+        vp.Height = (FLOAT)SCREEN_HEIGHT;
+        vp.MinDepth = 0.0f; vp.TopLeftX = 0;
+        vp.MaxDepth = 1.0f; vp.TopLeftY = 0;
+        deviceContext->RSSetViewports(1, &vp);
+
+        D3D11_RECT rect = {};
+        rect.left = 0;
+        rect.right = SCREEN_WIDTH;
+        rect.top = 0;
+        rect.bottom = SCREEN_HEIGHT;
+
+        deviceContext->RSSetScissorRects(1, &rect);
+
+        D3D11_RASTERIZER_DESC rasterizerDesc = {};
+        rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+        rasterizerDesc.CullMode = D3D11_CULL_NONE;
+        rasterizerDesc.ScissorEnable = true;
+        rasterizerDesc.DepthClipEnable = false;
+
 
         ID3D11RasterizerState* pRasterizerState;
-        this->device->CreateRasterizerState(&pRasterizerDesc, &pRasterizerState);
+        this->device->CreateRasterizerState(&rasterizerDesc, &pRasterizerState);
         this->deviceContext->RSSetState(pRasterizerState);
 
 
@@ -118,7 +126,6 @@ namespace Lapis
 
         device->CreateTexture2D(&depthBufferDesc, nullptr, &depthBuffer);
 
-        //ID3D11DepthStencilView* depthBufferView;
 
         device->CreateDepthStencilView(depthBuffer, nullptr, &this->depthBufferView);
 
@@ -232,7 +239,7 @@ namespace Lapis
         static float h = 0;
         h += this->deltaTime*0.5;
         if (h > 360) h -= 360;
-        auto color = HSLToRGB((int)h, 1.0f, 0.7f, 1.0f);
+        auto color = hsl2rgb((int)h, 1.0f, 0.7f, 1.0f);
 
         this->deviceContext->ClearRenderTargetView(this->backbuffer, (FLOAT*)&color);
         this->deviceContext->ClearDepthStencilView(this->depthBufferView, D3D11_CLEAR_DEPTH, 1.0f, 0);

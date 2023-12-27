@@ -1,32 +1,31 @@
 #pragma once
 #include <d3d11.h>
-#undef RGB
 
-class RGB
+class rgb
 {
 public:
 	unsigned char R;
 	unsigned char G;
 	unsigned char B;
 
-	RGB(unsigned char r, unsigned char g, unsigned char b);
+	rgb(unsigned char r, unsigned char g, unsigned char b);
 	
 
-	bool Equals(RGB rgb);
+	bool Equals(rgb rgb);
 
 };
 
-class HSL
+class hsl
 {
 public:
 	int H;
 	float S;
 	float L;
 
-	HSL(int h, float s, float l);
-	bool Equals(HSL hsl);
+	hsl(int h, float s, float l);
+	bool Equals(hsl hsl);
 };
 
 static float HueToRGB(float v1, float v2, float vH);
-static RGB HSLToRGB(HSL hsl);
-DXGI_RGBA HSLToRGB(int h, float s, float l, float a);
+static rgb hsl2rgb(hsl hsl);
+DXGI_RGBA hsl2rgb(int h, float s, float l, float a);

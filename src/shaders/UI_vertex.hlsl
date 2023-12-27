@@ -12,5 +12,7 @@ VOut main( VIn input )
     
     output.position = mul(Screen, output.position);
     
+    output.position.z = 0;
+    
 	return output;
 }
