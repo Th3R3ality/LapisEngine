@@ -158,16 +158,16 @@ namespace Lapis
 
     void LapisInstance::FlushFrame() {
         
-        this->vertexBuffer.clear();
+        this->LapisVertexVector.clear();
         this->VertexCount = 0;
 
-        this->commandList.clear();
+        this->LapisCommandVector.clear();
 
 
-        this->vertexBuffer.clear();
+        this->LapisVertexVector.clear();
         this->VertexCount = 0;
 
-        this->commandList.clear();
+        this->LapisCommandVector.clear();
     }
 
     void LapisInstance::UpdateGlobalConstantBuffer()
@@ -214,28 +214,28 @@ namespace Lapis
     {
         
         static int VBufferSize = 0;
-        if (VBufferCapacity > VBufferSize) {
+        if (VertexVectorCapacity > VBufferSize) {
 
-            if (pVBuffer)
-                pVBuffer->Release();
+            if (vertexBuffer)
+                vertexBuffer->Release();
 
             std::cout << "resizing back buffer\n";
             D3D11_BUFFER_DESC bd = {};
 
             bd.Usage = D3D11_USAGE_DYNAMIC;
-            bd.ByteWidth = VBufferCapacity * sizeof(Vertex);
+            bd.ByteWidth = VertexVectorCapacity * sizeof(Vertex);
             bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
             bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
 
-            this->device->CreateBuffer(&bd, NULL, &this->pVBuffer);       // create the buffer
-            if (!this->pVBuffer)
+            this->device->CreateBuffer(&bd, NULL, &this->vertexBuffer);       // create the buffer
+            if (!this->vertexBuffer)
                 return;
 
-            VBufferSize = this->VBufferCapacity;
+            VBufferSize = this->VertexVectorCapacity;
         }
         
-        RemapSubResource(pVBuffer, vertexBuffer.data(), sizeof(Vertex) * vertexBuffer.size());
+        RemapSubResource(vertexBuffer, LapisVertexVector.data(), sizeof(Vertex) * LapisVertexVector.size());
         
         static float h = 0;
         h += this->deltaTime*0.5;
@@ -247,11 +247,11 @@ namespace Lapis
 
         UINT stride = sizeof(Vertex);
         UINT offset = 0;
-        this->deviceContext->IASetVertexBuffers(0, 1, &this->pVBuffer, &stride, &offset);
+        this->deviceContext->IASetVertexBuffers(0, 1, &this->vertexBuffer, &stride, &offset);
         
         UpdateGlobalConstantBuffer();
 
-        for (auto& internalCommand : commandList) {
+        for (auto& internalCommand : LapisCommandVector) {
             {
                 this->DrawCommand(internalCommand);
             }
@@ -289,7 +289,7 @@ namespace Lapis
     }
     
     void LapisInstance::PushCommand(LapisCommand drawCommand) {
-        this->commandList.push_back(InternalLapisCommand(drawCommand, this->VertexCount));
+        this->LapisCommandVector.push_back(InternalLapisCommand(drawCommand, this->VertexCount));
     }
 
     void LapisInstance::InitDefaultShaders()
@@ -328,11 +328,11 @@ namespace Lapis
     }
 
     void LapisInstance::PushVertex(Vertex vert) {
-        if (this->VertexCount + 1 > this->VBufferCapacity) {
-            this->VBufferCapacity += 1000;
-            this->vertexBuffer.reserve(this->VBufferCapacity);
+        if (this->VertexCount + 1 > this->VertexVectorCapacity) {
+            this->VertexVectorCapacity += 1000;
+            this->LapisVertexVector.reserve(this->VertexVectorCapacity);
         }
-        this->vertexBuffer.push_back(vert);
+        this->LapisVertexVector.push_back(vert);
         this->VertexCount += 1;
     }
 
@@ -347,7 +347,7 @@ namespace Lapis
             material.second.pixelShader->Release();
         }
 
-        this->pVBuffer->Release();
+        this->vertexBuffer->Release();
         this->swapchain->Release();
         this->frameBuffer->Release();
         this->device->Release();

@@ -47,13 +47,13 @@ namespace Lapis
 			deviceContext = nullptr;
 			frameBuffer = nullptr;
 			inputLayout = nullptr;
-			pVBuffer = nullptr;
+			vertexBuffer = nullptr;
 			depthBufferView = nullptr;
 			constantBuffer = nullptr;
 
 			deltaDuration = {};
 			elapsedDuration = deltaDuration;
-			vertexBuffer.reserve(VBufferCapacity);
+			LapisVertexVector.reserve(VertexVectorCapacity);
 		}
 
 		void Init();
@@ -94,17 +94,17 @@ namespace Lapis
 		ID3D11DepthStencilView* depthBufferView;
 		ID3D11InputLayout* inputLayout;
 		ID3D11Buffer* constantBuffer;
+		ID3D11Buffer* vertexBuffer;
 
 		GlobalConstantBuffer gcb{};
 
-		ID3D11Buffer* pVBuffer;
 
 		std::chrono::steady_clock::duration initDuration = {};
 
 		int VertexCount = 0;
-		int VBufferCapacity = 1000;
-		std::vector<Vertex> vertexBuffer;
-		std::vector<InternalLapisCommand> commandList;
+		int VertexVectorCapacity = 1000;
+		std::vector<Vertex> LapisVertexVector;
+		std::vector<InternalLapisCommand> LapisCommandVector;
 
 		std::unordered_map<std::string, Material> builtinMaterials = {};
 
