@@ -23,8 +23,8 @@
 #pragma comment (lib, "d3dcompiler.lib")
 
 // include Lapis headers
-#include "Backend.h"
-#include "DataTypes.hpp"
+#include "engine/Backend.h"
+#include "engine/DataTypes.hpp"
 #include "utils/hsl-to-rgb.hpp"
 
 

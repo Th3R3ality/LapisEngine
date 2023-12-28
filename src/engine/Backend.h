@@ -11,7 +11,7 @@
 
 #include "DataTypes.hpp"
 
-#include "utils/hsl-to-rgb.hpp"
+#include "../utils/hsl-to-rgb.hpp"
 
 #define SCREEN_WIDTH (200*1)
 #define SCREEN_HEIGHT (150*1)
