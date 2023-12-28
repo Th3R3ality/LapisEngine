@@ -15,6 +15,7 @@
     <ClCompile Include="src\engine\3d.cpp" />
     <ClCompile Include="src\engine\Backend.cpp" />
     <ClCompile Include="src\engine\LapisEngine.cpp" />
+    <ClCompile Include="src\engine\LapisInternalTypes.cpp" />
     <ClCompile Include="src\engine\Material.cpp" />
     <ClCompile Include="src\utils\hsl-to-rgb.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -26,6 +27,7 @@
     <ClInclude Include="src\engine\2d.h" />
     <ClInclude Include="src\engine\Helpers.h" />
     <ClInclude Include="src\engine\LapisEngine.h" />
+    <ClInclude Include="src\engine\LapisInternalTypes.h" />
     <ClInclude Include="src\engine\Material.h" />
     <ClInclude Include="src\engine\shaders\compiled\DEFAULTSHADER__UI_pixel.h" />
     <ClInclude Include="src\engine\shaders\compiled\DEFAULTSHADER__UI_vertex.h" />

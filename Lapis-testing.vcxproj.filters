@@ -9,6 +9,7 @@
     <ClCompile Include="src\engine\Material.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\engine\LapisEngine.cpp" />
+    <ClCompile Include="src\engine\LapisInternalTypes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\engine\LapisTypes.h" />
@@ -28,6 +29,7 @@
     <ClInclude Include="src\engine\shaders\compiled\UNLIT_pixel.h" />
     <ClInclude Include="src\engine\shaders\compiled\UNLIT3d_vertex.h" />
     <ClInclude Include="src\engine\LapisEngine.h" />
+    <ClInclude Include="src\engine\LapisInternalTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\engine\shaders\unlit.shader" />

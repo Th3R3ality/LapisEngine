@@ -1,8 +1,13 @@
 #pragma once
-#include <d3d11.h>
+#include "LapisTypes.h"
 
 namespace Lapis
 {
-	//void DrawRect(int x, int y, int w, int h, DXGI_RGB rgb = {1, 0, 1}, float alpha = 1.f);
-	//void DrawRect(int x, int y, int w, int h, DXGI_RGBA rgba) { DrawRect(x,y,w,h, { rgba.r, rgba.g, rgba.b}, rgba.a); }
+	namespace D2
+	{
+		void DrawPoint(float x, float y, DXGI_RGBA rgba);
+		void DrawLine(Vec2 from, Vec2 to, DXGI_RGBA rgba);
+		void DrawRect(Vec2 tl, Vec2 wh, DXGI_RGBA rgba);
+		void DrawCircle(Vec2 xy, float r, DXGI_RGBA rgba, int vertexCount);
+	}
 }

@@ -9,6 +9,11 @@
 
 namespace Lapis
 {
+	enum class RenderApi
+	{
+		D3D11
+	};
+
 	struct Vec2
 	{
 		float x, y;
@@ -105,53 +110,4 @@ namespace Lapis
 			pos(pos), rot(rot), scale(scale)
 		{}
 	};
-
-	struct LapisCommand
-	{
-		UINT vertexCount;
-		D3D_PRIMITIVE_TOPOLOGY topology;
-		Transform transform;
-		Material material;
-
-		LapisCommand(UINT vertexCount, D3D_PRIMITIVE_TOPOLOGY topology, Transform transform, Material material) :
-			vertexCount(vertexCount), topology(topology), transform(transform), material(material)
-		{}
-
-		LapisCommand(UINT vertexCount, D3D_PRIMITIVE_TOPOLOGY topology, Material material) :
-			vertexCount(vertexCount), topology(topology), material(material)
-		{
-			transform = Transform({}, {}, { 1,1,1 });
-		}
-	};
-
-	struct InternalLapisCommand
-	{
-		UINT vertexCount;
-		UINT startVertexLocation;
-		D3D_PRIMITIVE_TOPOLOGY topology;
-		Transform transform;
-		Material material;
-
-		InternalLapisCommand(LapisCommand drawCommand, UINT startVertexLocation)
-			: vertexCount(drawCommand.vertexCount),
-			startVertexLocation(startVertexLocation),
-			topology(drawCommand.topology),
-			transform(drawCommand.transform),
-			material(drawCommand.material)
-		{}
-	};
-
-	_declspec(align(16))
-	struct GlobalConstantBuffer
-	{
-		float elapsedTime;
-		float deltaTime;
-		DirectX::XMMATRIX Screen;
-		DirectX::XMMATRIX Model;
-		DirectX::XMMATRIX World;
-		DirectX::XMMATRIX View;
-		DirectX::XMMATRIX Projection;
-	};
-
-
 }

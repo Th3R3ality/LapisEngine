@@ -10,6 +10,7 @@
 #include <unordered_map>
 
 #include "LapisTypes.h"
+#include "LapisInternalTypes.h"
 
 #include "../utils/hsl-to-rgb.hpp"
 
