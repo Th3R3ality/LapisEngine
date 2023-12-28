@@ -5,14 +5,14 @@
 #include <D3D11.h>
 #include <DirectXMath.h>
 
-#include "Material.h"
-
 namespace Lapis
 {
 	enum class RenderApi
 	{
 		D3D11
 	};
+
+	using Color = DXGI_RGBA;
 
 	struct Vec2
 	{
@@ -86,8 +86,6 @@ namespace Lapis
 		{}
 	};
 
-
-
 	struct Transform {
 		union
 		{
@@ -104,7 +102,7 @@ namespace Lapis
 			Vec3 scale;
 		};
 		Transform() :
-			pos(0), rot(0), scale(0)
+			pos(0), rot(0), scale(1)
 		{}
 		Transform(Vec3 pos, Vec3 rot, Vec3 scale) :
 			pos(pos), rot(rot), scale(scale)

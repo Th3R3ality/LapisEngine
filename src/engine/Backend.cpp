@@ -12,7 +12,10 @@ namespace Lapis
 {
     namespace Backend
     {
+        void InitD3D11(HWND hwnd)
+        {
 
+        }
     }
 
     void LapisInstance::Init()
@@ -65,8 +68,8 @@ namespace Lapis
         this->deviceContext->OMSetRenderTargets(1, &this->frameBuffer, NULL);
 
         InitDefaultShaders();
-        deviceContext->VSSetShader(builtinMaterials["UI"].vertexShader, 0, 0);
-        deviceContext->PSSetShader(builtinMaterials["UI"].pixelShader, 0, 0);
+        deviceContext->VSSetShader(builtinMaterials["UI"]->vertexShader, 0, 0);
+        deviceContext->PSSetShader(builtinMaterials["UI"]->pixelShader, 0, 0);
 
         D3D11_INPUT_ELEMENT_DESC ied[] =
         {
@@ -150,20 +153,21 @@ namespace Lapis
     }
     void LapisInstance::CleanD3D11()
     {
-        this->swapchain->SetFullscreenState(0, NULL);
+        swapchain->SetFullscreenState(0, NULL);
 
-        this->inputLayout->Release();
+        inputLayout->Release();
 
-        for (auto& material : builtinMaterials) {
-            material.second.vertexShader->Release();
-            material.second.pixelShader->Release();
+        for (auto [name, material] : builtinMaterials) {
+            
         }
+        builtinMaterials.clear();
 
-        this->vertexBuffer->Release();
-        this->swapchain->Release();
-        this->frameBuffer->Release();
-        this->device->Release();
-        this->deviceContext->Release();
+        vertexBuffer->Release();
+        frameBuffer->Release();
+
+        swapchain->Release();
+        device->Release();
+        deviceContext->Release();
     }
 
     void LapisInstance::NewFrame() {
@@ -231,12 +235,6 @@ namespace Lapis
         this->VertexCount = 0;
 
         this->LapisCommandVector.clear();
-
-
-        this->LapisVertexVector.clear();
-        this->VertexCount = 0;
-
-        this->LapisCommandVector.clear();
     }
 
     void LapisInstance::UpdateGlobalConstantBuffer()
@@ -298,7 +296,6 @@ namespace Lapis
     }
     void LapisInstance::DrawCommand(InternalLapisCommand internalLapisCommand)
     {
-
         auto model = DirectX::XMMatrixIdentity();
         auto scaleModel = Lapis::Helpers::XMMatrixScaling(internalLapisCommand.transform.scale);
         auto rotateModel = Lapis::Helpers::XMMatrixRotationAxis(Lapis::Vec3(0, 1, 0), internalLapisCommand.transform.rot.y);
@@ -311,14 +308,14 @@ namespace Lapis
 
         auto& material = internalLapisCommand.material;
         static ID3D11VertexShader* prevVertexShader = nullptr;
-        if (prevVertexShader != material.vertexShader) {
-            deviceContext->VSSetShader(material.vertexShader, 0, 0);
-            prevVertexShader = material.vertexShader;
+        if (prevVertexShader != material->vertexShader) {
+            deviceContext->VSSetShader(material->vertexShader, 0, 0);
+            prevVertexShader = material->vertexShader;
         }
         static ID3D11PixelShader* prevPixelShader = nullptr;
-        if (prevPixelShader != material.pixelShader) {
-            deviceContext->PSSetShader(material.pixelShader, 0, 0);
-            prevPixelShader = material.pixelShader;
+        if (prevPixelShader != material->pixelShader) {
+            deviceContext->PSSetShader(material->pixelShader, 0, 0);
+            prevPixelShader = material->pixelShader;
         }
 
         this->deviceContext->IASetPrimitiveTopology(internalLapisCommand.topology);
@@ -337,7 +334,7 @@ namespace Lapis
 #define CREATE_DEFAULT_MATERIAL_SEPERATE_SHADERS(name, vsName, psName) \
         CREATE_DEFAULT_SHADERS_SEPERATE(vsName, psName); \
         builtinMaterials.insert({ \
-                #name,Material(vsName##_vertex, psName##_pixel, nullptr)\
+                #name,std::make_unique<Material>(vsName##_vertex, psName##_pixel, nullptr)\
             });
 
 #define CREATE_DEFAULT_MATERIAL(name) CREATE_DEFAULT_MATERIAL_SEPERATE_SHADERS(name, name, name)
@@ -345,8 +342,6 @@ namespace Lapis
 
         CREATE_DEFAULT_MATERIAL(UI);
         CREATE_DEFAULT_MATERIAL_SEPERATE_SHADERS(UNLIT3D,UNLIT3D,UNLIT);
-
-        
 
 #undef CREATE_DEFAULT_SHADER
     }

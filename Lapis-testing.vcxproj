@@ -18,7 +18,7 @@
     <ClCompile Include="src\engine\LapisInternalTypes.cpp" />
     <ClCompile Include="src\engine\Material.cpp" />
     <ClCompile Include="src\utils\hsl-to-rgb.cpp" />
-    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\WinMain.cpp" />
     <ClCompile Include="src\engine\LapisTypes.cpp" />
   </ItemGroup>
   <ItemGroup>

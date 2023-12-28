@@ -16,19 +16,19 @@ namespace Lapis
 		UINT vertexCount;
 		D3D_PRIMITIVE_TOPOLOGY topology;
 		Transform transform;
-		Material material;
+		std::shared_ptr<Material> material;
 
-		LapisCommand(UINT vertexCount, D3D_PRIMITIVE_TOPOLOGY topology, Transform transform, Material material) :
+		LapisCommand(UINT vertexCount, D3D_PRIMITIVE_TOPOLOGY topology, Transform transform, std::shared_ptr<Material> material) :
 			vertexCount(vertexCount),
 			topology(topology),
 			transform(transform),
 			material(material)
 		{}
 
-		LapisCommand(UINT vertexCount, D3D_PRIMITIVE_TOPOLOGY topology, Material material) :
+		LapisCommand(UINT vertexCount, D3D_PRIMITIVE_TOPOLOGY topology, std::shared_ptr<Material> material) :
 			vertexCount(vertexCount),
 			topology(topology),
-			transform(Transform(0, 0, 1)),
+			transform(Transform()),
 			material(material)
 		{}
 	};
@@ -39,7 +39,7 @@ namespace Lapis
 		UINT startVertexLocation;
 		D3D_PRIMITIVE_TOPOLOGY topology;
 		Transform transform;
-		Material material;
+		std::shared_ptr<Material> material;
 
 		InternalLapisCommand(LapisCommand drawCommand, UINT startVertexLocation)
 			: vertexCount(drawCommand.vertexCount),

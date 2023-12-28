@@ -1,8 +1,9 @@
 #pragma once
+#include <Windows.h>
+
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
-#include <Windows.h>
 
 #include <chrono>
 #include <thread>
@@ -14,24 +15,31 @@
 
 #include "../utils/hsl-to-rgb.hpp"
 
-#define SCREEN_WIDTH (200*1)
-#define SCREEN_HEIGHT (150*1)
+#define SCREEN_WIDTH (200*4)
+#define SCREEN_HEIGHT (150*4)
 
 
 
 namespace Lapis
 {
-	struct LapisData
+	namespace Backend
 	{
+		void InitD3D11(HWND hwnd);
 
-	};
+		//void UpdateGlobalConstantBuffer();
+		//void RemapSubResource(ID3D11Resource* resource, void* data, size_t size);
+		//void PushVertex(Vertex vert);
+		//void PushVertex(Vec3 pos, Color col, Vec2 uv, Vec3 normal) { PushVertex(Vertex(pos, col, uv, normal)); };
+		//void PushCommand(LapisCommand lapisCommand);
+		//void DrawCommand(InternalLapisCommand internalLapisCommand);
+		//void InitDefaultShaders();
+	}
 
 	class LapisInstance
 	{
 
 	public:
 		// global declarations
-		
 
 		Lapis::Vec3 cameraPosition = { 0, 0, 0 };
 		float CameraRotationY = 0;
@@ -101,7 +109,9 @@ namespace Lapis
 		std::vector<Vertex> LapisVertexVector;
 		std::vector<InternalLapisCommand> LapisCommandVector;
 
-		std::unordered_map<std::string, Material> builtinMaterials = {};
+		std::unordered_map<std::string, std::shared_ptr<Material>> builtinMaterials = {};
+
+		
 
 		void UpdateGlobalConstantBuffer();
 		void RemapSubResource(ID3D11Resource* resource, void* data, size_t size);

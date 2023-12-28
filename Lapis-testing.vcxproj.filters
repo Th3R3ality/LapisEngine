@@ -7,7 +7,7 @@
     <ClCompile Include="src\engine\2d.cpp" />
     <ClCompile Include="src\engine\3d.cpp" />
     <ClCompile Include="src\engine\Material.cpp" />
-    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\WinMain.cpp" />
     <ClCompile Include="src\engine\LapisEngine.cpp" />
     <ClCompile Include="src\engine\LapisInternalTypes.cpp" />
   </ItemGroup>
