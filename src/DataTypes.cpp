@@ -4,29 +4,29 @@
 namespace Lapis
 {
 
-	////////////////////// Vector2
+	////////////////////// Vec2
 
-	Vector2 Lapis::Vector2::operator-() const
+	Vec2 Lapis::Vec2::operator-() const
 	{
-		Vector2 res;
+		Vec2 res;
 
 		res.x = -this->x;
 		res.y = -this->y;
 
 		return res;
 	}
-	Vector2 Vector2::operator+(const Vector2& other) const
+	Vec2 Vec2::operator+(const Vec2& other) const
 	{
-		Vector2 res;
+		Vec2 res;
 		
 		res.x = this->x + other.x;
 		res.y = this->y + other.y;
 
 		return res;
 	}
-	Vector2 Vector2::operator-(const Vector2& other) const
+	Vec2 Vec2::operator-(const Vec2& other) const
 	{
-		Vector2 res;
+		Vec2 res;
 
 		res.x = this->x - other.x;
 		res.y = this->y - other.y;
@@ -34,11 +34,11 @@ namespace Lapis
 		return res;
 	}
 
-	////////////////////// Vector3
+	////////////////////// Vec3
 
-	Vector3 Lapis::Vector3::operator-() const
+	Vec3 Lapis::Vec3::operator-() const
 	{
-		Vector3 res;
+		Vec3 res;
 
 		res.x = -this->x;
 		res.y = -this->y;
@@ -47,11 +47,11 @@ namespace Lapis
 		return res;
 	}
 
-	////////////////////// Vector4
+	////////////////////// Vec4
 
-	Vector4 Lapis::Vector4::operator+(const Vector4& other) const
+	Vec4 Lapis::Vec4::operator+(const Vec4& other) const
 	{
-		Vector4 res;
+		Vec4 res;
 
 		res.x = this->x + other.x;
 		res.y = this->y + other.y;

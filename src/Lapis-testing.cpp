@@ -126,15 +126,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 
 
-        Vector2 center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
+        Vec2 center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
 
-        //engine.DrawLine(center + Vector2(20, 0), center + Vector2(50, 0), { 1, 0, 0, 1 });
-        //engine.DrawLine(center + Vector2(0, 20), center + Vector2(0, 50), { 0, 1, 0, 1 });
-        //engine.DrawRect(center - Vector2(10, 10), Vector2(20, 20), { 0,0,1,1 });
-        //engine.DrawRect(Vector4(10, 10, 190, 15), { 1,0,1,1 });
-        //engine.DrawCircle(Vector2(10, 50), 10, { 1,1,0,1 }, 16);
+        //engine.DrawLine(center + Vec2(20, 0), center + Vec2(50, 0), { 1, 0, 0, 1 });
+        //engine.DrawLine(center + Vec2(0, 20), center + Vec2(0, 50), { 0, 1, 0, 1 });
+        //engine.DrawRect(center - Vec2(10, 10), Vec2(20, 20), { 0,0,1,1 });
+        //engine.DrawRect(Vec4(10, 10, 190, 15), { 1,0,1,1 });
+        //engine.DrawCircle(Vec2(10, 50), 10, { 1,1,0,1 }, 16);
 
-        engine.DrawPlane(Transform(Vector3(0, -0.1, 0), {}, { 1 }), { 0.5,0.5,0.5,1 });
+        engine.DrawPlane(Transform(Vec3(0, -0.1, 0), {}, { 1 }), { 0.5,0.5,0.5,1 });
 
         int checkerboardSize = 10;
         for (int i = 0; i < checkerboardSize; i++) {
@@ -147,51 +147,51 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
                     col = { 0, 0 ,0 ,1 };
                 //col = { dist,dist,dist,1 };
                 //engine.DrawPlane(Transform({ i - checkerboardSize / 2,-2 - dist * dist * (checkerboardSize / 5), j - checkerboardSize / 2 }, {}, { 1,1,1 }), col);
-                engine.DrawPlane(Transform(Vector3(i - checkerboardSize / 2 + 0.5, -0.2, j - checkerboardSize / 2 + 0.5), {}, {1}), col);
+                engine.DrawPlane(Transform(Vec3(i - checkerboardSize / 2 + 0.5, -0.2, j - checkerboardSize / 2 + 0.5), {}, {1}), col);
             }
         }
 
-        engine.DrawLine3D(Vector3(0, 0, 1), Vector3(1, 0, 0), { 0.8,0.2,0.8,1 });
+        engine.DrawLine3D(Vec3(0, 0, 1), Vec3(1, 0, 0), { 0.8,0.2,0.8,1 });
 
         float ymod = 0.3*sinf(engine.elapsedTime) + 0.4;
 
-        std::vector<Vector3> lineSegments = {
-            Vector3(0   ,.1 * ymod,1),
-            Vector3(.7  ,.2 * ymod,.7),
-            Vector3(1   ,.3 * ymod,0),
-            Vector3(0.7 ,.4 * ymod,-0.7),
-            Vector3(0   ,.5 * ymod,-1),
-            Vector3(-0.7,.6 * ymod,-0.7),
-            Vector3(-1  ,.7 * ymod,0),
-            Vector3(-0.7,.8 * ymod,0.7),
+        std::vector<Vec3> lineSegments = {
+            Vec3(0   ,.1 * ymod,1),
+            Vec3(.7  ,.2 * ymod,.7),
+            Vec3(1   ,.3 * ymod,0),
+            Vec3(0.7 ,.4 * ymod,-0.7),
+            Vec3(0   ,.5 * ymod,-1),
+            Vec3(-0.7,.6 * ymod,-0.7),
+            Vec3(-1  ,.7 * ymod,0),
+            Vec3(-0.7,.8 * ymod,0.7),
 
-            Vector3(0   ,.9 * ymod,1),
-            Vector3(.7  ,1 * ymod,.7),
-            Vector3(1   ,1.1 * ymod,0),
-            Vector3(0.7 ,1.2 * ymod,-0.7),
-            Vector3(0   ,1.3 * ymod,-1),
-            Vector3(-0.7,1.4 * ymod,-0.7),
-            Vector3(-1  ,1.5 * ymod,0),
-            Vector3(-0.7,1.6 * ymod,0.7),
+            Vec3(0   ,.9 * ymod,1),
+            Vec3(.7  ,1 * ymod,.7),
+            Vec3(1   ,1.1 * ymod,0),
+            Vec3(0.7 ,1.2 * ymod,-0.7),
+            Vec3(0   ,1.3 * ymod,-1),
+            Vec3(-0.7,1.4 * ymod,-0.7),
+            Vec3(-1  ,1.5 * ymod,0),
+            Vec3(-0.7,1.6 * ymod,0.7),
 
-            Vector3(0   ,1.7 * ymod,1),
-            Vector3(.7  ,1.8 * ymod,.7),
-            Vector3(1   ,1.9 * ymod,0),
-            Vector3(0.7 ,2 * ymod,-0.7),
-            Vector3(0   ,2.1 * ymod,-1),
-            Vector3(-0.7,2.2 * ymod,-0.7),
-            Vector3(-1  ,2.3 * ymod,0),
-            Vector3(-0.7,2.4 * ymod,0.7),
+            Vec3(0   ,1.7 * ymod,1),
+            Vec3(.7  ,1.8 * ymod,.7),
+            Vec3(1   ,1.9 * ymod,0),
+            Vec3(0.7 ,2 * ymod,-0.7),
+            Vec3(0   ,2.1 * ymod,-1),
+            Vec3(-0.7,2.2 * ymod,-0.7),
+            Vec3(-1  ,2.3 * ymod,0),
+            Vec3(-0.7,2.4 * ymod,0.7),
 
-            Vector3(0   ,2.5 * ymod,1),
-            Vector3(.7  ,2.6 * ymod,.7),
-            Vector3(1   ,2.7 * ymod,0),
-            Vector3(0.7 ,2.8 * ymod,-0.7),
-            Vector3(0   ,2.9 * ymod,-1),
-            Vector3(-0.7,3 * ymod,-0.7),
-            Vector3(-1  ,3.1 * ymod,0),
-            Vector3(-0.7,3.2 * ymod,0.7),
-            Vector3(0   ,3.3 * ymod,1),
+            Vec3(0   ,2.5 * ymod,1),
+            Vec3(.7  ,2.6 * ymod,.7),
+            Vec3(1   ,2.7 * ymod,0),
+            Vec3(0.7 ,2.8 * ymod,-0.7),
+            Vec3(0   ,2.9 * ymod,-1),
+            Vec3(-0.7,3 * ymod,-0.7),
+            Vec3(-1  ,3.1 * ymod,0),
+            Vec3(-0.7,3.2 * ymod,0.7),
+            Vec3(0   ,3.3 * ymod,1),
         };
         engine.DrawLines3D(lineSegments, { 0.2,0.2,0.8,1 });
 

@@ -9,70 +9,74 @@
 
 namespace Lapis
 {
-	struct Vector2
+	struct Vec2
 	{
 		float x, y;
 
-		Vector2 operator-() const;
-		Vector2 operator+(const Vector2& other) const;
-		Vector2 operator-(const Vector2& other) const;
+		Vec2 operator-() const;
+		Vec2 operator+(const Vec2& other) const;
+		Vec2 operator-(const Vec2& other) const;
 
-		constexpr Vector2() :
+		constexpr Vec2() :
 			x(0), y(0)
 		{}
 
-		constexpr Vector2(float f) :
+		constexpr Vec2(float f) :
 			x(f), y(f)
 		{}
 
-		constexpr Vector2(float x, float y) :
+		constexpr Vec2(float x, float y) :
 			x(x), y(y)
 		{}
 
 	};
+	using Vector2 = Vec2;
 
-	struct Vector3
+	struct Vec3
 	{
 		float x, y, z;
 
-		Vector3 operator-() const;
+		Vec3 operator-() const;
 
-		constexpr Vector3() :
+		constexpr Vec3() :
 			x(0), y(0), z(0)
 		{}
 
-		constexpr Vector3(float f) :
+		constexpr Vec3(float f) :
 			x(f), y(f), z(f)
 		{}
 
-		constexpr Vector3(float x, float y, float z) :
+		constexpr Vec3(float x, float y, float z) :
 			x(x), y(y), z(z)
 		{}
 	};
+	using Vector3 = Vec3;
+	
 
-	struct Vector4
+	struct Vec4
 	{
 		float x, y, z, w;
 
-		Vector4 operator+(const Vector4& other) const;
+		Vec4 operator+(const Vec4& other) const;
 	};
+	using Vector4 = Vec4;
 
-	struct VERTEX
+	struct Vertex
 	{
 		union
 		{
-			Vector3 position;
-			Vector3 pos;
+			Vec3 position;
+			Vec3 pos;
 		};
 		union
 		{
 			DXGI_RGBA color;
 			DXGI_RGBA col;
 		};
-		Vector2 uv;
-		Vector3 normal;
+		Vec2 uv;
+		Vec3 normal;
 
-		VERTEX(Vector3 pos, DXGI_RGBA col, Vector2 uv, Vector3 normal) :
+		Vertex(Vec3 pos, DXGI_RGBA col, Vec2 uv, Vec3 normal) :
 			pos(pos), col(col), uv(uv), normal(normal)
 		{}
 	};
@@ -82,22 +86,22 @@ namespace Lapis
 	struct Transform {
 		union
 		{
-			Vector3 position;
-			Vector3 pos;
+			Vec3 position;
+			Vec3 pos;
 		};
 		union
 		{
-			Vector3 rotation;
-			Vector3 rot;
+			Vec3 rotation;
+			Vec3 rot;
 		};
 		union
 		{
-			Vector3 scale;
+			Vec3 scale;
 		};
 		Transform() :
 			pos(0), rot(0), scale(0)
 		{}
-		Transform(Vector3 pos, Vector3 rot, Vector3 scale) :
+		Transform(Vec3 pos, Vec3 rot, Vec3 scale) :
 			pos(pos), rot(rot), scale(scale)
 		{}
 	};
@@ -140,7 +144,8 @@ namespace Lapis
 	_declspec(align(16))
 	struct GlobalConstantBuffer
 	{
-		float fTime;
+		float elapsedTime;
+		float deltaTime;
 		DirectX::XMMATRIX Screen;
 		DirectX::XMMATRIX Model;
 		DirectX::XMMATRIX World;

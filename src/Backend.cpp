@@ -53,11 +53,11 @@ namespace Lapis
         this->swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
 
         // use the back buffer address to create the render target
-        this->device->CreateRenderTargetView(pBackBuffer, NULL, &this->backbuffer);
+        this->device->CreateRenderTargetView(pBackBuffer, NULL, &this->frameBuffer);
         pBackBuffer->Release();
 
         // set the render target as the back buffer
-        this->deviceContext->OMSetRenderTargets(1, &this->backbuffer, NULL);
+        this->deviceContext->OMSetRenderTargets(1, &this->frameBuffer, NULL);
 
         InitDefaultShaders();
         deviceContext->VSSetShader(builtinMaterials["UI"].vertexShader, 0, 0);
@@ -71,8 +71,8 @@ namespace Lapis
             {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
         };
 
-        this->device->CreateInputLayout(ied, sizeof(ied) / sizeof(ied[0]), DEFAULTSHADER__UI_vertex, sizeof(DEFAULTSHADER__UI_vertex), &this->pLayout);
-        this->deviceContext->IASetInputLayout(this->pLayout);
+        this->device->CreateInputLayout(ied, sizeof(ied) / sizeof(ied[0]), DEFAULTSHADER__UI_vertex, sizeof(DEFAULTSHADER__UI_vertex), &this->inputLayout);
+        this->deviceContext->IASetInputLayout(this->inputLayout);
 
 
         D3D11_BUFFER_DESC cbDesc{};
@@ -83,9 +83,9 @@ namespace Lapis
         cbDesc.MiscFlags = 0;
         cbDesc.StructureByteStride = 0;
 
-        this->device->CreateBuffer(&cbDesc, NULL, &this->pConstantBuffer);
-        this->deviceContext->VSSetConstantBuffers(0, 1, &this->pConstantBuffer);
-        this->deviceContext->PSSetConstantBuffers(0, 1, &this->pConstantBuffer);
+        this->device->CreateBuffer(&cbDesc, NULL, &this->constantBuffer);
+        this->deviceContext->VSSetConstantBuffers(0, 1, &this->constantBuffer);
+        this->deviceContext->PSSetConstantBuffers(0, 1, &this->constantBuffer);
 
         // Setup the viewport
         D3D11_VIEWPORT vp;
@@ -129,7 +129,7 @@ namespace Lapis
 
         device->CreateDepthStencilView(depthBuffer, nullptr, &this->depthBufferView);
 
-        deviceContext->OMSetRenderTargets(1, &this->backbuffer, this->depthBufferView);
+        deviceContext->OMSetRenderTargets(1, &this->frameBuffer, this->depthBufferView);
 
         D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {};
         depthStencilDesc.DepthEnable = TRUE;
@@ -172,7 +172,8 @@ namespace Lapis
 
     void LapisInstance::UpdateGlobalConstantBuffer()
     {
-        gcb.fTime = elapsedTime;
+        gcb.elapsedTime = elapsedTime;
+        gcb.deltaTime = deltaTime;
 
         float L = 0, T = 0, R = SCREEN_WIDTH, B = SCREEN_HEIGHT;
         DirectX::XMMATRIX m = {
@@ -189,9 +190,9 @@ namespace Lapis
 
         auto world = DirectX::XMMatrixIdentity();
 
-        DirectX::XMVECTOR Eye = Lapis::Helpers::XMVectorSet(Lapis::Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-        DirectX::XMVECTOR At = Lapis::Helpers::XMVectorSet(Lapis::Vector4(0.0f, 0.0f, 1.0f, 0.0f));
-        DirectX::XMVECTOR Up = Lapis::Helpers::XMVectorSet(Lapis::Vector4(0.0f, 1.0f, 0.0f, 0.0f));
+        DirectX::XMVECTOR Eye = Lapis::Helpers::XMVectorSet(Lapis::Vec4(0.0f, 0.0f, 0.0f, 0.0f));
+        DirectX::XMVECTOR At = Lapis::Helpers::XMVectorSet(Lapis::Vec4(0.0f, 0.0f, 1.0f, 0.0f));
+        DirectX::XMVECTOR Up = Lapis::Helpers::XMVectorSet(Lapis::Vec4(0.0f, 1.0f, 0.0f, 0.0f));
         auto view = DirectX::XMMatrixLookAtLH(Eye, At, Up);
         auto translateView = Lapis::Helpers::XMMatrixTranslation(this->cameraPosition);
         auto rotateView = DirectX::XMMatrixRotationY(this->CameraRotationY);
@@ -205,7 +206,7 @@ namespace Lapis
         gcb.View = DirectX::XMMatrixTranspose(view);
         gcb.Projection = DirectX::XMMatrixTranspose(projection);
 
-        RemapSubResource(pConstantBuffer, &gcb, sizeof(gcb));
+        RemapSubResource(constantBuffer, &gcb, sizeof(gcb));
 
     }
 
@@ -222,7 +223,7 @@ namespace Lapis
             D3D11_BUFFER_DESC bd = {};
 
             bd.Usage = D3D11_USAGE_DYNAMIC;
-            bd.ByteWidth = VBufferCapacity * sizeof(VERTEX);
+            bd.ByteWidth = VBufferCapacity * sizeof(Vertex);
             bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
             bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
@@ -234,17 +235,17 @@ namespace Lapis
             VBufferSize = this->VBufferCapacity;
         }
         
-        RemapSubResource(pVBuffer, vertexBuffer.data(), sizeof(VERTEX) * vertexBuffer.size());
+        RemapSubResource(pVBuffer, vertexBuffer.data(), sizeof(Vertex) * vertexBuffer.size());
         
         static float h = 0;
         h += this->deltaTime*0.5;
         if (h > 360) h -= 360;
         auto color = hsl2rgb((int)h, 1.0f, 0.7f, 1.0f);
 
-        this->deviceContext->ClearRenderTargetView(this->backbuffer, (FLOAT*)&color);
+        this->deviceContext->ClearRenderTargetView(this->frameBuffer, (FLOAT*)&color);
         this->deviceContext->ClearDepthStencilView(this->depthBufferView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-        UINT stride = sizeof(VERTEX);
+        UINT stride = sizeof(Vertex);
         UINT offset = 0;
         this->deviceContext->IASetVertexBuffers(0, 1, &this->pVBuffer, &stride, &offset);
         
@@ -263,13 +264,13 @@ namespace Lapis
 
         auto model = DirectX::XMMatrixIdentity();
         auto scaleModel = Lapis::Helpers::XMMatrixScaling(internalDrawCommand.transform.scale);
-        auto rotateModel = Lapis::Helpers::XMMatrixRotationAxis(Lapis::Vector3(0, 1, 0), internalDrawCommand.transform.rot.y);
+        auto rotateModel = Lapis::Helpers::XMMatrixRotationAxis(Lapis::Vec3(0, 1, 0), internalDrawCommand.transform.rot.y);
         auto translateModel = Lapis::Helpers::XMMatrixTranslation(internalDrawCommand.transform.pos);
 
         model = model * scaleModel * rotateModel * translateModel;
         gcb.Model = DirectX::XMMatrixTranspose(model);
 
-        RemapSubResource(pConstantBuffer, &gcb, sizeof(gcb));
+        RemapSubResource(constantBuffer, &gcb, sizeof(gcb));
 
         static ID3D11VertexShader* prevVertexShader = nullptr;
         if (prevVertexShader != internalDrawCommand.material.vertexShader) {
@@ -326,7 +327,7 @@ namespace Lapis
         this->deviceContext->Unmap(resource, NULL);
     }
 
-    void LapisInstance::PushVertex(VERTEX vert) {
+    void LapisInstance::PushVertex(Vertex vert) {
         if (this->VertexCount + 1 > this->VBufferCapacity) {
             this->VBufferCapacity += 1000;
             this->vertexBuffer.reserve(this->VBufferCapacity);
@@ -339,7 +340,7 @@ namespace Lapis
     {
         this->swapchain->SetFullscreenState(0, NULL);
 
-        this->pLayout->Release();
+        this->inputLayout->Release();
 
         for (auto& material : builtinMaterials) {
             material.second.vertexShader->Release();
@@ -348,7 +349,7 @@ namespace Lapis
 
         this->pVBuffer->Release();
         this->swapchain->Release();
-        this->backbuffer->Release();
+        this->frameBuffer->Release();
         this->device->Release();
         this->deviceContext->Release();
     }

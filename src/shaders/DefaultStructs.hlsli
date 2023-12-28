@@ -14,7 +14,8 @@ struct VOut
 };
 cbuffer GlobalConstantBuffer : register(b0)
 {
-    float fTime;
+    float elapsedTime;
+    float deltaTime;
     matrix Screen;
     matrix Model;
     matrix World;
