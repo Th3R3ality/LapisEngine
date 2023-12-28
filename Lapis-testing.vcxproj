@@ -16,7 +16,7 @@
     <ClCompile Include="src\Backend.cpp" />
     <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\utils\hsl-to-rgb.cpp" />
-    <ClCompile Include="src\Lapis-testing.cpp" />
+    <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\DataTypes.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -59,15 +59,11 @@
       <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">DEFAULTSHADER__UI_vertex</VariableName>
       <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">src\shaders\compiled\UI_vertex.h</HeaderFileOutput>
     </FxCompile>
-    <FxCompile Include="src\shaders\UNLIT3D_vertex.hlsl">
+    <FxCompile Include="src\shaders\DEFAULTSHADER__UNLIT3D_vertex.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">DEFAULTSHADER__UNLIT3D_vertex</VariableName>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">src\shaders\compiled\UNLIT3d_vertex.h</HeaderFileOutput>
-      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">DEFAULTSHADER__UNLIT3D_vertex</VariableName>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">src\shaders\compiled\UNLIT3d_vertex.h</HeaderFileOutput>
     </FxCompile>
     <FxCompile Include="src\shaders\UNLIT_pixel.hlsl">
       <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">DEFAULTSHADER__UNLIT_pixel</VariableName>
@@ -138,6 +134,11 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OutputFile>$(SolutionDir)bin\$(TargetName)$(TargetExt)</OutputFile>
     </Link>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+      <VariableName>%(Filename)</VariableName>
+      <HeaderFileOutput>src\engine\shaders\compiled\%(Filename)</HeaderFileOutput>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -156,6 +157,11 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <OutputFile>$(SolutionDir)bin\$(TargetName)$(TargetExt)</OutputFile>
     </Link>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+      <VariableName>%(Filename)</VariableName>
+      <HeaderFileOutput>src\engine\shaders\compiled\%(Filename)</HeaderFileOutput>
+    </FxCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

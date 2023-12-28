@@ -107,7 +107,7 @@ namespace Lapis
         rasterizerDesc.FillMode = D3D11_FILL_SOLID;
         rasterizerDesc.CullMode = D3D11_CULL_NONE;
         rasterizerDesc.ScissorEnable = true;
-        rasterizerDesc.DepthClipEnable = false;
+        rasterizerDesc.DepthClipEnable = true;
 
 
         ID3D11RasterizerState* pRasterizerState;
