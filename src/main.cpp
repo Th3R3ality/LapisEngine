@@ -24,13 +24,13 @@
 
 // include Lapis headers
 #include "engine/Backend.h"
-#include "engine/DataTypes.hpp"
-#include "utils/hsl-to-rgb.hpp"
+#include "engine/LapisTypes.h"
 
+// include Utility headers
+#include "utils/hsl-to-rgb.hpp"
 
 using namespace Lapis;
 LapisInstance engine;
-
 
 // the WindowProc function prototype
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -134,7 +134,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
         //engine.DrawRect(Vec4(10, 10, 190, 15), { 1,0,1,1 });
         //engine.DrawCircle(Vec2(10, 50), 10, { 1,1,0,1 }, 16);
 
-        engine.DrawPlane(Transform(Vec3(0, -0.1, 0), {}, { 1 }), { 0.5,0.5,0.5,1 });
+        engine.DrawPlane(Transform(Vec3(0, -0.1f, 0), {}, { 1 }), { 0.5,0.5,0.5,1 });
 
         int checkerboardSize = 10;
         for (int i = 0; i < checkerboardSize; i++) {
@@ -147,53 +147,53 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
                     col = { 0, 0 ,0 ,1 };
                 //col = { dist,dist,dist,1 };
                 //engine.DrawPlane(Transform({ i - checkerboardSize / 2,-2 - dist * dist * (checkerboardSize / 5), j - checkerboardSize / 2 }, {}, { 1,1,1 }), col);
-                engine.DrawPlane(Transform(Vec3(i - checkerboardSize / 2 + 0.5, -0.2, j - checkerboardSize / 2 + 0.5), {}, {1}), col);
+                engine.DrawPlane(Transform(Vec3(i - checkerboardSize / 2 + 0.5f, -0.2f, j - checkerboardSize / 2 + 0.5f), {}, {1}), col);
             }
         }
 
-        engine.DrawLine3D(Vec3(0, 0, 1), Vec3(1, 0, 0), { 0.8,0.2,0.8,1 });
+        engine.DrawLine3D(Vec3(0, 0, 1), Vec3(1, 0, 0), { 0.8f,0.2f,0.8f,1 });
 
-        float ymod = 0.3*sinf(engine.elapsedTime) + 0.4;
+        float ymod = 0.3f*sinf(engine.elapsedTime) + 0.4f;
 
         std::vector<Vec3> lineSegments = {
-            Vec3(0   ,.1 * ymod,1),
-            Vec3(.7  ,.2 * ymod,.7),
-            Vec3(1   ,.3 * ymod,0),
-            Vec3(0.7 ,.4 * ymod,-0.7),
-            Vec3(0   ,.5 * ymod,-1),
-            Vec3(-0.7,.6 * ymod,-0.7),
-            Vec3(-1  ,.7 * ymod,0),
-            Vec3(-0.7,.8 * ymod,0.7),
+            Vec3(0    ,.1f * ymod,1),
+            Vec3(.7f  ,.2f * ymod,.7f),
+            Vec3(1    ,.3f * ymod,0),
+            Vec3(0.7f ,.4f * ymod,-0.7f),
+            Vec3(0    ,.5f * ymod,-1),
+            Vec3(-0.7f,.6f * ymod,-0.7f),
+            Vec3(-1   ,.7f * ymod,0),
+            Vec3(-0.7f,.8f * ymod,0.7f),
 
-            Vec3(0   ,.9 * ymod,1),
-            Vec3(.7  ,1 * ymod,.7),
-            Vec3(1   ,1.1 * ymod,0),
-            Vec3(0.7 ,1.2 * ymod,-0.7),
-            Vec3(0   ,1.3 * ymod,-1),
-            Vec3(-0.7,1.4 * ymod,-0.7),
-            Vec3(-1  ,1.5 * ymod,0),
-            Vec3(-0.7,1.6 * ymod,0.7),
+            Vec3(0    ,.9f * ymod,1),
+            Vec3(.7f  ,1 * ymod  ,.7f),
+            Vec3(1    ,1.1f * ymod,0),
+            Vec3(0.7f ,1.2f * ymod,-0.7f),
+            Vec3(0    ,1.3f * ymod,-1),
+            Vec3(-0.7f,1.4f * ymod,-0.7f),
+            Vec3(-1   ,1.5f * ymod,0),
+            Vec3(-0.7f,1.6f * ymod,0.7f),
 
-            Vec3(0   ,1.7 * ymod,1),
-            Vec3(.7  ,1.8 * ymod,.7),
-            Vec3(1   ,1.9 * ymod,0),
-            Vec3(0.7 ,2 * ymod,-0.7),
-            Vec3(0   ,2.1 * ymod,-1),
-            Vec3(-0.7,2.2 * ymod,-0.7),
-            Vec3(-1  ,2.3 * ymod,0),
-            Vec3(-0.7,2.4 * ymod,0.7),
+            Vec3(0    ,1.7f * ymod,1),
+            Vec3(.7f  ,1.8f * ymod,.7f),
+            Vec3(1    ,1.9f * ymod,0),
+            Vec3(0.7f ,2 * ymod,-0.7f),
+            Vec3(0    ,2.1f * ymod,-1),
+            Vec3(-0.7f,2.2f * ymod,-0.7f),
+            Vec3(-1   ,2.3f * ymod,0),
+            Vec3(-0.7f,2.4f * ymod,0.7f),
 
-            Vec3(0   ,2.5 * ymod,1),
-            Vec3(.7  ,2.6 * ymod,.7),
-            Vec3(1   ,2.7 * ymod,0),
-            Vec3(0.7 ,2.8 * ymod,-0.7),
-            Vec3(0   ,2.9 * ymod,-1),
-            Vec3(-0.7,3 * ymod,-0.7),
-            Vec3(-1  ,3.1 * ymod,0),
-            Vec3(-0.7,3.2 * ymod,0.7),
-            Vec3(0   ,3.3 * ymod,1),
+            Vec3(0    ,2.5f * ymod,1),
+            Vec3(.7f  ,2.6f * ymod,.7f),
+            Vec3(1    ,2.7f * ymod,0),
+            Vec3(0.7f ,2.8f * ymod,-0.7f),
+            Vec3(0    ,2.9f * ymod,-1),
+            Vec3(-0.7f,3 * ymod,-0.7f),
+            Vec3(-1   ,3.1f * ymod,0),
+            Vec3(-0.7f,3.2f * ymod,0.7f),
+            Vec3(0    ,3.3f * ymod,1),
         };
-        engine.DrawLines3D(lineSegments, { 0.2,0.2,0.8,1 });
+        engine.DrawLines3D(lineSegments, { 0.2f,0.2f,0.8f,1 });
 
         engine.RenderFrame();
         engine.FlushFrame();
@@ -203,7 +203,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     std::cout << "Cleaning up";
     engine.CleanD3D11();
 
-    return msg.wParam;
+    return (int)msg.wParam;
 }
 
 // this is the main message handler for the program

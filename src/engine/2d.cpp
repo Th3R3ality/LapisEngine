@@ -36,8 +36,8 @@ namespace Lapis
 #define _PI (float)3.14159265358979323846
 
 		for (int i = 0; i < vertexCount; i++) {
-			float _x = cosf(i * _PI / (vertexCount-1)) * 0.5 + 0.5;
-			float _y = (i % 2 == 0 ? -1 : 1) * sinf(i * _PI / (vertexCount-1)) * 0.5 + 0.5;
+			float _x = cosf(i * _PI / (vertexCount-1)) * 0.5f + 0.5f;
+			float _y = (i % 2 == 0 ? -1 : 1) * sinf(i * _PI / (vertexCount-1)) * 0.5f + 0.5f;
 			this->PushVertex(Vertex(
 				Vec3( xy.x + r*2 * _x, xy.y + r*2 * _y, 0),
 				rgba,

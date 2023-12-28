@@ -9,7 +9,7 @@
 #include <vector>
 #include <unordered_map>
 
-#include "DataTypes.hpp"
+#include "LapisTypes.h"
 
 #include "../utils/hsl-to-rgb.hpp"
 

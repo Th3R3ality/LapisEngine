@@ -13,7 +13,7 @@ namespace Lapis
 
 	void LapisInstance::DrawLines3D(std::vector<Vec3> points, DXGI_RGBA rgba)
 	{
-		PushCommand(LapisCommand(points.size(), D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP, builtinMaterials["UNLIT3D"]));
+		PushCommand(LapisCommand((UINT)points.size(), D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP, builtinMaterials["UNLIT3D"]));
 
 		for (int idx = 0; idx < points.size(); idx++) {
 			PushVertex(Vertex(points[idx], rgba, Vec2((float)idx/points.size(), 0), {}));

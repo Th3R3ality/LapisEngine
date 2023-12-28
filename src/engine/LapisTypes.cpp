@@ -1,4 +1,4 @@
-#include "DataTypes.hpp"
+#include "LapisTypes.h"
 
 
 namespace Lapis

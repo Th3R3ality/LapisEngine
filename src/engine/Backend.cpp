@@ -200,7 +200,7 @@ namespace Lapis
         RemapSubResource(vertexBuffer, LapisVertexVector.data(), sizeof(Vertex) * LapisVertexVector.size());
         
         static float h = 0;
-        h += this->deltaTime*0.5;
+        h += this->deltaTime*0.5f;
         if (h > 360) h -= 360;
         auto color = hsl2rgb((int)h, 1.0f, 0.7f, 1.0f);
 
