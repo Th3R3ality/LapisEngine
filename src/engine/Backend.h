@@ -15,8 +15,8 @@
 
 #include "../utils/hsl-to-rgb.hpp"
 
-#define SCREEN_WIDTH (200*4)
-#define SCREEN_HEIGHT (150*4)
+#define SCREEN_WIDTH (200*1)
+#define SCREEN_HEIGHT (150*1)
 
 
 
@@ -79,6 +79,7 @@ namespace Lapis
 		void DrawLine(Vec2 from, Vec2 to, DXGI_RGBA rgba);
 		void DrawRect(Vec2 xy, Vec2 wh, DXGI_RGBA rgba);
 		void DrawRect(Vec4 ltrb, DXGI_RGBA rgba) { DrawRect(Vec2(ltrb.x, ltrb.y), Vec2(ltrb.z - ltrb.x, ltrb.w - ltrb.y), rgba); };
+		void DrawCircle(Vec2 xy, float r, Color rgba);
 		void DrawCircle(Vec2 xy, float r, DXGI_RGBA rgba, int vertexCount);
 
 		void DrawLine3D(Vec3 from, Vec3 to, DXGI_RGBA rgba);

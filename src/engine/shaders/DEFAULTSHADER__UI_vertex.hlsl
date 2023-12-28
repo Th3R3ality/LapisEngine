@@ -10,6 +10,7 @@ VOut main( VIn input )
     output.normal = input.normal;
     
     
+    output.position = mul(Model, output.position);
     output.position = mul(Screen, output.position);
     
     output.position.z = 0;

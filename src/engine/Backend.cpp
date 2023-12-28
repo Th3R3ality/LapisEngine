@@ -142,7 +142,7 @@ namespace Lapis
         D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {};
         depthStencilDesc.DepthEnable = TRUE;
         depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-        depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+        depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
         ID3D11DepthStencilState* depthStencilState;
 
@@ -332,16 +332,19 @@ namespace Lapis
 #define CREATE_DEFAULT_SHADERS(name) CREATE_DEFAULT_SHADERS_SEPERATE(name, name);
 
 #define CREATE_DEFAULT_MATERIAL_SEPERATE_SHADERS(name, vsName, psName) \
+    { \
         CREATE_DEFAULT_SHADERS_SEPERATE(vsName, psName); \
-        builtinMaterials.insert({ \
-                #name,std::make_unique<Material>(vsName##_vertex, psName##_pixel, nullptr)\
-            });
+            builtinMaterials.insert({ \
+                    #name,std::make_unique<Material>(vsName##_vertex, psName##_pixel, nullptr)\
+                }); \
+    }
 
 #define CREATE_DEFAULT_MATERIAL(name) CREATE_DEFAULT_MATERIAL_SEPERATE_SHADERS(name, name, name)
         
 
         CREATE_DEFAULT_MATERIAL(UI);
         CREATE_DEFAULT_MATERIAL_SEPERATE_SHADERS(UNLIT3D,UNLIT3D,UNLIT);
+        CREATE_DEFAULT_MATERIAL_SEPERATE_SHADERS(CIRCLE, UI, CIRCLE);
 
 #undef CREATE_DEFAULT_SHADER
     }

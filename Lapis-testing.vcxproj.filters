@@ -43,5 +43,6 @@
     <FxCompile Include="src\engine\shaders\DEFAULTSHADER__UI_pixel.hlsl" />
     <FxCompile Include="src\engine\shaders\DEFAULTSHADER__UNLIT_pixel.hlsl" />
     <FxCompile Include="src\engine\shaders\DEFAULTSHADER__UNLIT3D_vertex.hlsl" />
+    <FxCompile Include="src\engine\shaders\DEFAULTSHADER__CIRCLE_pixel.hlsl" />
   </ItemGroup>
 </Project>

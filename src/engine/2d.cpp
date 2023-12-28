@@ -26,6 +26,17 @@ namespace Lapis
 		PushVertex(Vertex({ tl.x + wh.x, tl.y + wh.y, 0 }, rgba, { 1,1 }, { 0,0,-1 }));
 	}
 
+	void LapisInstance::DrawCircle(Vec2 xy, float r, Color rgba)
+	{
+		r = r * 2;
+		PushCommand(LapisCommand(4, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, builtinMaterials["CIRCLE"]));
+
+		PushVertex(Vertex(xy + Vec2(-0.5f) * r, rgba, 0, Vec3(0, 0, -1)));
+		PushVertex(Vertex(xy + Vec2(0.5f, -0.5f) * r, rgba, Vec2(1,0), Vec3(0, 0, -1)));
+		PushVertex(Vertex(xy + Vec2(-0.5f, 0.5f) * r, rgba, Vec2(0,1), Vec3(0, 0, -1)));
+		PushVertex(Vertex(xy + Vec2(0.5) * r, rgba, 1, Vec3(0, 0, -1)));
+	}
+
 	void LapisInstance::DrawCircle(Vec2 xy, float r, DXGI_RGBA rgba, int vertexCount)
 	{
 		if (vertexCount < 6)

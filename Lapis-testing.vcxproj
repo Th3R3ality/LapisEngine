@@ -49,6 +49,10 @@
     <None Include="src\engine\shaders\unlit.shader" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="src\engine\shaders\DEFAULTSHADER__CIRCLE_pixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="src\engine\shaders\DEFAULTSHADER__UI_pixel.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>

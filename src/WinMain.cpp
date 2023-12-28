@@ -128,8 +128,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
         Lapis::Vec2 center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
 
-        //engine.DrawLine(center + Vec2(20, 0), center + Vec2(50, 0), { 1, 0, 0, 1 });
-        //engine.DrawLine(center + Vec2(0, 20), center + Vec2(0, 50), { 0, 1, 0, 1 });
+        engine.DrawLine(center + Lapis::Vec2(20, 0), center + Lapis::Vec2(50, 0), { 1, 0, 0, 1 });
+        engine.DrawLine(center + Lapis::Vec2(0, 20), center + Lapis::Vec2(0, 50), { 0, 1, 0, 1 });
         //engine.DrawRect(center - Vec2(10, 10), Vec2(20, 20), { 0,0,1,1 });
         //engine.DrawRect(Vec4(10, 10, 190, 15), { 1,0,1,1 });
         //engine.DrawCircle(Vec2(10, 50), 10, { 1,1,0,1 }, 16);
@@ -139,15 +139,12 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
         int checkerboardSize = 10;
         for (int i = 0; i < checkerboardSize; i++) {
             for (int j = 0; j < checkerboardSize; j++) {
-                //float dist = ((DirectX::XMVector2Length({ (float)i - checkerboardSize / 2,(float)j - checkerboardSize / 2 })).m128_f32[0]) / (checkerboardSize / 2);
                 DXGI_RGBA col;
                 if (((i % 2) + j) % 2 == 1)
                     col = { 1 ,1 ,1 ,1 };
                 else
                     col = { 0, 0 ,0 ,1 };
-                //col = { dist,dist,dist,1 };
-                //engine.DrawPlane(Transform({ i - checkerboardSize / 2,-2 - dist * dist * (checkerboardSize / 5), j - checkerboardSize / 2 }, {}, { 1,1,1 }), col);
-                engine.DrawPlane(Lapis::Transform(Lapis::Vec3(i - checkerboardSize / 2 + 0.5f, -0.2f, j - checkerboardSize / 2 + 0.5f), {}, {1}), col);
+                engine.DrawPlane(Lapis::Transform(Lapis::Vec3(i - checkerboardSize / 2 + 0.5f, -0.2f, j - checkerboardSize / 2 + 0.5f - 5), {}, {1}), col);
             }
         }
 
@@ -194,6 +191,23 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             Lapis::Vec3(0    ,3.3f * ymod,1),
         };
         engine.DrawLines3D(lineSegments, { 0.2f,0.2f,0.8f,1 });
+
+        engine.DrawCircle(Lapis::Vec2(50, 50), 20, { 1,1,1,1 });
+        engine.DrawCircle(Lapis::Vec2(50, 48), 15, { 0,0,0,1 });
+        engine.DrawCircle(Lapis::Vec2(50, 46), 10, { 1,1,1,1 });
+
+        engine.DrawCircle(Lapis::Vec2(100, 50), 20, { 1,1,1,1 });
+        engine.DrawCircle(Lapis::Vec2(100, 48), 15, { 0,0,0,1 });
+        engine.DrawCircle(Lapis::Vec2(100, 46), 10, { 1,1,1,1 });
+
+        engine.DrawLine(Lapis::Vec2(40, 80), Lapis::Vec2(75, 100), {});
+        engine.DrawLine(Lapis::Vec2(40, 81), Lapis::Vec2(75, 101), {});
+        engine.DrawLine(Lapis::Vec2(40, 82), Lapis::Vec2(75, 102), {});
+
+        engine.DrawLine(Lapis::Vec2(75, 100), Lapis::Vec2(110, 80), {});
+        engine.DrawLine(Lapis::Vec2(75, 101), Lapis::Vec2(110, 81), {});
+        engine.DrawLine(Lapis::Vec2(75, 102), Lapis::Vec2(110, 82), {});
+
 
         engine.RenderFrame();
         engine.FlushFrame();

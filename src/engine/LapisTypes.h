@@ -14,6 +14,7 @@ namespace Lapis
 
 	using Color = DXGI_RGBA;
 
+
 	struct Vec2
 	{
 		float x, y;
@@ -21,6 +22,7 @@ namespace Lapis
 		Vec2 operator-() const;
 		Vec2 operator+(const Vec2& other) const;
 		Vec2 operator-(const Vec2& other) const;
+		Vec2 operator*(const float& mul) const;
 
 		constexpr Vec2() :
 			x(0), y(0)
@@ -53,6 +55,10 @@ namespace Lapis
 
 		constexpr Vec3(float x, float y, float z) :
 			x(x), y(y), z(z)
+		{}
+
+		constexpr Vec3(Vec2 v2) :
+			x(v2.x), y(v2.y), z(0)
 		{}
 	};
 	using Vector3 = Vec3;

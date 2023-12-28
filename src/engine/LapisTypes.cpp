@@ -33,6 +33,15 @@ namespace Lapis
 
 		return res;
 	}
+	Vec2 Vec2::operator*(const float& mul) const
+	{
+		Vec2 res;
+
+		res.x = x * mul;
+		res.y = y * mul;
+		
+		return res;
+	}
 
 	////////////////////// Vec3
 
