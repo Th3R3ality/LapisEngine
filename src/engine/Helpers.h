@@ -1,5 +1,7 @@
 #pragma once
 #include <DirectXMath.h>
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include "LapisTypes.h"
 
 		
@@ -9,6 +11,10 @@ namespace Lapis
 {
 	namespace Helpers
 	{
+
+#define DEG2RAD (M_PI/180)
+
+#define RAD2DEG (180/M_PI)
 
 		constexpr Lapis::Vec3 AxisY = Lapis::Vec3(0.0, 1.0, 0.0);
 

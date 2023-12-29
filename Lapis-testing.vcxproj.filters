@@ -30,6 +30,7 @@
     <ClInclude Include="src\engine\shaders\compiled\UNLIT3d_vertex.h" />
     <ClInclude Include="src\engine\LapisEngine.h" />
     <ClInclude Include="src\engine\LapisInternalTypes.h" />
+    <ClInclude Include="src\engine\shaders\compiled\DEFAULTSHADER__CIRCLE_pixel.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\engine\shaders\unlit.shader" />

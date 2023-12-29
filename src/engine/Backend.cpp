@@ -256,6 +256,10 @@ namespace Lapis
         
 
         auto world = DirectX::XMMatrixIdentity();
+#ifdef USE_Z_UP
+        world = world * Lapis::Helpers::XMMatrixRotationAxis(Vec3(1, 0, 0), -90*DEG2RAD);
+        world = world * DirectX::XMMatrixScaling(1, 1, -1);
+#endif
 
         DirectX::XMVECTOR Eye = Lapis::Helpers::XMVectorSet(Lapis::Vec4(0.0f, 0.0f, 0.0f, 0.0f));
         DirectX::XMVECTOR At = Lapis::Helpers::XMVectorSet(Lapis::Vec4(0.0f, 0.0f, 1.0f, 0.0f));
