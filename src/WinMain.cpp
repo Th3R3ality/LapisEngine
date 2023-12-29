@@ -192,22 +192,21 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
         };
         engine.DrawLines3D(lineSegments, { 0.2f,0.2f,0.8f,1 });
 
-        engine.DrawCircle(Lapis::Vec2(50, 50), 20, { 1,1,1,1 });
-        engine.DrawCircle(Lapis::Vec2(50, 48), 15, { 0,0,0,1 });
-        engine.DrawCircle(Lapis::Vec2(50, 46), 10, { 1,1,1,1 });
+        //engine.DrawCircle(Lapis::Vec2(50, 50), 20, { 1,1,1,1 });
+        //engine.DrawCircle(Lapis::Vec2(50, 48), 15, { 0,0,0,1 });
+        //engine.DrawCircle(Lapis::Vec2(50, 46), 10, { 1,1,1,1 });
 
-        engine.DrawCircle(Lapis::Vec2(100, 50), 20, { 1,1,1,1 });
-        engine.DrawCircle(Lapis::Vec2(100, 48), 15, { 0,0,0,1 });
-        engine.DrawCircle(Lapis::Vec2(100, 46), 10, { 1,1,1,1 });
+        //engine.DrawCircle(Lapis::Vec2(100, 50), 20, { 1,1,1,1 });
+        //engine.DrawCircle(Lapis::Vec2(100, 48), 15, { 0,0,0,1 });
+        //engine.DrawCircle(Lapis::Vec2(100, 46), 10, { 1,1,1,1 });
 
-        engine.DrawLine(Lapis::Vec2(40, 80), Lapis::Vec2(75, 100), {});
-        engine.DrawLine(Lapis::Vec2(40, 81), Lapis::Vec2(75, 101), {});
-        engine.DrawLine(Lapis::Vec2(40, 82), Lapis::Vec2(75, 102), {});
+        //engine.DrawLine(Lapis::Vec2(40, 80), Lapis::Vec2(75, 100), {});
+        //engine.DrawLine(Lapis::Vec2(40, 81), Lapis::Vec2(75, 101), {});
+        //engine.DrawLine(Lapis::Vec2(40, 82), Lapis::Vec2(75, 102), {});
 
-        engine.DrawLine(Lapis::Vec2(75, 100), Lapis::Vec2(110, 80), {});
-        engine.DrawLine(Lapis::Vec2(75, 101), Lapis::Vec2(110, 81), {});
-        engine.DrawLine(Lapis::Vec2(75, 102), Lapis::Vec2(110, 82), {});
-
+        //engine.DrawLine(Lapis::Vec2(75, 100), Lapis::Vec2(110, 80), {});
+        //engine.DrawLine(Lapis::Vec2(75, 101), Lapis::Vec2(110, 81), {});
+        //engine.DrawLine(Lapis::Vec2(75, 102), Lapis::Vec2(110, 82), {});
 
         engine.RenderFrame();
         engine.FlushFrame();
