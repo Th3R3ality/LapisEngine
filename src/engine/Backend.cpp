@@ -60,6 +60,8 @@ namespace Lapis
         ID3D11Texture2D* pBackBuffer = nullptr;
         this->swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
 
+        
+
         // use the back buffer address to create the render target
         this->device->CreateRenderTargetView(pBackBuffer, NULL, &this->frameBuffer);
         pBackBuffer->Release();
@@ -189,7 +191,8 @@ namespace Lapis
         this->elapsedDuration = (now - initDuration);
         old = now;
 
-        this->deltaTime = (float)std::chrono::duration_cast<std::chrono::microseconds>(this->deltaDuration).count() / 1000 / 1000;
+        using s = std::chrono::duration<double>;
+        this->deltaTime = std::chrono::duration_cast<s>(deltaDuration).count();// / 1000 / 1000;
         this->elapsedTime += this->deltaTime;
     }
     void LapisInstance::RenderFrame()
@@ -238,7 +241,7 @@ namespace Lapis
                 this->DrawCommand(internalCommand);
             }
         }
-        this->swapchain->Present(0, 0);
+        this->swapchain->Present(1, 0);
     }
     void LapisInstance::FlushFrame() {
         
