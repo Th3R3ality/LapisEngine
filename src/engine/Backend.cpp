@@ -149,7 +149,21 @@ namespace Lapis
         device->CreateDepthStencilState(&depthStencilDesc, &depthStencilState);
 
         deviceContext->OMSetDepthStencilState(depthStencilState, 0);
-        deviceContext->OMSetBlendState(nullptr, nullptr, 0xffffffff); // use default blend mode (i.e. disable)
+
+        D3D11_BLEND_DESC desc;
+        ZeroMemory(&desc, sizeof(desc));
+        desc.AlphaToCoverageEnable = false;
+        desc.RenderTarget[0].BlendEnable = true;
+        desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+        desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+        desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+        desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_INV_DEST_ALPHA;
+        desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
+        desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+        desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+        device->CreateBlendState(&desc, &blendState);
+
+        deviceContext->OMSetBlendState(blendState, nullptr, 0xffffffff); // use default blend mode (i.e. disable)
     }
     void LapisInstance::CleanD3D11()
     {
@@ -157,9 +171,6 @@ namespace Lapis
 
         inputLayout->Release();
 
-        for (auto [name, material] : builtinMaterials) {
-            
-        }
         builtinMaterials.clear();
 
         vertexBuffer->Release();
@@ -211,8 +222,8 @@ namespace Lapis
         static float h = 0;
         h += this->deltaTime*0.5f;
         if (h > 360) h -= 360;
-        auto color = hsl2rgb((int)h, 1.0f, 0.7f, 1.0f);
-
+        //auto color = hsl2rgb((int)h, 1.0f, 0.7f, 1.0f);
+        Color color = { .4f, .4f, 1, .5f };
         this->deviceContext->ClearRenderTargetView(this->frameBuffer, (FLOAT*)&color);
         this->deviceContext->ClearDepthStencilView(this->depthBufferView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 

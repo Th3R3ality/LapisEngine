@@ -5,6 +5,9 @@
 #include <windowsx.h>
 #include <wingdi.h>
 
+#pragma comment(lib, "dwmapi.lib")
+#include <dwmapi.h>
+
 // include chrono for time
 #include <chrono>
 #include <thread>
@@ -44,11 +47,18 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     ZeroMemory(&wc, sizeof(WNDCLASSEX));
 
     wc.cbSize = sizeof(WNDCLASSEX);
-    wc.style = CS_HREDRAW | CS_VREDRAW;
+    //wc.style = CS_HREDRAW | CS_VREDRAW;
+    wc.style = ACS_TRANSPARENT;
     wc.lpfnWndProc = WindowProc;
+    wc.cbClsExtra = 0;
+    wc.cbWndExtra = 0;
     wc.hInstance = hInstance;
+    wc.hIcon = NULL;
     wc.hCursor = LoadCursor(NULL, IDC_NO);
+    wc.hbrBackground;
+    wc.lpszMenuName;
     wc.lpszClassName = L"LapisWindowClass";
+    wc.hIconSm;
 
     // register the window class
     RegisterClassEx(&wc);
@@ -61,8 +71,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
         NULL,//( WS_EX_TOPMOST | WS_EX_NOACTIVATE),
         wc.lpszClassName,    // name of the window class
         L"Lapis Dev Window",   // title of the window
-        WS_OVERLAPPEDWINDOW,    // window style
-
+        WS_OVERLAPPEDWINDOW,    // window style //WS_POPUP
         300,    // x-position of the window
         300,    // y-position of the window
         wr.right -wr.left,    // width of the window
@@ -72,6 +81,11 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
         hInstance,    // application handle
         NULL);    // used with multiple windows, NULL
     ShowWindow(hwnd, nCmdShow); // make sure window is shown
+
+    //SetLayeredWindowAttributes(hwnd, 0, 1.0f, LWA_ALPHA);
+    //SetLayeredWindowAttributes(hwnd, 0, RGB(0, 0, 0), LWA_COLORKEY);
+    //MARGINS margins = { -1 }; ;
+    //DwmExtendFrameIntoClientArea(hwnd, &margins);
 
 #ifdef _DEBUG
     AllocConsole();
@@ -128,11 +142,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
         Lapis::Vec2 center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
 
-        engine.DrawLine(center + Lapis::Vec2(20, 0), center + Lapis::Vec2(50, 0), { 1, 0, 0, 1 });
-        engine.DrawLine(center + Lapis::Vec2(0, 20), center + Lapis::Vec2(0, 50), { 0, 1, 0, 1 });
-        //engine.DrawRect(center - Vec2(10, 10), Vec2(20, 20), { 0,0,1,1 });
-        //engine.DrawRect(Vec4(10, 10, 190, 15), { 1,0,1,1 });
-        //engine.DrawCircle(Vec2(10, 50), 10, { 1,1,0,1 }, 16);
+        //engine.DrawLine(center + Lapis::Vec2(20, 0), center + Lapis::Vec2(50, 0), { 1, 0, 0, 1 });
+        //engine.DrawLine(center + Lapis::Vec2(0, 20), center + Lapis::Vec2(0, 50), { 0, 1, 0, 1 });
 
         engine.DrawPlane(Lapis::Transform(Lapis::Vec3(0, -0.1f, 0), {}, { 1 }), { 0.5,0.5,0.5,1 });
 
@@ -190,7 +201,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             Lapis::Vec3(-0.7f,3.2f * ymod,0.7f),
             Lapis::Vec3(0    ,3.3f * ymod,1),
         };
-        engine.DrawLines3D(lineSegments, { 0.2f,0.2f,0.8f,1 });
+        engine.DrawLines3D(lineSegments, { 0.5f,0.9f,0.5f,1 });
 
         //engine.DrawCircle(Lapis::Vec2(50, 50), 20, { 1,1,1,1 });
         //engine.DrawCircle(Lapis::Vec2(50, 48), 15, { 0,0,0,1 });

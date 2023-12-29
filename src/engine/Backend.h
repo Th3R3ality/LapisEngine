@@ -99,6 +99,7 @@ namespace Lapis
 		ID3D11InputLayout* inputLayout;
 		ID3D11Buffer* constantBuffer;
 		ID3D11Buffer* vertexBuffer;
+		ID3D11BlendState* blendState;
 
 		GlobalConstantBuffer gcb{};
 
