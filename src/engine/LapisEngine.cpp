@@ -1,14 +1,37 @@
 #include "LapisEngine.h"
+#include <iostream>
 #include "Backend.h"
 
 namespace Lapis
 {
-	void Init(RenderApi renderingApi, HWND hwnd)
+
+	float deltaTime;
+	float elapsedTime;
+	Transform mainCamera;
+
+
+	void InitLapis(HWND hwnd)
 	{
-		switch (renderingApi) {
-		case RenderApi::D3D11:
-			Backend::InitD3D11(hwnd);
-		}
+		std::cout << "hwnd: " << hwnd << "\n";
+		Backend::InitBackend(hwnd);
 	}
+
+	void NewFrame()
+	{
+		Backend::NewFrame();
+	}
+	void RenderFrame()
+	{
+		Backend::RenderFrame();
+	}
+	void FlushFrame()
+	{
+		Backend::FlushFrame();
+	}
+	void CleanLapis()
+	{
+		Backend::CleanD3D11();
+	}
+
 
 }

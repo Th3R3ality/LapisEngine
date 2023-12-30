@@ -26,15 +26,13 @@
 #pragma comment (lib, "d3dcompiler.lib")
 
 // include Lapis headers
-#include "engine/Backend.h"
 #include "engine/LapisEngine.h"
-#include "engine/LapisTypes.h"
+#include "engine/Globals.h"
+#include "engine/Helpers.h"
 
 // include Utility headers
 #include "utils/hsl-to-rgb.hpp"
 
-//using namespace Lapis;
-Lapis::LapisInstance engine;
 
 // the WindowProc function prototype
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -47,8 +45,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     ZeroMemory(&wc, sizeof(WNDCLASSEX));
 
     wc.cbSize = sizeof(WNDCLASSEX);
-    //wc.style = CS_HREDRAW | CS_VREDRAW;
-    wc.style = ACS_TRANSPARENT;
+    wc.style = CS_HREDRAW | CS_VREDRAW;
+    //wc.style = ACS_TRANSPARENT;
     wc.lpfnWndProc = WindowProc;
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 0;
@@ -96,22 +94,16 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 #endif
 
     printf("initting lapis\n");
-    engine.Init();
-    printf("initting d3d11\n");
-    engine.InitD3D11(hwnd);
+    Lapis::InitLapis(hwnd);
 
-    //Lapis::Init(Lapis::RenderApi::D3D11, hwnd);
 
     float FPS_CAP = 60;
     bool LIMIT_FPS = false;
     MSG msg;
-    while (true)
+    while (true && !GetAsyncKeyState(VK_DELETE))
     {
-
-        engine.NewFrame();
-        std::cout << "delta: " << engine.deltaTime * 1000 << "ms\n";
-        
-        
+        std::cout << std::format("delta:   {:.4f}ms\nelapsed: {:.4f}s\n", Lapis::deltaTime*1000, Lapis::elapsedTime);
+        Lapis::NewFrame();
 
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             TranslateMessage(&msg);
@@ -121,97 +113,24 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
                 break;
         }
 
-        static float x = 0;
-        static float y = 0;
-        static float z = 0;
-        float moveDistance = 3 * engine.deltaTime;
+        using namespace Lapis;
+        using namespace Lapis::Draw;
+        D2::Line(Vec2(10, 10), Vec2(50, 50), {1,1,1,1});
 
-        if (GetAsyncKeyState('A')) x += moveDistance;
-        if (GetAsyncKeyState('D')) x -= moveDistance;
-        if (GetAsyncKeyState('Q')) y += moveDistance;
-        if (GetAsyncKeyState('E')) y -= moveDistance;
-        if (GetAsyncKeyState('W')) z -= moveDistance;
-        if (GetAsyncKeyState('S')) z += moveDistance;
+        D2::Rect(Vec4(100,10,110,60), {1,0,0,1});
+        D2::Rect(Vec2(10,100), Vec2(50,10), {0,0,1,1});
 
-        engine.cameraPosition = { x,y,z };
+        D2::Circle(Vec2(120, 120), 20, { 0,1,0,1 });
+        D2::Circle(Vec2(150, 150), 20, { 0,0,0,1 }, 12);
+       
+        D3::Plane(Transform(Vec3(0,.1,1), 0, 1), {1,1,1,1});
 
-        if (GetAsyncKeyState(VK_RIGHT)) engine.CameraRotationY -= moveDistance;
-        if (GetAsyncKeyState(VK_LEFT)) engine.CameraRotationY += moveDistance;
-
-
-
-        Lapis::Vec2 center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
-
-        //engine.DrawLine(center + Lapis::Vec2(20, 0), center + Lapis::Vec2(50, 0), { 1, 0, 0, 1 });
-        //engine.DrawLine(center + Lapis::Vec2(0, 20), center + Lapis::Vec2(0, 50), { 0, 1, 0, 1 });
-
-        engine.DrawPlane(Lapis::Transform(Lapis::Vec3(0, -0.1f, 0), {}, { 1 }), { 0.5,0.5,0.5,1 });
-
-        int checkerboardSize = 10;
-        for (int i = 0; i < checkerboardSize; i++) {
-            for (int j = 0; j < checkerboardSize; j++) {
-                DXGI_RGBA col;
-                if (((i % 2) + j) % 2 == 1)
-                    col = { 1 ,1 ,1 ,1 };
-                else
-                    col = { 0, 0 ,0 ,1 };
-                engine.DrawPlane(Lapis::Transform(Lapis::Vec3(i - checkerboardSize / 2 + 0.5f, -0.2f, j - checkerboardSize / 2 + 0.5f - 5), {}, {1}), col);
-            }
-        }
-
-        engine.DrawLine3D(Lapis::Vec3(0, 0, 1), Lapis::Vec3(1, 0, 0), { 0.8f,0.2f,0.8f,1 });
-
-        float ymod = 0.3f*sinf(engine.elapsedTime) + 0.4f;
-
-        std::vector<Lapis::Vec3> lineSegments = {
-            Lapis::Vec3(0    ,.1f * ymod,1),
-            Lapis::Vec3(.7f  ,.2f * ymod,.7f),
-            Lapis::Vec3(1    ,.3f * ymod,0),
-            Lapis::Vec3(0.7f ,.4f * ymod,-0.7f),
-            Lapis::Vec3(0    ,.5f * ymod,-1),
-            Lapis::Vec3(-0.7f,.6f * ymod,-0.7f),
-            Lapis::Vec3(-1   ,.7f * ymod,0),
-            Lapis::Vec3(-0.7f,.8f * ymod,0.7f),
-
-            Lapis::Vec3(0    ,.9f * ymod,1),
-            Lapis::Vec3(.7f  ,1 * ymod  ,.7f),
-            Lapis::Vec3(1    ,1.1f * ymod,0),
-            Lapis::Vec3(0.7f ,1.2f * ymod,-0.7f),
-            Lapis::Vec3(0    ,1.3f * ymod,-1),
-            Lapis::Vec3(-0.7f,1.4f * ymod,-0.7f),
-            Lapis::Vec3(-1   ,1.5f * ymod,0),
-            Lapis::Vec3(-0.7f,1.6f * ymod,0.7f),
-
-            Lapis::Vec3(0    ,1.7f * ymod,1),
-            Lapis::Vec3(.7f  ,1.8f * ymod,.7f),
-            Lapis::Vec3(1    ,1.9f * ymod,0),
-            Lapis::Vec3(0.7f ,2 * ymod,-0.7f),
-            Lapis::Vec3(0    ,2.1f * ymod,-1),
-            Lapis::Vec3(-0.7f,2.2f * ymod,-0.7f),
-            Lapis::Vec3(-1   ,2.3f * ymod,0),
-            Lapis::Vec3(-0.7f,2.4f * ymod,0.7f),
-
-            Lapis::Vec3(0    ,2.5f * ymod,1),
-            Lapis::Vec3(.7f  ,2.6f * ymod,.7f),
-            Lapis::Vec3(1    ,2.7f * ymod,0),
-            Lapis::Vec3(0.7f ,2.8f * ymod,-0.7f),
-            Lapis::Vec3(0    ,2.9f * ymod,-1),
-            Lapis::Vec3(-0.7f,3 * ymod,-0.7f),
-            Lapis::Vec3(-1   ,3.1f * ymod,0),
-            Lapis::Vec3(-0.7f,3.2f * ymod,0.7f),
-            Lapis::Vec3(0    ,3.3f * ymod,1),
-        };
-        engine.DrawLines3D(lineSegments, { 0.5f,0.9f,0.5f,1 });
-
-
-        engine.RenderFrame();
-        engine.FlushFrame();
-        if (LIMIT_FPS && (int)FPS_CAP >= 1)
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000 / (int)FPS_CAP));
+        Lapis::RenderFrame();
+        Lapis::FlushFrame();
     }
 
     std::cout << "Cleaning up";
-    engine.CleanD3D11();
+    Lapis::CleanLapis();
 
     return (int)msg.wParam;
 }

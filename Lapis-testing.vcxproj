@@ -11,43 +11,38 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\engine\2d.cpp" />
-    <ClCompile Include="src\engine\3d.cpp" />
-    <ClCompile Include="src\engine\Backend.cpp" />
+    <ClCompile Include="src\engine\Draw\D2.cpp" />
+    <ClCompile Include="src\engine\Draw\D3.cpp" />
+    <ClCompile Include="src\engine\InternalTypes.cpp" />
     <ClCompile Include="src\engine\LapisEngine.cpp" />
-    <ClCompile Include="src\engine\LapisInternalTypes.cpp" />
-    <ClCompile Include="src\engine\Material.cpp" />
+    <ClCompile Include="src\engine\LapisTypes.cpp" />
+    <ClCompile Include="src\engine\Backend.cpp" />
     <ClCompile Include="src\utils\hsl-to-rgb.cpp" />
     <ClCompile Include="src\WinMain.cpp" />
-    <ClCompile Include="src\engine\LapisTypes.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\engine\3d.h" />
     <ClInclude Include="src\engine\Backend.h" />
-    <ClInclude Include="src\engine\2d.h" />
+    <ClInclude Include="src\engine\Draw\D2.h" />
+    <ClInclude Include="src\engine\Draw\D3.h" />
+    <ClInclude Include="src\engine\Globals.h" />
     <ClInclude Include="src\engine\Helpers.h" />
+    <ClInclude Include="src\engine\InternalTypes.h" />
     <ClInclude Include="src\engine\LapisEngine.h" />
-    <ClInclude Include="src\engine\LapisInternalTypes.h" />
-    <ClInclude Include="src\engine\Material.h" />
+    <ClInclude Include="src\engine\LapisTypes.h" />
     <ClInclude Include="src\engine\shaders\compiled\DEFAULTSHADER__CIRCLE_pixel.h" />
     <ClInclude Include="src\engine\shaders\compiled\DEFAULTSHADER__UI_pixel.h" />
     <ClInclude Include="src\engine\shaders\compiled\DEFAULTSHADER__UI_vertex.h" />
     <ClInclude Include="src\engine\shaders\compiled\DEFAULTSHADER__UNLIT3D_vertex.h" />
     <ClInclude Include="src\engine\shaders\compiled\DEFAULTSHADER__UNLIT_pixel.h" />
+    <ClInclude Include="src\engine\shaders\DefaultShaders.h" />
     <ClInclude Include="src\engine\shaders\compiled\UI_pixel.h" />
     <ClInclude Include="src\engine\shaders\compiled\UI_vertex.h" />
     <ClInclude Include="src\engine\shaders\compiled\UNLIT3d_vertex.h" />
     <ClInclude Include="src\engine\shaders\compiled\UNLIT_pixel.h" />
-    <ClInclude Include="src\engine\shaders\DefaultShaders.h" />
     <ClInclude Include="src\utils\hsl-to-rgb.hpp" />
-    <ClInclude Include="src\engine\LapisTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\engine\shaders\DefaultStructs.hlsli" />
-    <None Include="src\engine\shaders\RGBHSL.hlsli" />
-    <None Include="src\engine\shaders\ShaderToy1.hlsli" />
-    <None Include="src\engine\shaders\ShaderToy2.hlsli" />
-    <None Include="src\engine\shaders\unlit.shader" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="src\engine\shaders\DEFAULTSHADER__CIRCLE_pixel.hlsl">
@@ -65,8 +60,6 @@
     <FxCompile Include="src\engine\shaders\DEFAULTSHADER__UNLIT3D_vertex.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="src\engine\shaders\DEFAULTSHADER__UNLIT_pixel.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

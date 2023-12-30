@@ -1,19 +1,12 @@
 #pragma once
 
-#include <windows.h>
-#include <windowsx.h>
-#include <D3D11.h>
-#include <DirectXMath.h>
+#include <d3d11.h>
+#include <memory>
+#include <string>
 
 namespace Lapis
 {
-	enum class RenderApi
-	{
-		D3D11
-	};
-
 	using Color = DXGI_RGBA;
-
 
 	struct Vec2
 	{
@@ -60,15 +53,36 @@ namespace Lapis
 		constexpr Vec3(Vec2 v2) :
 			x(v2.x), y(v2.y), z(0)
 		{}
+
+		static const Vec3 up;
+		static const Vec3 right;
+		static const Vec3 forward;
 	};
 	using Vector3 = Vec3;
-	
+
 
 	struct Vec4
 	{
 		float x, y, z, w;
 
 		Vec4 operator+(const Vec4& other) const;
+
+		constexpr Vec4() :
+			x(0), y(0), z(0), w(0)
+		{}
+		constexpr Vec4(float f) :
+			x(f), y(f), z(f), w(f)
+		{}
+		constexpr Vec4(float x, float y, float z, float w) :
+			x(x), y(y), z(z), w(w)
+		{}
+
+		constexpr Vec4(Vec3 v3, float w) :
+			x(v3.x), y(v3.y), z(v3.z), w(w)
+		{}
+		constexpr Vec4(Vec3 v3) :
+			x(v3.x), y(v3.y), z(v3.z), w(0)
+		{}
 	};
 	using Vector4 = Vec4;
 
@@ -92,7 +106,8 @@ namespace Lapis
 		{}
 	};
 
-	struct Transform {
+	struct Transform
+	{
 		union
 		{
 			Vec3 position;
@@ -114,4 +129,27 @@ namespace Lapis
 			pos(pos), rot(rot), scale(scale)
 		{}
 	};
+
+
+	/*struct LapisCommand
+	{
+		UINT vertexCount;
+		D3D_PRIMITIVE_TOPOLOGY topology;
+		Transform transform;
+		std::shared_ptr<Material> material;
+
+		LapisCommand(UINT vertexCount, D3D_PRIMITIVE_TOPOLOGY topology, Transform transform, std::shared_ptr<Material> material) :
+			vertexCount(vertexCount),
+			topology(topology),
+			transform(transform),
+			material(material)
+		{}
+
+		LapisCommand(UINT vertexCount, D3D_PRIMITIVE_TOPOLOGY topology, std::shared_ptr<Material> material) :
+			vertexCount(vertexCount),
+			topology(topology),
+			transform(Transform()),
+			material(material)
+		{}
+	};*/
 }

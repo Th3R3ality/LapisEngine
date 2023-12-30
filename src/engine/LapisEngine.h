@@ -1,12 +1,22 @@
 #pragma once
 #include <Windows.h>
-
 #include "LapisTypes.h"
-
-#include "3d.h"
-#include "2d.h"
+#include "Draw/D2.h"
+#include "Draw/D3.h"
 
 namespace Lapis
 {
-	void Init(RenderApi renderingApi, HWND hwnd);
+
+	extern float deltaTime;
+	extern float elapsedTime;
+	extern Transform mainCamera;
+
+
+	void InitLapis(HWND hwnd);
+
+	void NewFrame();
+	void RenderFrame();
+	void FlushFrame();
+
+	void CleanLapis();
 }

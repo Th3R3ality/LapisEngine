@@ -18,7 +18,7 @@ namespace Lapis
 	Vec2 Vec2::operator+(const Vec2& other) const
 	{
 		Vec2 res;
-		
+
 		res.x = this->x + other.x;
 		res.y = this->y + other.y;
 
@@ -39,11 +39,14 @@ namespace Lapis
 
 		res.x = x * mul;
 		res.y = y * mul;
-		
+
 		return res;
 	}
 
 	////////////////////// Vec3
+	Vec3 const Vec3::up(0, 1, 0);
+	Vec3 const Vec3::right(1, 0, 0);
+	Vec3 const Vec3::forward(0, 0, 1);
 
 	Vec3 Lapis::Vec3::operator-() const
 	{
