@@ -59,6 +59,28 @@ namespace Lapis
 		return res;
 	}
 
+	Vec3 Vec3::operator+(const Vec3& other) const
+	{
+		Vec3 res;
+
+		res.x = x + other.x;
+		res.y = y + other.y;
+		res.z = z + other.z;
+
+		return res;
+	}
+
+	Vec3 Vec3::operator*(const float& scalar) const
+	{
+		Vec3 res;
+
+		res.x = x * scalar;
+		res.y = y * scalar;
+		res.z = z * scalar;
+
+		return res;
+	}
+
 	////////////////////// Vec4
 
 	Vec4 Lapis::Vec4::operator+(const Vec4& other) const
