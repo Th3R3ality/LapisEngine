@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "Globals.h"
+#include "GlobalDefines.h"
 
 #include "shaders/DefaultShaders.h"
 #include "LapisEngine.h"
@@ -225,13 +225,16 @@ namespace Lapis
 
             RemapSubResource(vertexBuffer, LapisVertexVector.data(), sizeof(Vertex) * LapisVertexVector.size());
 
+#if CLEAR_RENDER_TARGET_VIEW == 1
             static float h = 0;
             h += Lapis::deltaTime;
             if (h > 360) h -= 360;
             auto color = hsl2rgb((int)h, 1.0f, 0.7f, 1.0f);
-            //Color color = { .4f, .4f, 1, .5f };
             deviceContext->ClearRenderTargetView(frameBuffer, (FLOAT*)&color);
+#endif
+#if CLEAR_DEPTH_STENCIL_VIEW == 1
             deviceContext->ClearDepthStencilView(depthBufferView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+#endif
 
             UINT stride = sizeof(Vertex);
             UINT offset = 0;
@@ -244,7 +247,7 @@ namespace Lapis
                     DrawCommand(internalCommand);
                 }
             }
-            swapchain->Present(1, 0);
+            swapchain->Present(0, 0);
         }
         void FlushFrame()
         {
@@ -269,6 +272,7 @@ namespace Lapis
                 VertexVectorCapacity += 1000;
                 LapisVertexVector.reserve(VertexVectorCapacity);
             }
+
             LapisVertexVector.push_back(vert);
             VertexCount += 1;
         }
@@ -296,8 +300,8 @@ namespace Lapis
 
 
             auto world = DirectX::XMMatrixIdentity();
-#ifdef USE_Z_UP
-            world = world * Lapis::Helpers::XMMatrixRotationAxis(Vec3::right, -90 * DEG2RAD);
+#if USE_Z_UP
+            world = world * Lapis::Helpers::XMMatrixRotationAxis(Vec3::right, 90 * DEG2RAD);
             world = world * DirectX::XMMatrixScaling(1, 1, -1);
 #endif
 
@@ -305,9 +309,9 @@ namespace Lapis
             DirectX::XMVECTOR At = Helpers::XMVectorSet(Vec3::forward);
             DirectX::XMVECTOR Up = Helpers::XMVectorSet(Vec3::up);
             auto view = DirectX::XMMatrixLookAtLH(Eye, At, Up);
-            auto translateView = Helpers::XMMatrixTranslation(Lapis::mainCamera.pos);
-            auto rotateView = DirectX::XMMatrixRotationY(Lapis::mainCamera.rotation.y);
-            rotateView = rotateView * DirectX::XMMatrixRotationX(-20 * DirectX::XM_PI / 180);
+            auto translateView = Helpers::XMMatrixTranslation(mainCamera.pos);
+            auto rotateView = Helpers::XMMatrixRotationRollPitchYaw(-mainCamera.rotation);
+            auto scaleView = Helpers::XMMatrixScaling(mainCamera.scale);
             view = view * translateView * rotateView;
 
             auto projection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, SCREEN_WIDTH / (FLOAT)SCREEN_HEIGHT, 0.01f, 100.0f);
@@ -320,18 +324,11 @@ namespace Lapis
             RemapSubResource(constantBuffer, &gcb, sizeof(gcb));
 
         }
-        void RemapSubResource(ID3D11Resource* resource, void* data, size_t size)
-        {
-            D3D11_MAPPED_SUBRESOURCE ms;
-            deviceContext->Map(resource, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
-            memcpy(ms.pData, data, size);
-            deviceContext->Unmap(resource, NULL);
-        }
         void DrawCommand(InternalLapisCommand internalLapisCommand)
         {
             auto model = DirectX::XMMatrixIdentity();
             auto scaleModel = Helpers::XMMatrixScaling(internalLapisCommand.transform.scale);
-            auto rotateModel = Helpers::XMMatrixRotationAxis(Lapis::Vec3::up, internalLapisCommand.transform.rot.y);
+            auto rotateModel = Helpers::XMMatrixRotationRollPitchYaw(internalLapisCommand.transform.rot);
             auto translateModel = Helpers::XMMatrixTranslation(internalLapisCommand.transform.pos);
 
             model = model * scaleModel * rotateModel * translateModel;
@@ -380,6 +377,13 @@ namespace Lapis
             CREATE_DEFAULT_MATERIAL_SEPERATE_SHADERS(CIRCLE, UI, CIRCLE);
 
 #undef CREATE_DEFAULT_SHADER
+        }
+        void RemapSubResource(ID3D11Resource* resource, void* data, size_t size)
+        {
+            D3D11_MAPPED_SUBRESOURCE ms;
+            deviceContext->Map(resource, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
+            memcpy(ms.pData, data, size);
+            deviceContext->Unmap(resource, NULL);
         }
 	}
 }

@@ -7,8 +7,7 @@ namespace Lapis
 	{
 		namespace D2
 		{
-			void Point(float x, float y, Color rgba);
-			inline void Point(float x, float y) { Point(x, y, { 1,0,1,1 }); };
+			void Point(Vec2 p, Color rgba);
 
 			void Line(Vec2 from, Vec2 to, Color rgba);
 

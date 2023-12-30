@@ -27,7 +27,7 @@
 
 // include Lapis headers
 #include "engine/LapisEngine.h"
-#include "engine/Globals.h"
+#include "engine/GlobalDefines.h"
 #include "engine/Helpers.h"
 
 // include Utility headers
@@ -99,10 +99,36 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
     float FPS_CAP = 60;
     bool LIMIT_FPS = false;
-    MSG msg;
+    MSG msg{};
     while (true && !GetAsyncKeyState(VK_DELETE))
     {
-        std::cout << std::format("delta:   {:.4f}ms\nelapsed: {:.4f}s\n", Lapis::deltaTime*1000, Lapis::elapsedTime);
+        using namespace Lapis;
+        using namespace Lapis::Draw;
+
+        static float fpsTimeTotal = 0;
+        static int fpsSamples = 0;
+        static float fps = 0;
+        if (GetAsyncKeyState('M')) {
+            fpsTimeTotal += Lapis::deltaTime;
+            fpsSamples++;
+        }
+        if (fpsSamples > 0) {
+            fps = 1000/(1000 * fpsTimeTotal / fpsSamples);
+        }
+        std::cout << std::format("delta:   {:.8f}s\nelapsed: {:.4f}s\navg fps: {}\n", Lapis::deltaTime, Lapis::elapsedTime, fps);
+
+        if (GetAsyncKeyState('A')) mainCamera.pos += Vec3::right * deltaTime;
+        if (GetAsyncKeyState('D')) mainCamera.pos -= Vec3::right * deltaTime;
+        if (GetAsyncKeyState('Q')) mainCamera.pos += Vec3::up * deltaTime;
+        if (GetAsyncKeyState('E')) mainCamera.pos -= Vec3::up * deltaTime;
+        if (GetAsyncKeyState('W')) mainCamera.pos -= Vec3::forward * deltaTime;
+        if (GetAsyncKeyState('S')) mainCamera.pos += Vec3::forward * deltaTime;
+
+        if (GetAsyncKeyState(VK_RIGHT)) mainCamera.rot += Vec3(0, 45, 0) * deltaTime;
+        if (GetAsyncKeyState(VK_LEFT))  mainCamera.rot -= Vec3(0, 45, 0) * deltaTime;
+        if (GetAsyncKeyState(VK_UP))    mainCamera.rot -= Vec3(45, 0, 0) * deltaTime;
+        if (GetAsyncKeyState(VK_DOWN))  mainCamera.rot += Vec3(45, 0, 0) * deltaTime;
+
         Lapis::NewFrame();
 
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
@@ -113,17 +139,16 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
                 break;
         }
 
-        using namespace Lapis;
-        using namespace Lapis::Draw;
-        D2::Line(Vec2(10, 10), Vec2(50, 50), {1,1,1,1});
-
-        D2::Rect(Vec4(100,10,110,60), {1,0,0,1});
-        D2::Rect(Vec2(10,100), Vec2(50,10), {0,0,1,1});
-
-        D2::Circle(Vec2(120, 120), 20, { 0,1,0,1 });
-        D2::Circle(Vec2(150, 150), 20, { 0,0,0,1 }, 12);
+        //D2::Line(Vec2(10, 10), Vec2(50, 50), {1,1,1,1});
+        //D2::Rect(Vec4(100,10,110,60), {1,0,0,1});
+        //D2::Rect(Vec2(10,100), Vec2(50,10), {0,0,1,1});
+        //D2::Circle(Vec2(120), 20, { 0,1,0,1 });
+        //D2::Circle(Vec2(150), 20, { 0,0,0,1 }, 12);
        
-        D3::Plane(Transform(Vec3(0,.1,1), 0, 1), {1,1,1,1});
+        D3::Plane(Transform(Vec3::forward + -Vec3::up * 0.3f, 0, 1), {1,1,1,1});
+        D3::Cube(Transform(Vec3::forward * 3, 0, 1 ), { 0.92, 0.26, .27, 1});
+        D3::Line(Vec3::forward * 3 + -Vec3::right, Vec3::forward * 2 + -Vec3::right * 1.5, { 0.345, 0.396, 0.949, 1});
+        D3::Arrow(Vec3::forward * 1.5, Vec3(.1), { 0.996, 0.906, 0.361, 1 });
 
         Lapis::RenderFrame();
         Lapis::FlushFrame();

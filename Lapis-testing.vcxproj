@@ -24,7 +24,7 @@
     <ClInclude Include="src\engine\Backend.h" />
     <ClInclude Include="src\engine\Draw\D2.h" />
     <ClInclude Include="src\engine\Draw\D3.h" />
-    <ClInclude Include="src\engine\Globals.h" />
+    <ClInclude Include="src\engine\GlobalDefines.h" />
     <ClInclude Include="src\engine\Helpers.h" />
     <ClInclude Include="src\engine\InternalTypes.h" />
     <ClInclude Include="src\engine\LapisEngine.h" />

@@ -51,8 +51,8 @@ namespace Lapis
 		void PushCommand(LapisCommand lapisCommand);
 
 		void UpdateGlobalConstantBuffer();
-		void RemapSubResource(ID3D11Resource* resource, void* data, size_t size);
 		void DrawCommand(InternalLapisCommand internalLapisCommand);
 		void InitDefaultShaders();
+		void RemapSubResource(ID3D11Resource* resource, void* data, size_t size);
 	}
 }

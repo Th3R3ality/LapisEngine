@@ -11,7 +11,7 @@ namespace Lapis
 	{
 		namespace D2
 		{
-			void Point(Vec2(p), Color rgba)
+			void Point(Vec2 p, Color rgba)
 			{
 				Backend::PushCommand(LapisCommand(1, D3D_PRIMITIVE_TOPOLOGY_POINTLIST, Transform(), "UI"));
 

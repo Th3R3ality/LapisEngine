@@ -1,5 +1,5 @@
 #include "LapisTypes.h"
-
+#include "GlobalDefines.h"
 
 namespace Lapis
 {
@@ -44,9 +44,15 @@ namespace Lapis
 	}
 
 	////////////////////// Vec3
-	Vec3 const Vec3::up(0, 1, 0);
+
 	Vec3 const Vec3::right(1, 0, 0);
+#if USE_Z_UP == 0
+	Vec3 const Vec3::up(0, 1, 0);
 	Vec3 const Vec3::forward(0, 0, 1);
+#elif USE_Z_UP == 1
+	Vec3 const Vec3::up(0, 0, 1);
+	Vec3 const Vec3::forward(0, 1, 0);
+#endif
 
 	Vec3 Lapis::Vec3::operator-() const
 	{
@@ -79,6 +85,24 @@ namespace Lapis
 		res.z = z * scalar;
 
 		return res;
+	}
+
+	Vec3& Vec3::operator+=(const Vec3& other)
+	{
+		x += other.x;
+		y += other.y;
+		z += other.z;
+
+		return *this;
+	}
+
+	Vec3& Vec3::operator-=(const Vec3& other)
+	{
+		x -= other.x;
+		y -= other.y;
+		z -= other.z;
+
+		return *this;
 	}
 
 	////////////////////// Vec4
