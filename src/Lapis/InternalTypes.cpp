@@ -4,7 +4,7 @@
 namespace Lapis
 {
 	InternalLapisCommand::InternalLapisCommand(LapisCommand lapisCommand, UINT startVertexLocation)
-	: vertexCount(lapisCommand.vertexCount),
+		: vertexCount(lapisCommand.vertexCount),
 		startVertexLocation(startVertexLocation),
 		topology(lapisCommand.topology),
 		transform(lapisCommand.transform),

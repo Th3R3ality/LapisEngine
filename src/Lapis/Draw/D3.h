@@ -15,6 +15,7 @@ namespace Lapis
 			void Triangle(Lapis::Transform transform, Color rgba);
 			void Plane(Lapis::Transform transform, Color rgba);
 			void Cube(Lapis::Transform transform, Color rgba);
+			void Icosahedron(Transform transform, Color rgba);
 		}
 	}
 }

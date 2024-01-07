@@ -11,25 +11,24 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\engine\Draw\D2.cpp" />
-    <ClCompile Include="src\engine\Draw\D3.cpp" />
-    <ClCompile Include="src\engine\InternalTypes.cpp" />
-    <ClCompile Include="src\engine\LapisEngine.cpp" />
-    <ClCompile Include="src\engine\LapisTypes.cpp" />
-    <ClCompile Include="src\engine\Backend.cpp" />
+    <ClCompile Include="src\Lapis\Draw\D2.cpp" />
+    <ClCompile Include="src\Lapis\Draw\D3.cpp" />
+    <ClCompile Include="src\Lapis\InternalTypes.cpp" />
+    <ClCompile Include="src\Lapis\Engine.cpp" />
+    <ClCompile Include="src\Lapis\LapisTypes.cpp" />
+    <ClCompile Include="src\Lapis\Backend.cpp" />
     <ClCompile Include="src\utils\hsl-to-rgb.cpp" />
     <ClCompile Include="src\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\engine\Backend.h" />
-    <ClInclude Include="src\engine\Draw\D2.h" />
-    <ClInclude Include="src\engine\Draw\D3.h" />
-    <ClInclude Include="src\engine\GlobalDefines.h" />
-    <ClInclude Include="src\engine\Helpers.h" />
-    <ClInclude Include="src\engine\InternalTypes.h" />
-    <ClInclude Include="src\engine\LapisEngine.h" />
-    <ClInclude Include="src\engine\LapisTypes.h" />
-    <ClInclude Include="src\engine\shaders\DefaultShaders.h" />
+    <ClInclude Include="src\Lapis\Backend.h" />
+    <ClInclude Include="src\Lapis\Draw\D2.h" />
+    <ClInclude Include="src\Lapis\Draw\D3.h" />
+    <ClInclude Include="src\Lapis\Helpers.h" />
+    <ClInclude Include="src\Lapis\InternalTypes.h" />
+    <ClInclude Include="src\Lapis\Engine.h" />
+    <ClInclude Include="src\Lapis\LapisTypes.h" />
+    <ClInclude Include="src\Lapis\shaders\DefaultShaders.h" />
     <ClInclude Include="src\engine\shaders\compiled\UI_pixel.h" />
     <ClInclude Include="src\engine\shaders\compiled\UI_vertex.h" />
     <ClInclude Include="src\engine\shaders\compiled\UNLIT3d_vertex.h" />
@@ -37,26 +36,26 @@
     <ClInclude Include="src\utils\hsl-to-rgb.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\engine\shaders\DefaultStructs.hlsli" />
+    <None Include="src\Lapis\shaders\DefaultStructs.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="src\engine\shaders\DEFAULTSHADER__CIRCLE_pixel.hlsl">
+    <FxCompile Include="src\Lapis\shaders\DEFAULTSHADER__CIRCLE_pixel.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="src\engine\shaders\DEFAULTSHADER__UI_pixel.hlsl">
+    <FxCompile Include="src\Lapis\shaders\DEFAULTSHADER__UI_pixel.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="src\engine\shaders\DEFAULTSHADER__UI_vertex.hlsl">
+    <FxCompile Include="src\Lapis\shaders\DEFAULTSHADER__UI_vertex.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
-    <FxCompile Include="src\engine\shaders\DEFAULTSHADER__UNLIT3D_vertex.hlsl">
+    <FxCompile Include="src\Lapis\shaders\DEFAULTSHADER__UNLIT3D_vertex.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
-    <FxCompile Include="src\engine\shaders\DEFAULTSHADER__UNLIT_pixel.hlsl">
+    <FxCompile Include="src\Lapis\shaders\DEFAULTSHADER__UNLIT_pixel.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
@@ -123,7 +122,7 @@
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
       <VariableName>%(Filename)</VariableName>
-      <HeaderFileOutput>src\engine\shaders\compiled\%(Filename).h</HeaderFileOutput>
+      <HeaderFileOutput>src\Lapis\shaders\compiled\%(Filename).h</HeaderFileOutput>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -146,7 +145,7 @@
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
       <VariableName>%(Filename)</VariableName>
-      <HeaderFileOutput>src\engine\shaders\compiled\%(Filename).h</HeaderFileOutput>
+      <HeaderFileOutput>src\Lapis\shaders\compiled\%(Filename).h</HeaderFileOutput>
     </FxCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

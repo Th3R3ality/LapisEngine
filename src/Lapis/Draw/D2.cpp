@@ -31,8 +31,8 @@ namespace Lapis
 				Backend::PushCommand(LapisCommand(3, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, Transform(), "UI"));
 
 				Backend::PushVertex(Vertex(p1, rgba, 0, -Vec3::forward));
-				Backend::PushVertex(Vertex(p2, rgba, Vec2(0.5,1), -Vec3::forward));
-				Backend::PushVertex(Vertex(p3, rgba, Vec2(1,0), -Vec3::forward));
+				Backend::PushVertex(Vertex(p2, rgba, Vec2(0.5, 1), -Vec3::forward));
+				Backend::PushVertex(Vertex(p3, rgba, Vec2(1, 0), -Vec3::forward));
 			}
 
 			void Rect(Vec2 tl, Vec2 wh, Color rgba)
@@ -64,9 +64,12 @@ namespace Lapis
 
 				Backend::PushCommand(LapisCommand(vertexCount, D3D_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, Transform(), "UI"));
 
+
+				constexpr float pie = static_cast<float>((M_PI));
+
 				for (int i = 0; i < vertexCount; i++) {
-					float _x = cosf(i * M_PI / (vertexCount - 1)) * 0.5f + 0.5f;
-					float _y = (i % 2 == 0 ? -1 : 1) * sinf(i * M_PI / (vertexCount - 1)) * 0.5f + 0.5f;
+					float _x = cosf(i * pie / (vertexCount - 1)) * 0.5f + 0.5f;
+					float _y = (i % 2 == 0 ? -1 : 1) * sinf(i * pie / (vertexCount - 1)) * 0.5f + 0.5f;
 					Backend::PushVertex(Vertex(
 						Vec3(xy.x + r * 2 * _x, xy.y + r * 2 * _y, 0),
 						rgba,

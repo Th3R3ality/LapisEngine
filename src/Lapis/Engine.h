@@ -1,0 +1,31 @@
+#pragma once
+#include <Windows.h>
+#include "LapisTypes.h"
+#include "Draw/D2.h"
+#include "Draw/D3.h"
+
+namespace Lapis
+{
+
+	extern float deltaTime;
+	extern float elapsedTime;
+	extern Transform mainCamera;
+
+
+	void InitLapis(IDXGISwapChain* swapchain, ID3D11Device* device = nullptr, ID3D11DeviceContext* deviceContext = nullptr);
+
+	void WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+	void NewFrame();
+	void RenderFrame();
+	void FlushFrame();
+
+	void CleanLapis();
+
+	void DestroyViews();
+	void CreateViews(IDXGISwapChain* swapchain);
+
+	void PushWorldMatrix(mat4x4 mat);
+	void PushViewMatrix(mat4x4 mat);
+	void PushProjectionMatrix(mat4x4 mat);
+}

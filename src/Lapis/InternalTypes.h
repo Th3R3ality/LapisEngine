@@ -39,7 +39,7 @@ namespace Lapis
 		ID3D11VertexShader* vertexShader;
 		ID3D11PixelShader* pixelShader;
 		ID3D11BlendState* blendState;
-		
+
 
 		InternalMaterial() :
 			name("UNNAMED_MATERIAL"), vertexShader(nullptr), pixelShader(nullptr), blendState(nullptr)
