@@ -24,6 +24,11 @@
     <ClInclude Include="src\Lapis\shaders\DefaultShaders.h" />
     <ClInclude Include="src\Lapis\Draw\D2.h" />
     <ClInclude Include="src\Lapis\Draw\D3.h" />
+    <ClInclude Include="src\Lapis\shaders\compiled\DEFAULTSHADER__CIRCLE_pixel.h" />
+    <ClInclude Include="src\Lapis\shaders\compiled\DEFAULTSHADER__UI_pixel.h" />
+    <ClInclude Include="src\Lapis\shaders\compiled\DEFAULTSHADER__UI_vertex.h" />
+    <ClInclude Include="src\Lapis\shaders\compiled\DEFAULTSHADER__UNLIT_pixel.h" />
+    <ClInclude Include="src\Lapis\shaders\compiled\DEFAULTSHADER__UNLIT3D_vertex.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Lapis\shaders\DefaultStructs.hlsli" />

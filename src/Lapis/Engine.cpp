@@ -11,10 +11,15 @@ namespace Lapis
 	Transform mainCamera;
 
 
-	void InitLapis(IDXGISwapChain* swapchain, ID3D11Device* device, ID3D11DeviceContext* deviceContext)
+	void InitLapis(IDXGISwapChain* swapchain)
 	{
 		std::cout << "Initting via SwapChain : " << swapchain << "\n";
-		Backend::InitBackend(swapchain, device, deviceContext);
+		Backend::InitBackend(swapchain, nullptr);
+	}
+	void InitLapis(HWND hwnd)
+	{
+		std::cout << "initting via HWND : " << hwnd << "\n";
+		Backend::InitBackend(nullptr, hwnd);
 	}
 
 	void WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

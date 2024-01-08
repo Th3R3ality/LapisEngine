@@ -38,8 +38,8 @@ namespace Lapis
 
 		extern std::unordered_map<std::string, std::shared_ptr<InternalMaterial>> builtinMaterials;
 
-		void InitBackend(IDXGISwapChain* _swapchain, ID3D11Device* _device, ID3D11DeviceContext* _deviceContext);
-		void InitD3D11(IDXGISwapChain* _swapchain, ID3D11Device* _device, ID3D11DeviceContext* _deviceContext);
+		void InitBackend(IDXGISwapChain* _swapchain, HWND _hwnd);
+		void InitD3D11(IDXGISwapChain* _swapchain, HWND _hwnd);
 		void SetupD3D11State();
 		void CleanD3D11();
 
@@ -50,7 +50,7 @@ namespace Lapis
 		void FlushFrame();
 
 		void DestroyViews();
-		void CreateViews(IDXGISwapChain* _swapchain);
+		bool CreateViews(IDXGISwapChain* _swapchain);
 
 		void PushWorldMatrix(mat4x4 mat);
 		void PushViewMatrix(mat4x4 mat);

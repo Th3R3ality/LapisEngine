@@ -12,7 +12,8 @@ namespace Lapis
 	extern Transform mainCamera;
 
 
-	void InitLapis(IDXGISwapChain* swapchain, ID3D11Device* device = nullptr, ID3D11DeviceContext* deviceContext = nullptr);
+	void InitLapis(IDXGISwapChain* swapchain);
+	void InitLapis(HWND hwnd);
 
 	void WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
