@@ -104,7 +104,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     float FPS_CAP = 60;
     bool LIMIT_FPS = false;
     MSG msg{};
-    while (true)// && !GetAsyncKeyState(VK_DELETE))
+    while (true && !GetAsyncKeyState(VK_ESCAPE))
     {
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             TranslateMessage(&msg);
@@ -119,7 +119,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             using namespace Lapis;
             NewFrame();
 
-            Draw::D2::Triangle(0, { 100,0 }, { 0,100 }, "ff005099");
+            Draw::D2::Circle(250, 100, "0000ff");
+
 
             RenderFrame();
             FlushFrame();

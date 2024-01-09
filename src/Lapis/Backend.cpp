@@ -223,10 +223,10 @@ namespace Lapis::Backend
         deviceContext->IASetInputLayout(inputLayout);
         deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
         //deviceContext->IASetIndexBuffer(bd->pIB, sizeof(Index) == 2 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT, 0);
-        deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-        deviceContext->VSSetShader(builtinMaterials["UI"]->vertexShader, nullptr, 0);
+        deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //breaks gpu if not set here
+        deviceContext->VSSetShader(builtinMaterials["UI"]->vertexShader, nullptr, 0); //breaks gpu if not set here
         deviceContext->VSSetConstantBuffers(0, 1, &constantBuffer);
-        deviceContext->PSSetShader(builtinMaterials["UI"]->pixelShader, nullptr, 0);
+        deviceContext->PSSetShader(builtinMaterials["UI"]->pixelShader, nullptr, 0); //breaks gpu if not set here
         deviceContext->PSSetConstantBuffers(0, 1, &constantBuffer);
         //deviceContext->PSSetSamplers(0, 1, &bd->pFontSampler);
         deviceContext->GSSetShader(nullptr, nullptr, 0);
@@ -419,8 +419,11 @@ namespace Lapis::Backend
                 deviceContext->IAGetInputLayout(&old.InputLayout);
             }
         } else {
-            const FLOAT r[4] = {0,0,0,0};
-            deviceContext->ClearRenderTargetView(renderTargetView, r);
+            static float h = 0;
+            h += Lapis::deltaTime;
+            if (h > 360) h -= 360;
+            auto color = hsl2rgb((int)h, 1.0f, 0.7f, 1.0f);
+            deviceContext->ClearRenderTargetView(renderTargetView, (FLOAT*)&color);
         }
 
         deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
@@ -527,13 +530,13 @@ namespace Lapis::Backend
 
         auto& material = internalLapisCommand.material;
 
-        static ID3D11VertexShader* prevVertexShader = builtinMaterials["UI"]->vertexShader;
-        if (prevVertexShader != material->vertexShader) {
+        static ID3D11VertexShader* prevVertexShader = nullptr;
+        if (true || prevVertexShader != material->vertexShader) {
             deviceContext->VSSetShader(material->vertexShader, 0, 0);
             prevVertexShader = material->vertexShader;
         }
-        static ID3D11PixelShader* prevPixelShader = builtinMaterials["UI"]->pixelShader;
-        if (prevPixelShader != material->pixelShader) {
+        static ID3D11PixelShader* prevPixelShader = nullptr;
+        if (true || prevPixelShader != material->pixelShader) {
             //std::cout << std::format("set new pixel  -  prevPixelShader : {:X} | material->pixelShader : {:X}\n", (uintptr_t)prevPixelShader, (uintptr_t)material->pixelShader);
             deviceContext->PSSetShader(material->pixelShader, 0, 0);
             prevPixelShader = material->pixelShader;

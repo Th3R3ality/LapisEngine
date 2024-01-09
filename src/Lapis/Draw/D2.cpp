@@ -43,13 +43,13 @@ namespace Lapis::Draw::D2
 
 	void Circle(Vec2 xy, float r, Color rgba)
 	{
-		r = r * 2;
+		
 		Backend::PushCommand(LapisCommand(4, D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, Transform(), "CIRCLE"));
 
-		Backend::PushVertex(Vertex(xy + Vec2(-0.5f) * r, rgba, 0, -Vec3::forward));
-		Backend::PushVertex(Vertex(xy + Vec2(0.5f, -0.5f) * r, rgba, Vec2(1, 0), -Vec3::forward));
-		Backend::PushVertex(Vertex(xy + Vec2(-0.5f, 0.5f) * r, rgba, Vec2(0, 1), -Vec3::forward));
-		Backend::PushVertex(Vertex(xy + Vec2(0.5) * r, rgba, 1, -Vec3::forward));
+		Backend::PushVertex(Vertex(xy+Vec2(-1)*r, rgba, 0, -Vec3::forward));
+		Backend::PushVertex(Vertex(xy+Vec2(1, -1)*r, rgba, Vec2(1, 0), -Vec3::forward));
+		Backend::PushVertex(Vertex(xy+Vec2(-1, 1)*r, rgba, Vec2(0, 1), -Vec3::forward));
+		Backend::PushVertex(Vertex(xy+Vec2(1)*r, rgba, 1, -Vec3::forward));
 	}
 
 	void Circle(Vec2 xy, float r, Color rgba, int vertexCount)
