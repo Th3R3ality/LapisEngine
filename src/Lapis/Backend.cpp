@@ -223,10 +223,10 @@ namespace Lapis::Backend
         deviceContext->IASetInputLayout(inputLayout);
         deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
         //deviceContext->IASetIndexBuffer(bd->pIB, sizeof(Index) == 2 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT, 0);
-        deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //breaks gpu if not set here
-        deviceContext->VSSetShader(builtinMaterials["UI"]->vertexShader, nullptr, 0); //breaks gpu if not set here
+        //deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //nevermind
+        //deviceContext->VSSetShader(builtinMaterials["UI"]->vertexShader, nullptr, 0); //nevermind
         deviceContext->VSSetConstantBuffers(0, 1, &constantBuffer);
-        deviceContext->PSSetShader(builtinMaterials["UI"]->pixelShader, nullptr, 0); //breaks gpu if not set here
+        //deviceContext->PSSetShader(builtinMaterials["UI"]->pixelShader, nullptr, 0); //nevermind
         deviceContext->PSSetConstantBuffers(0, 1, &constantBuffer);
         //deviceContext->PSSetSamplers(0, 1, &bd->pFontSampler);
         deviceContext->GSSetShader(nullptr, nullptr, 0);
@@ -531,12 +531,12 @@ namespace Lapis::Backend
         auto& material = internalLapisCommand.material;
 
         static ID3D11VertexShader* prevVertexShader = nullptr;
-        if (true || prevVertexShader != material->vertexShader) {
+        if (prevVertexShader != material->vertexShader) {
             deviceContext->VSSetShader(material->vertexShader, 0, 0);
             prevVertexShader = material->vertexShader;
         }
         static ID3D11PixelShader* prevPixelShader = nullptr;
-        if (true || prevPixelShader != material->pixelShader) {
+        if (prevPixelShader != material->pixelShader) {
             //std::cout << std::format("set new pixel  -  prevPixelShader : {:X} | material->pixelShader : {:X}\n", (uintptr_t)prevPixelShader, (uintptr_t)material->pixelShader);
             deviceContext->PSSetShader(material->pixelShader, 0, 0);
             prevPixelShader = material->pixelShader;
