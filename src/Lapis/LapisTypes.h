@@ -253,6 +253,9 @@ namespace Lapis
 			r{ r0, r1, r2, r3 }
 		{}
 
+		mat4x4(DirectX::XMMATRIX mat) :
+			r{ mat.r[0], mat.r[0], mat.r[0], mat.r[0] }
+		{}
 		mat4x4(DirectX::XMMATRIX& mat) :
 			r{ mat.r[0], mat.r[0], mat.r[0], mat.r[0] }
 		{}

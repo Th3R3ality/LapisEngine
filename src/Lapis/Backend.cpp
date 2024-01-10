@@ -22,10 +22,10 @@ namespace Lapis::Backend
 
     bool standaloneApplication = false;
 
-    mat4x4 matrix_screen;
-    mat4x4 matrix_world;
-    mat4x4 matrix_view;
-    mat4x4 matrix_projection;
+    mat4x4 matrix_screen = mat4x4(DirectX::XMMatrixIdentity());
+    mat4x4 matrix_world = mat4x4(DirectX::XMMatrixIdentity());
+    mat4x4 matrix_view = mat4x4(DirectX::XMMatrixIdentity());
+    mat4x4 matrix_projection = mat4x4(DirectX::XMMatrixIdentity());
 
     HWND hwnd;
     Vec4 clientRect = {0,0,800,600};
@@ -191,19 +191,9 @@ namespace Lapis::Backend
             device->CreateDepthStencilState(&desc, &depthStencilState);
         }
 
-        matrix_world = DirectX::XMMatrixIdentity();
-        DirectX::XMVECTOR Eye = Helpers::XMVectorSet(0);
-        DirectX::XMVECTOR At = Helpers::XMVectorSet(Vec3::forward);
-        DirectX::XMVECTOR Up = Helpers::XMVectorSet(Vec3::up);
-        matrix_view = DirectX::XMMatrixLookAtLH(Eye, At, Up);
-        matrix_projection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, clientRect.width / clientRect.height, 0.01f, 10000.0f);
-
-
-        gcb.World = DirectX::XMMatrixTranspose(matrix_world);
-        gcb.View = DirectX::XMMatrixTranspose(matrix_view);
-        gcb.Projection = DirectX::XMMatrixTranspose(matrix_projection);
-            
+        UpdateGlobalConstantBuffer();
     }
+
     void SetupD3D11State()
     {
         deviceContext->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
@@ -509,6 +499,15 @@ namespace Lapis::Backend
                 (R + L) / (L - R),(T + B) / (B - T),    0.5f,       1.0f
         };
         matrix_screen = m;
+
+        if (standaloneApplication) {
+            matrix_world = DirectX::XMMatrixIdentity();
+            DirectX::XMVECTOR Eye = Helpers::XMVectorSet(0);
+            DirectX::XMVECTOR At = Helpers::XMVectorSet(Vec3::forward);
+            DirectX::XMVECTOR Up = Helpers::XMVectorSet(Vec3::up);
+            matrix_view = DirectX::XMMatrixLookAtLH(Eye, At, Up);
+            matrix_projection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, clientRect.width / clientRect.height, 0.01f, 10000.0f);
+        }
 
         gcb.Screen = matrix_screen;
         gcb.World = DirectX::XMMatrixTranspose(matrix_world);
