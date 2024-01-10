@@ -514,7 +514,7 @@ namespace Lapis::Backend
             auto scaleView = Helpers::XMMatrixScaling(mainCamera.scale);
             matrix_view = DirectX::XMMATRIX(matrix_view) * translateView * rotateView * scaleView;
 
-            matrix_projection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, Lapis::clientRect.width / Lapis::clientRect.height, 0.01f, 10000.0f);
+            matrix_projection = DirectX::XMMatrixPerspectiveFovLH(75 * DEG2RAD, Lapis::clientRect.width / Lapis::clientRect.height, 0.01f, 10000.0f);
         }
 
         gcb.Screen = matrix_screen;
