@@ -9,7 +9,7 @@ namespace Lapis
 	float deltaTime;
 	float elapsedTime;
 	Transform mainCamera;
-
+	Vec4 clientRect = { 0,0,100,100 };
 
 	void InitLapis(IDXGISwapChain* swapchain)
 	{

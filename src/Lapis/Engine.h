@@ -10,7 +10,8 @@ namespace Lapis
 	extern float deltaTime;
 	extern float elapsedTime;
 	extern Transform mainCamera;
-
+	extern Vec4 clientRect;
+	
 
 	void InitLapis(IDXGISwapChain* swapchain);
 	void InitLapis(HWND hwnd);

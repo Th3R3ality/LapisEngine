@@ -252,9 +252,9 @@ namespace Lapis
 	{
 		Vec3 res = 0;
 
-		//res.x = cos(rot.yaw * DEG2RAD) * sin(rot.pitch * DEG2RAD);
-		//res.y = cos(rot.pitch * DEG2RAD);
-		//res.z = sin(rot.yaw * DEG2RAD) * sin(rot.pitch * DEG2RAD);
+		res.x = cos((rot.yaw + 90) * DEG2RAD) * sin(rot.pitch * DEG2RAD);
+		res.y = cos(rot.pitch * DEG2RAD);
+		res.z = sin((rot.yaw+90) * DEG2RAD) * sin(rot.pitch * DEG2RAD);
 
 		return res;
 	}

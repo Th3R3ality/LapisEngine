@@ -28,7 +28,6 @@ namespace Lapis::Backend
     mat4x4 matrix_projection = mat4x4(DirectX::XMMatrixIdentity());
 
     HWND hwnd;
-    Vec4 clientRect = {0,0,800,600};
 
     IDXGISwapChain* swapchain = nullptr;
     ID3D11Device* device;
@@ -78,7 +77,7 @@ namespace Lapis::Backend
 
             RECT rect;
             GetClientRect(hwnd, &rect);
-            clientRect = rect;
+            Lapis::clientRect = rect;
 
             CreateViews(_swapchain);
         }
@@ -89,7 +88,7 @@ namespace Lapis::Backend
             hwnd = _hwnd;
             RECT rect;
             GetClientRect(hwnd, &rect);
-            clientRect = rect;
+            Lapis::clientRect = rect;
 
             DXGI_SWAP_CHAIN_DESC scd;
             ZeroMemory(&scd, sizeof(DXGI_SWAP_CHAIN_DESC));
@@ -200,8 +199,8 @@ namespace Lapis::Backend
 
         // Setup viewport
         D3D11_VIEWPORT vp{};
-        vp.Width = clientRect.width;
-        vp.Height = clientRect.height;
+        vp.Width = Lapis::clientRect.width;
+        vp.Height = Lapis::clientRect.height;
         vp.MinDepth = 0.0f;
         vp.MaxDepth = 1.0f;
         vp.TopLeftX = vp.TopLeftY = 0;
@@ -304,8 +303,8 @@ namespace Lapis::Backend
 
         switch (msg) {
         case WM_SIZE:
-            clientRect.width = LOWORD(lParam);
-            clientRect.height = HIWORD(lParam);
+            Lapis::clientRect.width = LOWORD(lParam);
+            Lapis::clientRect.height = HIWORD(lParam);
 
             if (swapchain) {
                 DestroyViews();
@@ -313,7 +312,7 @@ namespace Lapis::Backend
                 CreateViews(swapchain);
             }
                 
-            std::cout << "resized clientRect: w" << clientRect.width << " h" << clientRect.height << "\n";
+            std::cout << "resized clientRect: w" << Lapis::clientRect.width << " h" << Lapis::clientRect.height << "\n";
             break;
         default:
             break;
@@ -422,7 +421,7 @@ namespace Lapis::Backend
 
         UpdateGlobalConstantBuffer();
 
-        const D3D11_RECT r = { (LONG)clientRect.x, (LONG)clientRect.y, (LONG)clientRect.width, (LONG)clientRect.height };
+        const D3D11_RECT r = { (LONG)Lapis::clientRect.x, (LONG)Lapis::clientRect.y, (LONG)Lapis::clientRect.width, (LONG)Lapis::clientRect.height };
         deviceContext->RSSetScissorRects(1, &r);
 
         for (auto& internalCommand : LapisCommandVector) {
@@ -491,7 +490,7 @@ namespace Lapis::Backend
         gcb.elapsedTime = elapsedTime;
         gcb.deltaTime = deltaTime;
 
-        float L = 0, T = 0, R = clientRect.width, B = clientRect.height;
+        float L = 0, T = 0, R = Lapis::clientRect.width, B = Lapis::clientRect.height;
         DirectX::XMMATRIX m = {
                 2.0f / (R - L),   0.0f,           0.0f,       0.0f ,
                 0.0f,             2.0f / (T - B), 0.0f,       0.0f ,
@@ -510,12 +509,12 @@ namespace Lapis::Backend
             auto pitch = DirectX::XMMatrixRotationAxis({1,0,0}, mainCamera.rot.pitch * DEG2RAD);
             auto yaw = DirectX::XMMatrixRotationAxis({ 0,1,0 }, mainCamera.rot.yaw * DEG2RAD);
             auto roll = DirectX::XMMatrixRotationAxis({ 0,0,1 }, mainCamera.rot.roll * DEG2RAD);
-            auto rotateView = yaw * pitch * roll;
+            auto rotateView = roll * yaw * pitch;
 
             auto scaleView = Helpers::XMMatrixScaling(mainCamera.scale);
             matrix_view = DirectX::XMMATRIX(matrix_view) * translateView * rotateView * scaleView;
 
-            matrix_projection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, clientRect.width / clientRect.height, 0.01f, 10000.0f);
+            matrix_projection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, Lapis::clientRect.width / Lapis::clientRect.height, 0.01f, 10000.0f);
         }
 
         gcb.Screen = matrix_screen;
@@ -530,6 +529,11 @@ namespace Lapis::Backend
         auto scaleModel = Helpers::XMMatrixScaling(internalLapisCommand.transform.scale);
         auto rotateModel = Helpers::XMMatrixRotationRollPitchYaw(internalLapisCommand.transform.rot);
         auto translateModel = Helpers::XMMatrixTranslation(internalLapisCommand.transform.pos);
+        //auto pitch = DirectX::XMMatrixRotationAxis({ 1,0,0 }, internalLapisCommand.transform.rot.pitch * DEG2RAD);
+        //auto yaw = DirectX::XMMatrixRotationAxis({ 0,1,0 }, internalLapisCommand.transform.rot.yaw * DEG2RAD);
+        //auto roll = DirectX::XMMatrixRotationAxis({ 0,0,1 }, internalLapisCommand.transform.rot.roll * DEG2RAD);
+        //auto rotateModel = roll * yaw * pitch;
+
 
         model = model * scaleModel * rotateModel * translateModel;
         gcb.Model = DirectX::XMMatrixTranspose(model);
