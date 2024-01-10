@@ -63,7 +63,7 @@ namespace Lapis
 		void UpdateGlobalConstantBuffer();
 		void DrawCommand(InternalLapisCommand internalLapisCommand);
 		void InitDefaultShaders();
-		void RemapSubResource(ID3D11Resource* resource, void* data, size_t size);
+		void MapResource(ID3D11Resource* resource, void* data, size_t size);
 		HRESULT GetDeviceAndCtxFromSwapchain(IDXGISwapChain* pSwapChain, ID3D11Device** ppDevice, ID3D11DeviceContext** ppContext);
 
 	}

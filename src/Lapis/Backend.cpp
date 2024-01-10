@@ -367,7 +367,7 @@ namespace Lapis::Backend
             VBufferSize = VertexVectorCapacity;
         }
             
-        RemapSubResource(vertexBuffer, LapisVertexVector.data(), sizeof(Vertex) * LapisVertexVector.size());
+        MapResource(vertexBuffer, LapisVertexVector.data(), sizeof(Vertex) * LapisVertexVector.size());
 
         // DX11 State Structure
         struct BACKUP_DX11_STATE
@@ -514,7 +514,7 @@ namespace Lapis::Backend
         gcb.World = DirectX::XMMatrixTranspose(matrix_world);
         gcb.View = DirectX::XMMatrixTranspose(matrix_view);
         gcb.Projection = DirectX::XMMatrixTranspose(matrix_projection);
-        RemapSubResource(constantBuffer, &gcb, sizeof(gcb));
+        MapResource(constantBuffer, &gcb, sizeof(gcb));
     }
     void DrawCommand(InternalLapisCommand internalLapisCommand)
     {
@@ -526,7 +526,7 @@ namespace Lapis::Backend
         model = model * scaleModel * rotateModel * translateModel;
         gcb.Model = DirectX::XMMatrixTranspose(model);
 
-        RemapSubResource(constantBuffer, &gcb, sizeof(gcb));
+        MapResource(constantBuffer, &gcb, sizeof(gcb));
 
         auto& material = internalLapisCommand.material;
 
@@ -572,7 +572,7 @@ namespace Lapis::Backend
 
 #undef CREATE_DEFAULT_SHADER
     }
-    void RemapSubResource(ID3D11Resource* resource, void* data, size_t size)
+    void MapResource(ID3D11Resource* resource, void* data, size_t size)
     {
         D3D11_MAPPED_SUBRESOURCE ms;
         deviceContext->Map(resource, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
