@@ -227,6 +227,10 @@ namespace Lapis
 		Transform(Vec3 pos, Vec3 rot, Vec3 scale) :
 			pos(pos), rot(rot), scale(scale)
 		{}
+		
+		Vec3 Forward();
+		Vec3 Right();
+		Vec3 Up();
 	};
 
 	struct mat4x4

@@ -1,5 +1,7 @@
 #include "LapisTypes.h"
 
+#include "Helpers.h"
+
 namespace Lapis
 {
 	////////////////////// Color
@@ -223,4 +225,37 @@ namespace Lapis
 	}
 
 	mat4x4 const mat4x4::Identity({ 1, 0, 0, 0 }, { 0,1,0,0 }, { 0,0,1,0 }, { 0,0,0,1 });
+
+	////////////////////// mat4x4
+	
+	Vec3 Transform::Forward()
+	{
+		Vec3 res;
+
+		res.x = cos((rot.yaw + 90) * DEG2RAD) * cos((rot.pitch) * DEG2RAD);
+		res.y = sin((rot.pitch) * DEG2RAD);
+		res.z = sin((rot.yaw + 90) * DEG2RAD) * cos((rot.pitch) * DEG2RAD);
+
+		return res;
+	}
+	Vec3 Transform::Right()
+	{
+		Vec3 res;
+
+		res.x = cos((rot.yaw) * DEG2RAD);
+		res.y = 0;
+		res.z = sin((rot.yaw) * DEG2RAD);
+		
+		return res;
+	}
+	Vec3 Transform::Up()
+	{
+		Vec3 res = 0;
+
+		//res.x = cos(rot.yaw * DEG2RAD) * sin(rot.pitch * DEG2RAD);
+		//res.y = cos(rot.pitch * DEG2RAD);
+		//res.z = sin(rot.yaw * DEG2RAD) * sin(rot.pitch * DEG2RAD);
+
+		return res;
+	}
 }
