@@ -506,6 +506,11 @@ namespace Lapis::Backend
             DirectX::XMVECTOR At = Helpers::XMVectorSet(Vec3::forward);
             DirectX::XMVECTOR Up = Helpers::XMVectorSet(Vec3::up);
             matrix_view = DirectX::XMMatrixLookAtLH(Eye, At, Up);
+            auto translateView = Helpers::XMMatrixTranslation(mainCamera.pos);
+            auto rotateView = Helpers::XMMatrixRotationRollPitchYaw(mainCamera.rotation);
+            auto scaleView = Helpers::XMMatrixScaling(mainCamera.scale);
+            matrix_view = DirectX::XMMATRIX(matrix_view) * translateView * rotateView * scaleView;
+
             matrix_projection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, clientRect.width / clientRect.height, 0.01f, 10000.0f);
         }
 
