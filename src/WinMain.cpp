@@ -119,8 +119,50 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             using namespace Lapis;
             NewFrame();
 
-            Draw::D2::Circle(250, 100, "0000ff");
+            std::cout << "mainCamera.pos : " << mainCamera.pos << "\n";
+            std::cout << "mainCamera.rot : " << mainCamera.rot << "\n";
 
+            std::cout << "mainCamera.Forward() : " << mainCamera.Forward() << "\n";
+            std::cout << "mainCamera.Right() : " << mainCamera.Right() << "\n";
+            std::cout << "mainCamera.Up() : " << mainCamera.Up() << "\n\n\n";
+
+            if (GetAsyncKeyState('A')) mainCamera.pos += mainCamera.Right() * deltaTime;
+            if (GetAsyncKeyState('D')) mainCamera.pos -= mainCamera.Right() * deltaTime;
+            if (GetAsyncKeyState('Q')) mainCamera.pos += mainCamera.Up() * deltaTime;
+            if (GetAsyncKeyState('E')) mainCamera.pos -= mainCamera.Up() * deltaTime;
+            if (GetAsyncKeyState('W')) mainCamera.pos -= mainCamera.Forward() * deltaTime;
+            if (GetAsyncKeyState('S')) mainCamera.pos += mainCamera.Forward() * deltaTime;
+
+            if (GetAsyncKeyState(VK_RIGHT)) mainCamera.rot.yaw -= 90 * deltaTime;
+            if (GetAsyncKeyState(VK_LEFT))  mainCamera.rot.yaw += 90 * deltaTime;
+            if (GetAsyncKeyState(VK_DOWN)) mainCamera.rot.pitch -= 90 * deltaTime;
+            if (GetAsyncKeyState(VK_UP))  mainCamera.rot.pitch += 90 * deltaTime;
+            if (GetAsyncKeyState('Z')) mainCamera.rot.roll -= 90 * deltaTime;
+            if (GetAsyncKeyState('X'))  mainCamera.rot.roll += 90 * deltaTime;
+
+
+            Draw::D2::Circle(-5, 30, "00ff50");
+
+            static int checkerboardSize = 25;
+            Color col;
+            for (int i = 0; i < checkerboardSize; i++) {
+                for (int j = 0; j < checkerboardSize; j++) {
+                    if (((i % 2) + j) % 2 == 1)
+                        col = "555555";
+                    else
+                        col = "000000";
+                    Draw::D3::Plane(Transform(Vec3(i - checkerboardSize / 2, -2, j - checkerboardSize / 2), 0, 1), col);
+                }
+            }
+            
+            static auto transform = Transform(Vec3(0,-0.5,2), 0, 0.1);
+            transform.rot.yaw += 20 * deltaTime;
+            transform.rot.pitch += 0 * deltaTime;
+
+            Draw::D3::Cube(transform, "ffffff90");
+            Draw::D3::Arrow(transform.pos, transform.Forward(), "0000ff");
+            Draw::D3::Arrow(transform.pos, transform.Right(), "ff0000");
+            Draw::D3::Arrow(transform.pos, transform.Up(), "00ff00");
 
             RenderFrame();
             FlushFrame();
