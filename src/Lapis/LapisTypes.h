@@ -228,6 +228,10 @@ namespace Lapis
 			pos(pos), rot(rot), scale(scale)
 		{}
 		
+		Vec3 _Forward();
+		Vec3 _Right();
+		Vec3 _Up();
+		
 		Vec3 Forward();
 		Vec3 Right();
 		Vec3 Up();
