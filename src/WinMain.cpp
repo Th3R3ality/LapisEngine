@@ -118,8 +118,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             using namespace Lapis;
             NewFrame();
 
-            std::cout << "mainCamera.pos : " << mainCamera.pos << "\n";
-            std::cout << "mainCamera.rot : " << mainCamera.rot << "\n";
+            //std::cout << "mainCamera.pos : " << mainCamera.pos << "\n";
+            //std::cout << "mainCamera.rot : " << mainCamera.rot << "\n";
 
             if (GetAsyncKeyState('W')) mainCamera.pos += mainCamera.Forward() * deltaTime;
             if (GetAsyncKeyState('S')) mainCamera.pos -= mainCamera.Forward() * deltaTime;
@@ -151,12 +151,37 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             }
             
             static auto transform = Transform(Vec3(0,-0.5,0), 0, 0.1);
-            transform.rot.yaw += 20 * deltaTime;
-            transform.rot.pitch += 14 * deltaTime;
-            transform.rot.roll += 10 * deltaTime;
+
+            static int rotDir = 0;
+            
+            if (GetAsyncKeyState(VK_RETURN) & 0x1)
+            {
+                rotDir += 1; rotDir %= 3;
+            }
+
+            transform.rot.yaw = 0;
+            transform.rot.pitch = 0;
+            transform.rot.roll = 0;
+
+            switch (rotDir)
+            {
+            case 0:
+                transform.rot.yaw = fmod(10 * elapsedTime, 360);
+                break;
+            case 1:
+                transform.rot.pitch = fmod(10 * elapsedTime,360);
+                break;
+            case 2:
+                transform.rot.roll = fmod(10 * elapsedTime, 360);
+                break;
+            }
  
+            Draw::D3::Triangle(transform, "ff00ff90");
+            transform.rot.y += 90;
+            Draw::D3::Triangle(transform, "ff00ff90");
+            transform.rot.y -= 90;
             Draw::D3::Plane(transform, "ffffff90");
-            Draw::D3::Cube(transform, "ffffff90");
+            //Draw::D3::Cube(transform, "ffffff90");
             Draw::D3::Arrow(transform.pos, transform.Forward(), "0000ff");
             Draw::D3::Arrow(transform.pos, transform.Right(), "ff0000");
             Draw::D3::Arrow(transform.pos, transform.Up(), "00ff00");

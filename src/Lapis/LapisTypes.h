@@ -126,6 +126,9 @@ namespace Lapis
 		static const Vec3 up;
 		static const Vec3 right;
 		static const Vec3 forward;
+
+		void Normalize();
+
 	};
 	using Vector3 = Vec3;
 

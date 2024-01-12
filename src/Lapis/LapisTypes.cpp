@@ -153,6 +153,14 @@ namespace Lapis
 		return *this;
 	}
 
+	void Vec3::Normalize()
+	{
+		float magnitude = std::sqrt(x * x + y * y + z * z);
+		x /= magnitude;
+		y /= magnitude;
+		z /= magnitude;
+	}
+
 	////////////////////// Vec4
 
 	Vec4 Lapis::Vec4::operator+(const Vec4& other) const
@@ -261,74 +269,21 @@ namespace Lapis
 
 	Vec3 Transform::_Forward()
 	{
-		float yaw = -(rot.yaw) * DEG2RAD;
-		float pitch = rot.pitch * DEG2RAD;
-		float roll = rot.roll * DEG2RAD;
-
-		float cosYaw = cos(yaw);
-		float sinYaw = sin(yaw);
-		float cosPitch = cos(pitch);
-		float sinPitch = sin(pitch);
-		float cosRoll = cos(roll);
-		float sinRoll = sin(roll);
-
-		float m13 = -sinYaw * cosRoll + cosYaw * sinPitch * sinRoll;
-		float m23 = sinYaw * sinRoll + cosYaw * sinPitch * cosRoll;
-		float m33 = cosYaw * cosPitch;
-
-		Vec3 res = Vec3(m13, m23, m33);
+		Vec3 res;
 
 		return res;
 	}
 
 	Vec3 Transform::_Right()
 	{
-		float yaw = -(rot.yaw+90) * DEG2RAD;
-		float pitch = rot.pitch * DEG2RAD;
-		float roll = rot.roll * DEG2RAD;
-
-		float cosYaw = cos(yaw);
-		float sinYaw = sin(yaw);
-		float cosPitch = cos(pitch);
-		float sinPitch = sin(pitch);
-		float cosRoll = cos(roll);
-		float sinRoll = sin(roll);
-
-		float m13 = -sinYaw * cosRoll + cosYaw * sinPitch * sinRoll;
-		float m23 = sinYaw * sinRoll + cosYaw * sinPitch * cosRoll;
-		float m33 = cosYaw * cosPitch;
-
-		Vec3 res = Vec3(m13, m23, m33);
+		Vec3 res;
 
 		return res;
 	}
 
 	Vec3 Transform::_Up()
 	{
-		float yaw = -(rot.yaw) * DEG2RAD;
-		float pitch = (rot.pitch + 90) * DEG2RAD;
-		float roll = -rot.roll * DEG2RAD;
-
-		float cosYaw = cos(yaw);
-		float sinYaw = sin(yaw);
-		float cosPitch = cos(pitch);
-		float sinPitch = sin(pitch);
-		float cosRoll = cos(roll);
-		float sinRoll = sin(roll);
-
-		float m11 = cosYaw * cosRoll + sinYaw * sinPitch * sinRoll;
-		float m12 = cosPitch * sinRoll;
-		float m13 = -sinYaw * cosRoll + cosYaw * sinPitch * sinRoll;
-
-		float m21 = -cosYaw * sinRoll + sinYaw * sinPitch * cosRoll;
-		float m22 = cosPitch * cosRoll;
-		float m23 = sinYaw * sinRoll + cosYaw * sinPitch * cosRoll;
-
-		float m31 = sinYaw * cosPitch;
-		float m32 = -sinPitch;
-		float m33 = cosYaw * cosPitch;
-
-		Vec3 res = Vec3(m13, m23, m33);
+		Vec3 res;
 
 		return res;
 	}
