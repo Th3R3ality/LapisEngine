@@ -100,7 +100,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     printf("initting lapis\n");
     Lapis::InitLapis(hwnd);
 
-
     float FPS_CAP = 60;
     bool LIMIT_FPS = false;
     MSG msg{};
@@ -121,10 +120,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
             std::cout << "mainCamera.pos : " << mainCamera.pos << "\n";
             std::cout << "mainCamera.rot : " << mainCamera.rot << "\n";
-
-            std::cout << "mainCamera.Forward() : " << mainCamera.Forward() << "\n";
-            std::cout << "mainCamera.Right() : " << mainCamera.Right() << "\n";
-            std::cout << "mainCamera.Up() : " << mainCamera.Up() << "\n\n\n";
 
             if (GetAsyncKeyState('W')) mainCamera.pos += mainCamera.Forward() * deltaTime;
             if (GetAsyncKeyState('S')) mainCamera.pos -= mainCamera.Forward() * deltaTime;
@@ -148,17 +143,18 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             for (int i = 0; i < checkerboardSize; i++) {
                 for (int j = 0; j < checkerboardSize; j++) {
                     if (((i % 2) + j) % 2 == 1)
-                        col = "555555";
+                        col = "707070";
                     else
-                        col = "000000";
+                        col = "101010";
                     Draw::D3::Plane(Transform(Vec3(i - checkerboardSize / 2, -2, j - checkerboardSize / 2), 0, 1), col);
                 }
             }
             
-            static auto transform = Transform(Vec3(0,-0.5,2), 0, 0.1);
+            static auto transform = Transform(Vec3(0,-0.5,0), 0, 0.1);
             transform.rot.yaw += 20 * deltaTime;
             transform.rot.pitch += 14 * deltaTime;
-
+            transform.rot.roll += 10 * deltaTime;
+ 
             Draw::D3::Plane(transform, "ffffff90");
             Draw::D3::Cube(transform, "ffffff90");
             Draw::D3::Arrow(transform.pos, transform.Forward(), "0000ff");
