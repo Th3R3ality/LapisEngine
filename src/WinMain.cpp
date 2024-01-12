@@ -126,12 +126,12 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             std::cout << "mainCamera.Right() : " << mainCamera.Right() << "\n";
             std::cout << "mainCamera.Up() : " << mainCamera.Up() << "\n\n\n";
 
-            if (GetAsyncKeyState('A')) mainCamera.pos += mainCamera.Right() * deltaTime;
-            if (GetAsyncKeyState('D')) mainCamera.pos -= mainCamera.Right() * deltaTime;
-            if (GetAsyncKeyState('Q')) mainCamera.pos += mainCamera.Up() * deltaTime;
-            if (GetAsyncKeyState('E')) mainCamera.pos -= mainCamera.Up() * deltaTime;
-            if (GetAsyncKeyState('W')) mainCamera.pos -= mainCamera.Forward() * deltaTime;
-            if (GetAsyncKeyState('S')) mainCamera.pos += mainCamera.Forward() * deltaTime;
+            if (GetAsyncKeyState('W')) mainCamera.pos += mainCamera.Forward() * deltaTime;
+            if (GetAsyncKeyState('S')) mainCamera.pos -= mainCamera.Forward() * deltaTime;
+            if (GetAsyncKeyState('A')) mainCamera.pos -= mainCamera.Right() * deltaTime;
+            if (GetAsyncKeyState('D')) mainCamera.pos += mainCamera.Right() * deltaTime;
+            if (GetAsyncKeyState('Q')) mainCamera.pos -= mainCamera.Up() * deltaTime;
+            if (GetAsyncKeyState('E')) mainCamera.pos += mainCamera.Up() * deltaTime;
 
             if (GetAsyncKeyState(VK_RIGHT)) mainCamera.rot.yaw -= 90 * deltaTime;
             if (GetAsyncKeyState(VK_LEFT))  mainCamera.rot.yaw += 90 * deltaTime;

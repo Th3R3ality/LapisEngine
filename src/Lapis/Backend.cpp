@@ -501,19 +501,19 @@ namespace Lapis::Backend
 
         if (standaloneApplication) {
             matrix_world = DirectX::XMMatrixIdentity();
-            DirectX::XMVECTOR Eye = Helpers::XMVectorSet(0);
-            DirectX::XMVECTOR At = Helpers::XMVectorSet(Vec3::forward);
-            DirectX::XMVECTOR Up = Helpers::XMVectorSet(Vec3::up);
-            matrix_view = DirectX::XMMatrixLookAtLH(Eye, At, Up);
-            auto translateView = Helpers::XMMatrixTranslation(mainCamera.pos);
-            auto pitch = DirectX::XMMatrixRotationAxis({1,0,0}, mainCamera.rot.pitch * DEG2RAD);
-            auto yaw = DirectX::XMMatrixRotationAxis({ 0,1,0 }, mainCamera.rot.yaw * DEG2RAD);
-            auto roll = DirectX::XMMatrixRotationAxis({ 0,0,1 }, mainCamera.rot.roll * DEG2RAD);
-            auto rotateView = roll * yaw * pitch;
+            DirectX::XMVECTOR Eye = Helpers::XMVectorSet(mainCamera.pos);
+            DirectX::XMVECTOR At = Helpers::XMVectorSet(mainCamera.Forward());
+            DirectX::XMVECTOR Up = Helpers::XMVectorSet(mainCamera.Up());
+            matrix_view = DirectX::XMMatrixLookToLH(Eye, At, Up);
+
+            //auto translateView = Helpers::XMMatrixTranslation(mainCamera.pos);
+            //auto pitch = DirectX::XMMatrixRotationAxis({1,0,0}, mainCamera.rot.pitch * DEG2RAD);
+            //auto yaw = DirectX::XMMatrixRotationAxis({ 0,1,0 }, mainCamera.rot.yaw * DEG2RAD);
+            //auto roll = DirectX::XMMatrixRotationAxis({ 0,0,1 }, mainCamera.rot.roll * DEG2RAD);
+            //auto rotateView = roll * yaw * pitch;
+            //matrix_view = DirectX::XMMATRIX(matrix_view) * translateView * rotateView * scaleView;
 
             auto scaleView = Helpers::XMMatrixScaling(mainCamera.scale);
-            matrix_view = DirectX::XMMATRIX(matrix_view) * translateView * rotateView * scaleView;
-
             matrix_projection = DirectX::XMMatrixPerspectiveFovLH(75 * DEG2RAD, Lapis::clientRect.width / Lapis::clientRect.height, 0.01f, 10000.0f);
         }
 
@@ -527,7 +527,7 @@ namespace Lapis::Backend
     {
         auto model = DirectX::XMMatrixIdentity();
         auto scaleModel = Helpers::XMMatrixScaling(internalLapisCommand.transform.scale);
-        auto rotateModel = Helpers::XMMatrixRotationRollPitchYaw(internalLapisCommand.transform.rot);
+        auto rotateModel = Helpers::XMMatrixRotationRollPitchYaw(-internalLapisCommand.transform.rot);
         auto translateModel = Helpers::XMMatrixTranslation(internalLapisCommand.transform.pos);
         //auto pitch = DirectX::XMMatrixRotationAxis({ 1,0,0 }, internalLapisCommand.transform.rot.pitch * DEG2RAD);
         //auto yaw = DirectX::XMMatrixRotationAxis({ 0,1,0 }, internalLapisCommand.transform.rot.yaw * DEG2RAD);
