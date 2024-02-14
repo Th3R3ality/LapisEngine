@@ -126,6 +126,9 @@ namespace Lapis
 		static const Vec3 up;
 		static const Vec3 right;
 		static const Vec3 forward;
+
+		void Normalize();
+
 	};
 	using Vector3 = Vec3;
 
@@ -227,6 +230,10 @@ namespace Lapis
 		Transform(Vec3 pos, Vec3 rot, Vec3 scale) :
 			pos(pos), rot(rot), scale(scale)
 		{}
+		
+		Vec3 _Forward();
+		Vec3 _Right();
+		Vec3 _Up();
 		
 		Vec3 Forward();
 		Vec3 Right();

@@ -153,6 +153,14 @@ namespace Lapis
 		return *this;
 	}
 
+	void Vec3::Normalize()
+	{
+		float magnitude = std::sqrt(x * x + y * y + z * z);
+		x /= magnitude;
+		y /= magnitude;
+		z /= magnitude;
+	}
+
 	////////////////////// Vec4
 
 	Vec4 Lapis::Vec4::operator+(const Vec4& other) const
@@ -255,6 +263,27 @@ namespace Lapis
 		res.x = -cos((rot.yaw + 90) * DEG2RAD) * sin(rot.pitch * DEG2RAD);
 		res.y = cos(rot.pitch * DEG2RAD);
 		res.z = -sin((rot.yaw + 90) * DEG2RAD) * sin(rot.pitch * DEG2RAD);
+
+		return res;
+	}
+
+	Vec3 Transform::_Forward()
+	{
+		Vec3 res;
+
+		return res;
+	}
+
+	Vec3 Transform::_Right()
+	{
+		Vec3 res;
+
+		return res;
+	}
+
+	Vec3 Transform::_Up()
+	{
+		Vec3 res;
 
 		return res;
 	}
