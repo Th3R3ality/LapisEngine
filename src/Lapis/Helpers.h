@@ -25,7 +25,7 @@ namespace Lapis
 
 		inline DirectX::XMMATRIX XMMatrixRotationRollPitchYaw(Lapis::Vec3 rot)
 		{
-			return DirectX::XMMatrixRotationRollPitchYaw(DEG2RAD * rot.x, DEG2RAD * rot.y, DEG2RAD * rot.z);
+			return DirectX::XMMatrixRotationRollPitchYaw(DEG2RAD * rot.roll, DEG2RAD * rot.pitch, DEG2RAD * rot.yaw);
 		}
 
 		inline DirectX::XMMATRIX XMMatrixRotationAxis(Lapis::Vec3 axis, float angle)

@@ -157,13 +157,15 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             
             static auto transform = Transform(Vec3(0,-0.5,2), 0, 0.1);
             transform.rot.yaw += 20 * deltaTime;
-            transform.rot.pitch += 14 * deltaTime;
+            transform.rot.pitch += 20 * deltaTime;
 
             Draw::D3::Plane(transform, "ffffff90");
             Draw::D3::Cube(transform, "ffffff90");
             Draw::D3::Arrow(transform.pos, transform.Forward(), "0000ff");
             Draw::D3::Arrow(transform.pos, transform.Right(), "ff0000");
             Draw::D3::Arrow(transform.pos, transform.Up(), "00ff00");
+
+            Draw::D2::String("a bcdefghi", {48,48}, "ffffff", 12);
 
             RenderFrame();
             FlushFrame();

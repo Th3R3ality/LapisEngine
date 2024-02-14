@@ -14,4 +14,6 @@ namespace Lapis::Draw::D2
 
 	void Circle(Vec2 xy, float r, Color rgba);
 	void Circle(Vec2 xy, float r, Color rgba, int vertexCount);
+
+	void String(const char* str, Vec2(xy), Color col, float fontSize = 8);
 }

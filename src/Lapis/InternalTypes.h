@@ -18,6 +18,13 @@ namespace Lapis
 		Topology topology;
 		Transform transform;
 		std::string materialName;
+
+		LapisCommand(UINT vertexCount, Topology topology, Transform transform, std::string materialName) :
+			vertexCount(vertexCount),
+			topology(topology),
+			transform(transform),
+			materialName(materialName)
+		{}
 	};
 
 	_declspec(align(16))

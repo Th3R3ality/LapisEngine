@@ -3,7 +3,7 @@
 #include <math.h>
 
 #include "../Backend.h"
-
+#include "SmallestPixel7.h"
 
 namespace Lapis::Draw::D2
 {
@@ -70,6 +70,26 @@ namespace Lapis::Draw::D2
 				Vec3(xy.x + r * 2 * _x, xy.y + r * 2 * _y, 0),
 				rgba,
 				{ _x, _y }, -Vec3::forward)); //idk why this works but it makes the uv not inverted
+		}
+	}
+	void String(const char* str, Vec2(xy), Color col, float fontSize)
+	{
+		for (int idx = 0; str[idx] != '\0'; idx++)
+		{
+			if (str[idx] < 'a' || str[idx] > 'z')
+				continue;
+
+			auto quads = sp7::characters.at(str[idx] - 'a');
+
+			for (auto& quad : quads)
+			{
+				Backend::PushCommand(LapisCommand(4, D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, Transform(), "UI"));
+
+				Backend::PushVertex(Vertex((quad.a * fontSize) + Vec3(xy) + Vec3((idx * 5) * fontSize,0,0), col, 0, 0));
+				Backend::PushVertex(Vertex((quad.b * fontSize) + Vec3(xy) + Vec3((idx * 5) * fontSize,0,0), col, 0, 0));
+				Backend::PushVertex(Vertex((quad.c * fontSize) + Vec3(xy) + Vec3((idx * 5) * fontSize,0,0), col, 0, 0));
+				Backend::PushVertex(Vertex((quad.d * fontSize) + Vec3(xy) + Vec3((idx * 5) * fontSize,0,0), col, 0, 0));
+			}
 		}
 	}
 }

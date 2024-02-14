@@ -24,6 +24,7 @@
     <ClInclude Include="src\Lapis\Backend.h" />
     <ClInclude Include="src\Lapis\Draw\D2.h" />
     <ClInclude Include="src\Lapis\Draw\D3.h" />
+    <ClInclude Include="src\Lapis\Draw\SmallestPixel7.h" />
     <ClInclude Include="src\Lapis\Helpers.h" />
     <ClInclude Include="src\Lapis\InternalTypes.h" />
     <ClInclude Include="src\Lapis\Engine.h" />
