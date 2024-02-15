@@ -155,12 +155,14 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             transform.rot.pitch += 20 * deltaTime;
 
             Draw::D3::Plane(transform, "ffffff90");
-            //Draw::D3::Cube(transform, "ffffff90");
+            Draw::D3::Cube(transform, "ffffff90");
             Draw::D3::Arrow(transform.pos, transform.Forward(), "0000ff");
             Draw::D3::Arrow(transform.pos, transform.Right(), "ff0000");
             Draw::D3::Arrow(transform.pos, transform.Up(), "00ff00");
 
-            Draw::D2::String("a bcdefghi", {48,48}, "ffffff", 12);
+            Draw::D2::String("a bcdefghijkl", { 48,48 }, "ffffff", 12);
+            Draw::D2::String("mnopqrstuvwx", { 48,120 }, "ffffff", 12);
+            Draw::D2::String("yz0123456789", { 48,120 + 48 + 24 }, "ffffff", 12);
 
             RenderFrame();
             FlushFrame();
