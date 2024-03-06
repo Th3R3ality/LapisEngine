@@ -528,7 +528,7 @@ namespace Lapis::Backend
         auto& transform = internalLapisCommand.transform;
         auto model = DirectX::XMMatrixIdentity();
         auto scaleModel = Helpers::XMMatrixScaling(internalLapisCommand.transform.scale);
-        auto rotateModel = DirectX::XMMatrixInverse(nullptr, Helpers::XMMatrixRotationRollPitchYaw(internalLapisCommand.transform.rot));
+        auto rotateModel = Helpers::XMMatrixRotationRollPitchYaw(internalLapisCommand.transform.rot);
         auto translateModel = Helpers::XMMatrixTranslation(internalLapisCommand.transform.pos);
         //auto pitch = DirectX::XMMatrixRotationAxis({ 1,0,0 }, internalLapisCommand.transform.rot.pitch * DEG2RAD);
         //auto yaw = DirectX::XMMatrixRotationAxis({ 0,1,0 }, internalLapisCommand.transform.rot.yaw * DEG2RAD);

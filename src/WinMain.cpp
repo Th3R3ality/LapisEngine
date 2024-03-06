@@ -151,8 +151,33 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             }
             
             static auto transform = Transform(Vec3(0,-0.5,2), 0, 0.1);
-            transform.rot.yaw += 20 * deltaTime;
-            transform.rot.pitch += 20 * deltaTime;
+
+            if (GetAsyncKeyState(VK_NUMPAD4))
+            {
+                transform.rot.yaw += 20 * deltaTime;
+            }
+            if (GetAsyncKeyState(VK_NUMPAD6))
+            {
+                transform.rot.yaw -= 20 * deltaTime;
+            }
+            if (GetAsyncKeyState(VK_NUMPAD8))
+            {
+                transform.rot.pitch += 20 * deltaTime;
+            }
+            if (GetAsyncKeyState(VK_NUMPAD2))
+            {
+                transform.rot.pitch -= 20 * deltaTime;
+            }
+            if (GetAsyncKeyState(VK_NUMPAD7))
+            {
+                transform.rot.roll += 20 * deltaTime;
+            }
+            if (GetAsyncKeyState(VK_NUMPAD9))
+            {
+                transform.rot.roll -= 20 * deltaTime;
+            }
+
+            //transform.rot.pitch += 20 * deltaTime;
 
             Draw::D3::Plane(transform, "ffffff90");
             Draw::D3::Cube(transform, "ffffff90");
