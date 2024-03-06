@@ -99,8 +99,8 @@ namespace Lapis::Backend
             scd.OutputWindow = hwnd;                                // the window to be used
             scd.SampleDesc.Count = 4;                               // how many multisamples
             scd.Windowed = TRUE;                                    // windowed/full-screen mode
-            scd.BufferDesc.Width = 800;
-            scd.BufferDesc.Height = 600;
+            scd.BufferDesc.Width = clientRect.width;
+            scd.BufferDesc.Height = clientRect.height;
             scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
             // create a device, device context and swap chain using the information in the scd struct
