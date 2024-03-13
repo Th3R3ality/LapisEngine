@@ -1,6 +1,8 @@
 #include "D3.h"
 #include "../Backend.h"
 
+#include <array>
+
 namespace Lapis::Draw::D3
 {
 
@@ -16,9 +18,34 @@ namespace Lapis::Draw::D3
 	{
 		Backend::PushCommand(LapisCommand((UINT)points.size(), D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP, Transform(), "UNLIT3D"));
 
-		for (int idx = 0; idx < points.size(); idx++) {
+		for(int idx = 0; idx < points.size(); idx++)
+		{
 			Backend::PushVertex(Vertex(points[idx], rgba, Vec2((float)idx / points.size(), 0), {}));
 		}
+	}
+
+	void Triangle(const Lapis::Transform transform, const Color rgba)
+	{
+		constexpr std::array<Vec3, 3> verticies
+		{
+			Vec3(0.0, 0.5, 0.0),
+			Vec3(0.5, -0.5, 0.0),
+			Vec3(-0.5, -0.5, 0.0)
+		};
+
+		constexpr std::array<Vec2, 3> texCoords
+		{
+			Vec2(0.5, 1),
+			Vec2(1, 0),
+			Vec2(0, 0)
+		};
+
+		Backend::PushCommand(LapisCommand(3, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, transform, "UNLIT3D"));
+
+		for(int numVert = 0; numVert < verticies.size(); numVert++)
+        {
+            Backend::PushVertex(verticies[numVert], rgba, texCoords[numVert], Vec3::forward);
+        }
 	}
 
 	void Arrow(Vec3 point, Vec3 dir, float magnitude, Color rgba)
@@ -31,23 +58,30 @@ namespace Lapis::Draw::D3
 		//Backend::PushVertex(Vertex(p + dir, rgba, 1, 0));
 	}
 
-	void Triangle(Lapis::Transform transform, Color rgba)
+	void Plane(const Lapis::Transform transform, const Color rgba)
 	{
-		Backend::PushCommand(LapisCommand(3, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, transform, "UNLIT3D"));
+		constexpr std::array<Vec3, 4> verticies
+		{
+			Vec3(-0.5, 0, 0.5),
+			Vec3(0.5, 0, 0.5),
+			Vec3(-0.5, 0, -0.5),
+			Vec3(0.5, 0, -0.5)
+		};
 
-		Backend::PushVertex(Vec3(0.0, 0.5, 0.0), rgba, Vec2(0.5, 1), -Vec3::forward);
-		Backend::PushVertex(Vec3(0.5, -0.5, 0.0), rgba, Vec2(1, 0), -Vec3::forward);
-		Backend::PushVertex(Vec3(-0.5, -0.5, 0.0), rgba, Vec2(0, 0), -Vec3::forward);
-	}
+		constexpr std::array<Vec2, 4> texCoords
+		{
+			Vec2(-1, 0),
+			Vec2(1, 0),
+			Vec2(-1, 1),
+			Vec2(1, 1)
+		};
 
-	void Plane(Lapis::Transform transform, Color rgba)
-	{
 		Backend::PushCommand(LapisCommand(4, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, transform, "UNLIT3D"));
 
-		Backend::PushVertex(Vec3(-0.5, 0, 0.5), rgba, Vec2(-1, 0), Vec3::up);
-		Backend::PushVertex(Vec3(0.5, 0, 0.5), rgba, Vec2(1, 0), Vec3::up);
-		Backend::PushVertex(Vec3(-0.5, 0, -0.5), rgba, Vec2(-1, 1), Vec3::up);
-		Backend::PushVertex(Vec3(0.5, 0, -0.5), rgba, Vec2(1, 1), Vec3::up);
+		for(int numVert = 0; numVert < verticies.size(); numVert++)
+		{
+			Backend::PushVertex(verticies[numVert], rgba, texCoords[numVert], Vec3::up);
+		}
 	}
 
 	void Cube(Lapis::Transform transform, Color rgba)
