@@ -76,10 +76,21 @@ namespace Lapis::Draw::D2
 	{
 		for (int idx = 0; str[idx] != '\0'; idx++)
 		{
-			if (str[idx] < 'a' || str[idx] > 'z')
+			if ((str[idx] < 'a' || str[idx] > 'z') && (str[idx] < '0' || str[idx] > '9'))
 				continue;
 
-			auto quads = sp7::characters.at(str[idx] - 'a');
+			int characterIndex;
+
+			if (str[idx] >= '0' && str[idx] <= '9')
+			{
+				characterIndex = ('z' - 'a') + str[idx] - '0' + 1;
+			}
+			else
+			{
+				characterIndex = str[idx] - 'a';
+			}
+
+			auto quads = sp7::characters.at(characterIndex);
 
 			for (auto& quad : quads)
 			{
