@@ -72,7 +72,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
     // create the window and use the result as the handle
     hwnd = CreateWindowExW(
-        ( WS_EX_TOPMOST | WS_EX_NOACTIVATE  | WS_EX_LAYERED  | WS_EX_TRANSPARENT  ),
+        NULL, //( WS_EX_TOPMOST | WS_EX_NOACTIVATE),
         wc.lpszClassName,    // name of the window class
         L"Lapis Dev Window",   // title of the window
         WS_POPUP,    // window style //
