@@ -39,13 +39,15 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 // entry point
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow) {
     
+    SetProcessDPIAware();
+
     // define window class
     WNDCLASSEX wc;
     ZeroMemory(&wc, sizeof(WNDCLASSEX));
 
     wc.cbSize = sizeof(WNDCLASSEX);
-    wc.style = CS_HREDRAW | CS_VREDRAW;
-    //wc.style = ACS_TRANSPARENT;
+    //wc.style = CS_HREDRAW | CS_VREDRAW;
+    wc.style = ACS_TRANSPARENT;
     wc.lpfnWndProc = WindowProc;
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 0;
@@ -60,17 +62,22 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     // register the window class
     RegisterClassEx(&wc);
 
-    RECT wr = { 0, 0, 800, 600 };
+    int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+    int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+    RECT wr = { 0, 0, screenWidth, screenWidth };
     HWND hwnd;
+
+    
 
     // create the window and use the result as the handle
     hwnd = CreateWindowExW(
-        NULL,//( WS_EX_TOPMOST | WS_EX_NOACTIVATE),
+        ( WS_EX_TOPMOST | WS_EX_NOACTIVATE  | WS_EX_LAYERED  | WS_EX_TRANSPARENT  ),
         wc.lpszClassName,    // name of the window class
         L"Lapis Dev Window",   // title of the window
-        WS_OVERLAPPEDWINDOW,    // window style //WS_POPUP
-        300,    // x-position of the window
-        300,    // y-position of the window
+        WS_POPUP,    // window style //
+        wr.left,    // x-position of the window
+        wr.top,    // y-position of the window
         wr.right -wr.left,    // width of the window
         wr.bottom -wr.top,    // height of the window
         NULL,    // we have no parent window, NULL
@@ -81,10 +88,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
     //SetLayeredWindowAttributes(hwnd, 0, 1.0f, LWA_ALPHA);
     //SetLayeredWindowAttributes(hwnd, 0, RGB(0, 0, 0), LWA_COLORKEY);
-    //MARGINS margins = { -1 }; ;
+    //MARGINS margins = { -1, -1, -1, -1 }; ;
     //DwmExtendFrameIntoClientArea(hwnd, &margins);
-
-  
 
     std::cout << "created device and swapchain\n";
 
@@ -100,10 +105,19 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     printf("initting lapis\n");
     Lapis::InitLapis(hwnd);
 
+
+    Lapis::Vec2 pos1(0), pos2(10);
+
     float FPS_CAP = 60;
     bool LIMIT_FPS = false;
+
+    int maxLightness = 10;
+    int xGrid = 4, yGrid = 4;
+    bool running = false;
+    bool holdingEdit = false;
+    bool wasHoldingEdit = false;
     MSG msg{};
-    while (true && !GetAsyncKeyState(VK_ESCAPE))
+    while (true && !GetAsyncKeyState(VK_DELETE))
     {
         if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             TranslateMessage(&msg);
@@ -118,77 +132,118 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             using namespace Lapis;
             NewFrame();
 
-            //std::cout << "mainCamera.pos : " << mainCamera.pos << "\n";
-            //std::cout << "mainCamera.rot : " << mainCamera.rot << "\n";
+            if (GetAsyncKeyState(VK_F4) & 1)
+            {
+                running = !running;
+            }
 
-            if (GetAsyncKeyState('W')) mainCamera.pos += mainCamera.Forward() * deltaTime;
-            if (GetAsyncKeyState('S')) mainCamera.pos -= mainCamera.Forward() * deltaTime;
-            if (GetAsyncKeyState('A')) mainCamera.pos -= mainCamera.Right() * deltaTime;
-            if (GetAsyncKeyState('D')) mainCamera.pos += mainCamera.Right() * deltaTime;
-            if (GetAsyncKeyState('Q')) mainCamera.pos -= mainCamera.Up() * deltaTime;
-            if (GetAsyncKeyState('E')) mainCamera.pos += mainCamera.Up() * deltaTime;
+            if (GetAsyncKeyState(VK_F2))
+            {
+                holdingEdit = true;
+            }
+            else
+                holdingEdit = false;
 
-            if (GetAsyncKeyState(VK_RIGHT)) mainCamera.rot.yaw -= 90 * deltaTime;
-            if (GetAsyncKeyState(VK_LEFT))  mainCamera.rot.yaw += 90 * deltaTime;
-            if (GetAsyncKeyState(VK_DOWN)) mainCamera.rot.pitch -= 90 * deltaTime;
-            if (GetAsyncKeyState(VK_UP))  mainCamera.rot.pitch += 90 * deltaTime;
-            if (GetAsyncKeyState('Z')) mainCamera.rot.roll -= 90 * deltaTime;
-            if (GetAsyncKeyState('X'))  mainCamera.rot.roll += 90 * deltaTime;
+            if (GetAsyncKeyState(VK_UP) & 1)
+                yGrid += 1;
+            if (GetAsyncKeyState(VK_DOWN) & 1)
+                yGrid -= 1;
+            if (GetAsyncKeyState(VK_LEFT) & 1)
+                xGrid -= 1;
+            if (GetAsyncKeyState(VK_RIGHT) & 1)
+                xGrid += 1;
 
+            if (xGrid <= 0) xGrid = 1;
+            if (yGrid <= 0) yGrid = 1;
 
-            Draw::D2::Circle(-5, 30, "00ff50");
+            if (!wasHoldingEdit && holdingEdit)
+            {
+                POINT p = {};
+                GetCursorPos(&p);
+                pos1 = Lapis::Vec2(p.x, p.y);
+            }
+            if (wasHoldingEdit)
+            {
+                POINT p = {};
+                GetCursorPos(&p);
+                pos2 = Lapis::Vec2(p.x, p.y);
+            }
 
-            static int checkerboardSize = 25;
-            Color col;
-            for (int i = 0; i < checkerboardSize; i++) {
-                for (int j = 0; j < checkerboardSize; j++) {
-                    if (((i % 2) + j) % 2 == 1)
-                        col = "707070";
-                    else
-                        col = "101010";
-                    Draw::D3::Plane(Transform(Vec3(i - checkerboardSize / 2, -2, j - checkerboardSize / 2), 0, 1), col);
+            Draw::D2::Rect(Lapis::Vec4(24,24,250,200), "101010");
+
+            int xCenterOffset = (pos2.x - pos1.x) / xGrid / 2;
+            int yCenterOffset = (pos2.y - pos1.y) / yGrid / 2;
+
+            if (running)
+            {
+
+                SetWindowLongA(hwnd, GWL_EXSTYLE, (WS_EX_TOPMOST | WS_EX_NOACTIVATE));
+                SetWindowPos(hwnd, NULL, 24, 24, 250, 200, SWP_SHOWWINDOW | SWP_NOMOVE);
+                
+                Draw::D2::String("running", { 48,48 }, "66ff66", 6);
+                HDC hdc = GetDC(HWND_DESKTOP);
+                for (int i = 0; i < xGrid; i++)
+                {
+                    auto xTemp = pos1.x + i * ((pos2.x - pos1.x) / xGrid) + xCenterOffset;
+                    for (int j = 0; j < yGrid; j++)
+                    {
+                        auto yTemp = pos1.y + j * ((pos2.y - pos1.y) / yGrid) + yCenterOffset;
+                        static COLORREF pixel = GetPixel(hdc, xTemp, yTemp);
+                        BYTE r = GetRValue(pixel);
+                        BYTE g = GetGValue(pixel);
+                        BYTE b = GetBValue(pixel);
+
+                        std::cout << std::format("{} {}\n", xTemp, yTemp);
+                        std::cout << std::format("{} {} {}\n\n", r, g, b);
+                        SetCursorPos(xTemp, yTemp);
+                        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                        if (r <= maxLightness && g <= maxLightness && b <= maxLightness)
+                        {
+                            mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
+                            mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+                        }
+                    }
+                }
+                ReleaseDC(0, hdc);
+            }
+            else
+            {
+                SetWindowLongA(hwnd, GWL_EXSTYLE, (WS_EX_TOPMOST | WS_EX_NOACTIVATE | WS_EX_LAYERED | WS_EX_TRANSPARENT));
+                SetWindowPos(hwnd, NULL, 0, 0, screenWidth, screenHeight, SWP_SHOWWINDOW | SWP_NOMOVE);
+
+                Draw::D2::String("stopped", { 48,48 }, "ff6666", 6);
+                Draw::D2::Rect(pos1, pos2 - pos1, "00000050");
+                for (int i = 0; i < xGrid; i++)
+                {
+                    auto xTemp = pos1.x + i * ((pos2.x - pos1.x) / xGrid) + xCenterOffset;
+                    //Draw::D2::Line(Lapis::Vec2(xTemp, pos1.y), Lapis::Vec2(xTemp, pos2.y), "aa0000");
+
+                    for (int j = 0; j < yGrid; j++)
+                    {
+                        auto yTemp = pos1.y + j * ((pos2.y - pos1.y) / yGrid) + yCenterOffset;
+                        Draw::D2::Line(Lapis::Vec2(xTemp-10, yTemp), Lapis::Vec2(xTemp+10, yTemp), "5555ff");
+                        Draw::D2::Line(Lapis::Vec2(xTemp, yTemp-10), Lapis::Vec2(xTemp, yTemp+10), "5555ff");
+                    }
+                }
+                for (int i = 0; i < xGrid+1; i++)
+                {
+                    auto xTemp = pos1.x + i * ((pos2.x - pos1.x) / xGrid);
+                    Draw::D2::Line(Lapis::Vec2(xTemp, pos1.y), Lapis::Vec2(xTemp, pos2.y), "444444");
+                }
+                for (int j = 0; j < yGrid+1; j++)
+                {
+                    auto yTemp = pos1.y + j * ((pos2.y - pos1.y) / yGrid);
+                    Draw::D2::Line(Lapis::Vec2(pos1.x, yTemp), Lapis::Vec2(pos2.x, yTemp), "444444");
                 }
             }
-            
-            static auto transform = Transform(Vec3(0,-0.5,2), 0, 0.1);
 
-            if (GetAsyncKeyState(VK_NUMPAD4))
-            {
-                transform.rot.yaw += 20 * deltaTime;
-            }
-            if (GetAsyncKeyState(VK_NUMPAD6))
-            {
-                transform.rot.yaw -= 20 * deltaTime;
-            }
-            if (GetAsyncKeyState(VK_NUMPAD8))
-            {
-                transform.rot.pitch += 20 * deltaTime;
-            }
-            if (GetAsyncKeyState(VK_NUMPAD2))
-            {
-                transform.rot.pitch -= 20 * deltaTime;
-            }
-            if (GetAsyncKeyState(VK_NUMPAD7))
-            {
-                transform.rot.roll += 20 * deltaTime;
-            }
-            if (GetAsyncKeyState(VK_NUMPAD9))
-            {
-                transform.rot.roll -= 20 * deltaTime;
-            }
+            Draw::D2::String("grid", { 48,48 * 2 }, "ffffff", 6);
+            Draw::D2::String(std::format("x {}",xGrid).c_str(), { 48,48 * 2.75 }, "0050ff", 6);
+            Draw::D2::String(std::format("y {}",yGrid).c_str(), { 48,48 * 3.5 }, "00ff50", 6);
 
-            //transform.rot.pitch += 20 * deltaTime;
 
-            Draw::D3::Plane(transform, "ffffff90");
-            Draw::D3::Cube(transform, "ffffff90");
-            Draw::D3::Arrow(transform.pos, transform.Forward(), "0000ff");
-            Draw::D3::Arrow(transform.pos, transform.Right(), "ff0000");
-            Draw::D3::Arrow(transform.pos, transform.Up(), "00ff00");
 
-            Draw::D2::String("a bcdefghijkl", { 48,48 }, "ffffff", 12);
-            Draw::D2::String("mnopqrstuvwx", { 48,120 }, "ffffff", 12);
-            Draw::D2::String("yz0123456789", { 48,120 + 48 + 24 }, "ffffff", 12);
-
+            wasHoldingEdit = holdingEdit;
             RenderFrame();
             FlushFrame();
         }

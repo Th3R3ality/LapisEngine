@@ -99,8 +99,8 @@ namespace Lapis::Backend
             scd.OutputWindow = hwnd;                                // the window to be used
             scd.SampleDesc.Count = 4;                               // how many multisamples
             scd.Windowed = TRUE;                                    // windowed/full-screen mode
-            scd.BufferDesc.Width = clientRect.width;
-            scd.BufferDesc.Height = clientRect.height;
+            scd.BufferDesc.Width = Lapis::clientRect.width;
+            scd.BufferDesc.Height = Lapis::clientRect.height;
             scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
             // create a device, device context and swap chain using the information in the scd struct
@@ -411,8 +411,9 @@ namespace Lapis::Backend
             static float h = 0;
             h += Lapis::deltaTime;
             if (h > 360) h -= 360;
-            auto color = hsl2rgb((int)h, 1.0f, 0.7f, 1.0f);
-            deviceContext->ClearRenderTargetView(renderTargetView, (FLOAT*)&color);
+            auto color = hsl2rgb((int)h, 1.0f, 0.7f, 0.5f);
+            D3DCOLORVALUE col = { 0.0,0.0,0.0,0.0 };
+            deviceContext->ClearRenderTargetView(renderTargetView, (FLOAT*)&col);
         }
 
         deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
