@@ -65,7 +65,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
     // create the window and use the result as the handle
     hwnd = CreateWindowExW(
-        NULL, //( WS_EX_TOPMOST | WS_EX_NOACTIVATE),
+        NULL,//( WS_EX_TOPMOST | WS_EX_NOACTIVATE),
         wc.lpszClassName,    // name of the window class
         L"Lapis Dev Window",   // title of the window
         WS_OVERLAPPEDWINDOW,    // window style //WS_POPUP
@@ -81,7 +81,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
     //SetLayeredWindowAttributes(hwnd, 0, 1.0f, LWA_ALPHA);
     //SetLayeredWindowAttributes(hwnd, 0, RGB(0, 0, 0), LWA_COLORKEY);
-    //MARGINS margins = { -1, -1, -1, -1 }; ;
+    //MARGINS margins = { -1 }; ;
     //DwmExtendFrameIntoClientArea(hwnd, &margins);
 
   
