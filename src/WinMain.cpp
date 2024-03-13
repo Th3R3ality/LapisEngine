@@ -241,7 +241,13 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             Draw::D2::String(std::format("x {}",xGrid).c_str(), { 48,48 * 2.75 }, "0050ff", 6);
             Draw::D2::String(std::format("y {}",yGrid).c_str(), { 48,48 * 3.5 }, "00ff50", 6);
 
+            Draw::D3::Plane(transform, "ffffff90");
+            //Draw::D3::Cube(transform, "ffffff90");
+            Draw::D3::Arrow(transform.pos, transform.Forward(), "0000ff");
+            Draw::D3::Arrow(transform.pos, transform.Right(), "ff0000");
+            Draw::D3::Arrow(transform.pos, transform.Up(), "00ff00");
 
+            Draw::D2::String("a bcdefghi", {48,48}, "ffffff", 12);
 
             wasHoldingEdit = holdingEdit;
             RenderFrame();
