@@ -291,6 +291,18 @@ namespace Lapis
 
 	struct Material
 	{
+	public:
+		std::string name;
+		ID3D11VertexShader* vertexShader;
+		ID3D11PixelShader* pixelShader;
+		ID3D11BlendState* blendState;
 
+		Material() :
+			name("<UNNAMED_MATERIAL>"), vertexShader(nullptr), pixelShader(nullptr), blendState(nullptr)
+		{}
+
+		Material(std::string name, ID3D11VertexShader* vs, ID3D11PixelShader* ps, ID3D11BlendState* bs) :
+			name(name), vertexShader(vs), pixelShader(ps), blendState(bs)
+		{}
 	};
 }

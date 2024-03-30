@@ -70,7 +70,7 @@ namespace Lapis
 		HRESULT GetDeviceAndCtxFromSwapchain(IDXGISwapChain* pSwapChain, ID3D11Device** ppDevice, ID3D11DeviceContext** ppContext);
 		ID3D11RenderTargetView* GetRenderTargetView();
 
-		void PushMaterial(Material mat);
+		void PushMaterial(Material* mat);
 		void PopMaterial();
 	}
 }

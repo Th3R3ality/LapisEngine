@@ -45,6 +45,7 @@
     <ClInclude Include="src\imgui\imstb_truetype.h" />
     <ClInclude Include="src\imgui\backends\imgui_impl_dx11.h" />
     <ClInclude Include="src\imgui\backends\imgui_impl_win32.h" />
+    <ClInclude Include="src\Lapis\shaders\compiled\shadertoytest_pixel.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\Lapis\shaders\DefaultStructs.hlsli" />
@@ -55,5 +56,6 @@
     <FxCompile Include="src\Lapis\shaders\DEFAULTSHADER__UNLIT_pixel.hlsl" />
     <FxCompile Include="src\Lapis\shaders\DEFAULTSHADER__UI_vertex.hlsl" />
     <FxCompile Include="src\Lapis\shaders\DEFAULTSHADER__UI_pixel.hlsl" />
+    <FxCompile Include="src\Lapis\shaders\shadertoytest_pixel.hlsl" />
   </ItemGroup>
 </Project>

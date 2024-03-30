@@ -49,6 +49,7 @@
     <ClInclude Include="src\Lapis\shaders\compiled\DEFAULTSHADER__UI_vertex.h" />
     <ClInclude Include="src\Lapis\shaders\compiled\DEFAULTSHADER__UNLIT3D_vertex.h" />
     <ClInclude Include="src\Lapis\shaders\compiled\DEFAULTSHADER__UNLIT_pixel.h" />
+    <ClInclude Include="src\Lapis\shaders\compiled\shadertoytest_pixel.h" />
     <ClInclude Include="src\Lapis\shaders\DefaultShaders.h" />
     <ClInclude Include="src\engine\shaders\compiled\UI_pixel.h" />
     <ClInclude Include="src\engine\shaders\compiled\UI_vertex.h" />
@@ -60,6 +61,10 @@
     <None Include="src\Lapis\shaders\DefaultStructs.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="src\Lapis\shaders\shadertoytest_pixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="src\Lapis\shaders\DEFAULTSHADER__CIRCLE_pixel.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>

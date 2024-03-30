@@ -32,10 +32,14 @@
 // include Utility headers
 #include "utils/hsl-to-rgb.hpp"
 
+// include ImGui
 #include "imgui/imgui.h"
 #include "imgui/backends/imgui_impl_win32.h"
 #include "imgui/backends/imgui_impl_dx11.h"
 
+// include Shaders
+#include "Lapis/shaders/compiled/DEFAULTSHADER__UI_vertex.h"
+#include "Lapis/shaders/compiled/shadertoytest_pixel.h"
 
 // the WindowProc function prototype
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -132,6 +136,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             using namespace Lapis;
             NewFrame();
 
+
+
+
             ////std::cout << "mainCamera.pos : " << mainCamera.pos << "\n";
             ////std::cout << "mainCamera.rot : " << mainCamera.rot << "\n";
 
@@ -199,6 +206,21 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             Draw::D3::Arrow(transform.pos, transform.Right(), "ff0000");
             Draw::D3::Arrow(transform.pos, transform.Up(), "00ff00");
 
+            
+            static bool once = false;
+            static Material mat{};
+            if (!once)
+            {
+                mat = *Lapis::FindBuiltinMaterial("UI");
+                ID3D11PixelShader* PS_shadertoytest;
+                device->CreatePixelShader(shadertoytest_pixel, sizeof(shadertoytest_pixel), 0, &PS_shadertoytest);
+                mat.pixelShader = PS_shadertoytest;
+                once = true;
+            }
+            PushMaterial(&mat);
+            Draw::D2::Rect(Vec4(100, 100, 200, 200), "ffffff");
+            PopMaterial();
+            
             Draw::D2::String("yo", { 48,48 }, "ffffff", 12);
 
             RenderFrame();
