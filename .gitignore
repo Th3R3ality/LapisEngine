@@ -369,3 +369,4 @@ FodyWeavers.xsd
 /src/Lapis/shaders/compiled/DEFAULTSHADER__UI_vertex.h
 /src/Lapis/shaders/compiled/DEFAULTSHADER__UNLIT3D_vertex.h
 /src/Lapis/shaders/compiled/DEFAULTSHADER__UNLIT_pixel.h
+/src/Lapis/shaders/compiled/shadertoytest_pixel.h
