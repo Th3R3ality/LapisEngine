@@ -48,6 +48,7 @@ namespace Lapis
 		void NewFrame();
 		void RenderFrame();
 		void FlushFrame();
+		void PresentFrame();
 
 		void DestroyViews();
 		bool CreateViews(IDXGISwapChain* _swapchain);
@@ -64,7 +65,12 @@ namespace Lapis
 		void DrawCommand(InternalLapisCommand internalLapisCommand);
 		void InitDefaultShaders();
 		void MapResource(ID3D11Resource* resource, void* data, size_t size);
-		HRESULT GetDeviceAndCtxFromSwapchain(IDXGISwapChain* pSwapChain, ID3D11Device** ppDevice, ID3D11DeviceContext** ppContext);
 
+		void GetDeviceAndCtx(ID3D11Device** ppDevice, ID3D11DeviceContext** ppContext);
+		HRESULT GetDeviceAndCtxFromSwapchain(IDXGISwapChain* pSwapChain, ID3D11Device** ppDevice, ID3D11DeviceContext** ppContext);
+		ID3D11RenderTargetView* GetRenderTargetView();
+
+		void PushMaterial(Material mat);
+		void PopMaterial();
 	}
 }

@@ -32,6 +32,10 @@
 // include Utility headers
 #include "utils/hsl-to-rgb.hpp"
 
+#include "imgui/imgui.h"
+#include "imgui/backends/imgui_impl_win32.h"
+#include "imgui/backends/imgui_impl_dx11.h"
+
 
 // the WindowProc function prototype
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -100,6 +104,16 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     printf("initting lapis\n");
     Lapis::InitLapis(hwnd);
 
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    ImGui::StyleColorsDark();
+    ImGui_ImplWin32_Init(hwnd);
+
+    ID3D11Device* device;
+    ID3D11DeviceContext* deviceContext;
+    Lapis::GetDeviceAndCtx(&device, &deviceContext);
+    ImGui_ImplDX11_Init(device, deviceContext);
+
     float FPS_CAP = 60;
     bool LIMIT_FPS = false;
     MSG msg{};
@@ -118,8 +132,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             using namespace Lapis;
             NewFrame();
 
-            //std::cout << "mainCamera.pos : " << mainCamera.pos << "\n";
-            //std::cout << "mainCamera.rot : " << mainCamera.rot << "\n";
+            ////std::cout << "mainCamera.pos : " << mainCamera.pos << "\n";
+            ////std::cout << "mainCamera.rot : " << mainCamera.rot << "\n";
 
             if (GetAsyncKeyState('W')) mainCamera.pos += mainCamera.Forward() * deltaTime;
             if (GetAsyncKeyState('S')) mainCamera.pos -= mainCamera.Forward() * deltaTime;
@@ -185,25 +199,44 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
             Draw::D3::Arrow(transform.pos, transform.Right(), "ff0000");
             Draw::D3::Arrow(transform.pos, transform.Up(), "00ff00");
 
-            Draw::D2::String("a bcdefghijkl", { 48,48 }, "ffffff", 12);
-            Draw::D2::String("mnopqrstuvwx", { 48,120 }, "ffffff", 12);
-            Draw::D2::String("yz0123456789", { 48,120 + 48 + 24 }, "ffffff", 12);
+            Draw::D2::String("yo", { 48,48 }, "ffffff", 12);
 
             RenderFrame();
             FlushFrame();
         }
+
+        ImGui_ImplDX11_NewFrame();
+        ImGui_ImplWin32_NewFrame();
+        ImGui::NewFrame();
+
+        ImGui::Begin("Hello, world!");
+        ImGui::Text("Hello from another window!");
+        ImGui::End();
+
+        ImGui::Render();
+        ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+        Lapis::PresentFrame();
     }
 
     std::cout << "Cleaning up";
+    
+    ImGui_ImplDX11_Shutdown();
+    ImGui_ImplWin32_Shutdown();
+    ImGui::DestroyContext();
+    
     Lapis::CleanLapis();
 
     return (int)msg.wParam;
 }
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 // this is the main message handler for the program
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     Lapis::WndProcHandler(hwnd, msg, wParam, lParam);
+    if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam))
+        return true;
 
     switch (msg) {
     case WM_DESTROY:

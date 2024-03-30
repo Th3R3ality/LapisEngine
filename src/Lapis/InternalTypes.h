@@ -49,7 +49,7 @@ namespace Lapis
 
 
 		InternalMaterial() :
-			name("UNNAMED_MATERIAL"), vertexShader(nullptr), pixelShader(nullptr), blendState(nullptr)
+			name("<UNNAMED_MATERIAL>"), vertexShader(nullptr), pixelShader(nullptr), blendState(nullptr)
 		{}
 
 		InternalMaterial(std::string name, ID3D11VertexShader* vs, ID3D11PixelShader* ps, ID3D11BlendState* bs) :

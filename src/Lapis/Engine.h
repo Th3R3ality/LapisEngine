@@ -21,6 +21,7 @@ namespace Lapis
 	void NewFrame();
 	void RenderFrame();
 	void FlushFrame();
+	void PresentFrame();
 
 	void CleanLapis();
 
@@ -30,4 +31,12 @@ namespace Lapis
 	void PushWorldMatrix(mat4x4 mat);
 	void PushViewMatrix(mat4x4 mat);
 	void PushProjectionMatrix(mat4x4 mat);
+
+	void GetDeviceAndCtx(ID3D11Device** ppDevice, ID3D11DeviceContext** ppContext);
+	HRESULT GetDeviceAndCtxFromSwapchain(IDXGISwapChain* pSwapChain, ID3D11Device** ppDevice, ID3D11DeviceContext** ppContext);
+	ID3D11RenderTargetView* GetRenderTargetView();
+
+
+	void PushMaterial(Material mat);
+	void PopMaterial();
 }

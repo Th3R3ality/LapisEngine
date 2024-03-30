@@ -331,6 +331,17 @@ namespace Lapis::Backend
         using s = std::chrono::duration<float>;
         Lapis::deltaTime = std::chrono::duration_cast<s>(deltaDuration).count();// / 1000 / 1000;
         Lapis::elapsedTime += Lapis::deltaTime;
+
+        if (standaloneApplication)
+        {
+             static float h = 0;
+             h += Lapis::deltaTime;
+             if (h > 360) h -= 360;
+             auto color = hsl2rgb((int)h, 1.0f, 0.7f, 1.0f);
+             deviceContext->ClearRenderTargetView(renderTargetView, (FLOAT*)&color);
+        }
+
+        deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
     }
     void RenderFrame()
     {
@@ -407,15 +418,7 @@ namespace Lapis::Backend
                 deviceContext->IAGetVertexBuffers(0, 1, &old.VertexBuffer, &old.VertexBufferStride, &old.VertexBufferOffset);
                 deviceContext->IAGetInputLayout(&old.InputLayout);
             }
-        } else {
-            static float h = 0;
-            h += Lapis::deltaTime;
-            if (h > 360) h -= 360;
-            auto color = hsl2rgb((int)h, 1.0f, 0.7f, 1.0f);
-            deviceContext->ClearRenderTargetView(renderTargetView, (FLOAT*)&color);
         }
-
-        deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
         SetupD3D11State();
 
@@ -449,8 +452,6 @@ namespace Lapis::Backend
                 deviceContext->IASetVertexBuffers(0, 1, &old.VertexBuffer, &old.VertexBufferStride, &old.VertexBufferOffset); if (old.VertexBuffer) old.VertexBuffer->Release();
                 deviceContext->IASetInputLayout(old.InputLayout); if (old.InputLayout) old.InputLayout->Release();
             }
-        } else {
-            swapchain->Present(0, 0);
         }
     }
     void FlushFrame()
@@ -459,6 +460,11 @@ namespace Lapis::Backend
         VertexCount = 0;
 
         LapisCommandVector.clear();
+    }
+
+    void PresentFrame()
+    {
+        swapchain->Present(0, 0);
     }
 
     void BeginCommand(Topology topology, std::string materialName)
@@ -560,30 +566,26 @@ namespace Lapis::Backend
     }
     void InitDefaultShaders()
     {
-#define CREATE_DEFAULT_SHADERS_SEPERATE(vsName, psName) \
-    ID3D11VertexShader* vsName##_vertex; \
-    device->CreateVertexShader(DEFAULTSHADER__##vsName##_vertex, sizeof(DEFAULTSHADER__##vsName##_vertex), NULL, &vsName##_vertex); \
-    ID3D11PixelShader* psName##_pixel; \
-    device->CreatePixelShader(DEFAULTSHADER__##psName##_pixel, sizeof(DEFAULTSHADER__##psName##_pixel), NULL, &psName##_pixel) \
-
-#define CREATE_DEFAULT_SHADERS(name) CREATE_DEFAULT_SHADERS_SEPERATE(name, name);
-
-#define CREATE_DEFAULT_MATERIAL_SEPERATE_SHADERS(name, vsName, psName) \
-{ \
-    CREATE_DEFAULT_SHADERS_SEPERATE(vsName, psName); \
-        builtinMaterials.insert({ \
-                #name,std::make_unique<InternalMaterial>(#name, vsName##_vertex, psName##_pixel, nullptr)\
-            }); \
-}
-
-#define CREATE_DEFAULT_MATERIAL(name) CREATE_DEFAULT_MATERIAL_SEPERATE_SHADERS(name, name, name)
-
-
-        CREATE_DEFAULT_MATERIAL(UI);
-        CREATE_DEFAULT_MATERIAL_SEPERATE_SHADERS(UNLIT3D, UNLIT3D, UNLIT);
-        CREATE_DEFAULT_MATERIAL_SEPERATE_SHADERS(CIRCLE, UI, CIRCLE);
-
-#undef CREATE_DEFAULT_SHADER
+        {   
+            ID3D11VertexShader* UI_vertex;
+            device->CreateVertexShader(DEFAULTSHADER__UI_vertex, sizeof(DEFAULTSHADER__UI_vertex), 0, &UI_vertex);
+            ID3D11PixelShader* UI_pixel;
+            device->CreatePixelShader(DEFAULTSHADER__UI_pixel, sizeof(DEFAULTSHADER__UI_pixel), 0, &UI_pixel);
+            builtinMaterials.insert({ "UI",std::make_unique<InternalMaterial>("UI", UI_vertex, UI_pixel, nullptr) }); };
+        {
+            ID3D11VertexShader* UNLIT3D_vertex;
+            device->CreateVertexShader(DEFAULTSHADER__UNLIT3D_vertex, sizeof(DEFAULTSHADER__UNLIT3D_vertex), 0, &UNLIT3D_vertex);
+            ID3D11PixelShader* UNLIT_pixel;
+            device->CreatePixelShader(DEFAULTSHADER__UNLIT_pixel, sizeof(DEFAULTSHADER__UNLIT_pixel), 0, &UNLIT_pixel);
+            builtinMaterials.insert({ "UNLIT3D",std::make_unique<InternalMaterial>("UNLIT3D", UNLIT3D_vertex, UNLIT_pixel, nullptr) });
+        }
+        {
+            ID3D11VertexShader* UI_vertex;
+            device->CreateVertexShader(DEFAULTSHADER__UI_vertex, sizeof(DEFAULTSHADER__UI_vertex), 0, &UI_vertex);
+            ID3D11PixelShader* CIRCLE_pixel;
+            device->CreatePixelShader(DEFAULTSHADER__CIRCLE_pixel, sizeof(DEFAULTSHADER__CIRCLE_pixel), 0, &CIRCLE_pixel);
+            builtinMaterials.insert({ "CIRCLE",std::make_unique<InternalMaterial>("CIRCLE", UI_vertex, CIRCLE_pixel, nullptr) });
+        }
     }
     void MapResource(ID3D11Resource* resource, void* data, size_t size)
     {
@@ -591,6 +593,12 @@ namespace Lapis::Backend
         deviceContext->Map(resource, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
         memcpy(ms.pData, data, size);
         deviceContext->Unmap(resource, NULL);
+    }
+
+    void GetDeviceAndCtx(ID3D11Device** ppDevice, ID3D11DeviceContext** ppContext)
+    {
+        *ppDevice = device;
+        *ppContext = deviceContext;
     }
 
     HRESULT GetDeviceAndCtxFromSwapchain(IDXGISwapChain* pSwapChain, ID3D11Device** ppDevice, ID3D11DeviceContext** ppContext)
@@ -601,5 +609,18 @@ namespace Lapis::Backend
             (*ppDevice)->GetImmediateContext(ppContext);
 
         return ret;
+    }
+    ID3D11RenderTargetView* GetRenderTargetView()
+    {
+        return renderTargetView;
+    }
+
+    void PushMaterial(Material mat)
+    {
+
+    }
+    void PopMaterial()
+    {
+
     }
 }

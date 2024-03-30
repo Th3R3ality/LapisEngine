@@ -39,6 +39,10 @@ namespace Lapis
 	{
 		Backend::FlushFrame();
 	}
+	void PresentFrame()
+	{
+		Backend::PresentFrame();
+	}
 	void CleanLapis()
 	{
 		Backend::CleanD3D11();
@@ -66,5 +70,27 @@ namespace Lapis
 	void PushProjectionMatrix(mat4x4 mat)
 	{
 		Backend::PushProjectionMatrix(mat);
+	}
+	void GetDeviceAndCtx(ID3D11Device** ppDevice, ID3D11DeviceContext** ppContext)
+	{
+		return Backend::GetDeviceAndCtx(ppDevice, ppContext);
+	}
+
+	HRESULT GetDeviceAndCtxFromSwapchain(IDXGISwapChain* pSwapChain, ID3D11Device** ppDevice, ID3D11DeviceContext** ppContext)
+	{
+		return Backend::GetDeviceAndCtxFromSwapchain(pSwapChain, ppDevice, ppContext);
+	}
+	ID3D11RenderTargetView* GetRenderTargetView()
+	{
+		return Backend::GetRenderTargetView();
+	}
+
+	void PushMaterial(Material mat)
+	{
+		Backend::PushMaterial(mat);
+	}
+	void PopMaterial()
+	{
+		Backend::PopMaterial();
 	}
 }

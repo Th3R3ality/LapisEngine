@@ -287,4 +287,10 @@ namespace Lapis
 	{
 		Vec3 a, b, c, d;
 	};
+
+
+	struct Material
+	{
+
+	};
 }
